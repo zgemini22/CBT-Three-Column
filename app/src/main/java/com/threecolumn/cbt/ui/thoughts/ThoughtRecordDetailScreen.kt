@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -105,6 +106,8 @@ fun ThoughtRecordDetailScreen(
                 )
             }
 
+            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+
             DetailSection(number = "2", title = stringResource(R.string.section_distortions)) {
                 val distortionLabels = current.distortionKeys
                     .mapNotNull { CognitiveDistortion.fromStorageKey(it) }
@@ -119,6 +122,8 @@ fun ThoughtRecordDetailScreen(
                     color = if (distortionLabels.isEmpty()) MaterialTheme.colorScheme.onSurfaceVariant else Color.Unspecified
                 )
             }
+
+            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
 
             DetailSection(number = "3", title = stringResource(R.string.section_rational_response)) {
                 Text(text = current.rationalResponse, style = MaterialTheme.typography.bodyLarge)
