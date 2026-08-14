@@ -1,0 +1,70 @@
+<resources>
+    <string name="app_name">三栏认知疗法</string>
+
+    <!-- 导航 -->
+    <string name="nav_thought_records">思维记录</string>
+    <string name="nav_journal">笔记本</string>
+    <string name="about_desc">关于</string>
+    <string name="about_title">关于本应用</string>
+    <string name="back_desc">返回</string>
+    <string name="delete_desc">删除</string>
+    <string name="save_desc">保存</string>
+
+    <!-- 思维记录列表 -->
+    <string name="new_thought_record_desc">新建思维记录</string>
+    <string name="thought_records_empty_title">还没有任何记录</string>
+    <string name="thought_records_empty_body">点击右下角的 + ，写下让你难受的自动化思维，找出其中的认知歪曲，再写下一个更合理的回应。</string>
+    <string name="belief_before_after">相信程度 %1$d%% → %2$d%%</string>
+
+    <!-- 思维记录编辑 -->
+    <string name="new_thought_record_title">新建思维记录</string>
+    <string name="edit_thought_record_title">编辑思维记录</string>
+    <string name="situation_label">情境（选填）</string>
+    <string name="situation_placeholder">这个想法出现时，你正在经历什么？</string>
+    <string name="section_automatic_thought">自动化思维</string>
+    <string name="automatic_thought_placeholder">脑海中突然冒出来的、让你难受的想法</string>
+    <string name="belief_before_label">你当时有多相信这个想法？</string>
+    <string name="section_distortions">认知歪曲</string>
+    <string name="distortions_hint">点击选中所有符合的类型，选中后下方会显示说明。</string>
+    <string name="section_rational_response">合理回应</string>
+    <string name="rational_response_placeholder">用更公正、有依据的想法回应这个歪曲的念头</string>
+    <string name="belief_after_label">现在你还有多相信这个自动化思维？</string>
+
+    <!-- 认知歪曲（原创释义，非书中原文） -->
+    <string name="distortion_all_or_nothing_label">非黑即白思维</string>
+    <string name="distortion_all_or_nothing_desc">你把事情简单地分成好或坏两个极端，只要结果没有达到完美，就把它看作彻底的失败。</string>
+    <string name="distortion_overgeneralization_label">以偏概全</string>
+    <string name="distortion_overgeneralization_desc">你把一次负面的经历当成了永远如此的规律，常常用\"总是\"\"从来\"这类词来描述。</string>
+    <string name="distortion_mental_filter_label">心理过滤</string>
+    <string name="distortion_mental_filter_desc">你只盯着一个负面细节不放，就像一滴墨水染黑了一整杯水，让你对整件事的看法都变得灰暗。</string>
+    <string name="distortion_discounting_positive_label">否定正面评价</string>
+    <string name="distortion_discounting_positive_desc">你把好的经历或成绩都说成\"不算数\"，找各种理由把它们排除在外。</string>
+    <string name="distortion_jumping_to_conclusions_label">妄下结论</string>
+    <string name="distortion_jumping_to_conclusions_desc">你在没有足够依据的情况下就往坏处想——要么猜测别人在怎么看你，要么提前断定事情会有糟糕的结局。</string>
+    <string name="distortion_magnification_minimization_label">放大或缩小</string>
+    <string name="distortion_magnification_minimization_desc">你把问题和缺点看得过分严重，却把自己的优点和长处看得微不足道。</string>
+    <string name="distortion_emotional_reasoning_label">情绪化推理</string>
+    <string name="distortion_emotional_reasoning_desc">你把自己的负面情绪当成事实的证明：\"我这么难受，说明事情一定很糟\"。</string>
+    <string name="distortion_should_statements_label">\"应该\"式思维</string>
+    <string name="distortion_should_statements_desc">你总用\"应该\"\"必须\"\"一定要\"来要求自己或别人，一旦达不到，就陷入内疚或怨恨。</string>
+    <string name="distortion_labeling_label">贴标签</string>
+    <string name="distortion_labeling_desc">这是以偏概全的极端形式——你不再只是描述一次具体的失误，而是直接给自己或别人贴上一个固定的负面标签。</string>
+    <string name="distortion_personalization_label">归因于己</string>
+    <string name="distortion_personalization_desc">你把某些并非主要由你造成的负面事件，都归咎到自己身上。</string>
+
+    <!-- 笔记本 -->
+    <string name="journal_topic">为什么害怕反对和批评是非理性且没有必要的？</string>
+    <string name="journal_topic_header">本笔记本的主题</string>
+    <string name="journal_new_page_desc">新建一页</string>
+    <string name="journal_empty_title">还没有任何一页</string>
+    <string name="journal_empty_body">点击 + ，写下关于这个主题的第一页。以后每当有新的想法，随时回来再写一页。</string>
+    <string name="journal_write_placeholder">写下你此刻的想法……</string>
+    <string name="journal_seed_entry_body">关于这个主题，先记下几个想法作为开始：\n\n1. 如果有人对你表现出反对或不满，这更可能反映了对方自己的想法和局限，而不一定说明你做错了什么。\n\n2. 就算批评说得没错，那也不是灾难——你可以承认这个错误、把它改过来，并从中学到东西，而不必因此认定自己是个糟糕的人；毕竟没有人能做到从不犯错。\n\n3. 一次没做好，说明的只是这一件事没做好，不能代表你这个人整体的价值。你随时可以调整、可以改变、可以继续成长。\n\n4. 别人能评价的，永远只是你某一次具体的言行，没有谁有资格给你整个人打一个总分。\n\n5. 不管你表现得多好，总会有人不认同你。不认同不会像野火一样蔓延开来，一次被否定，不等于你以后永远都会被否定。\n\n6. 被反对或被批评之后感到不舒服，是很正常的反应，但这种不适感会随着时间自己慢慢过去，不需要你费力去消灭它。\n\n7. 批评之所以刺痛你，往往是因为你在心里悄悄接受了对方给你贴的那个负面标签。去质疑那个标签本身，而不是只顾着感受那份刺痛。\n\n8. 意见不合、发生争执，是任何一段关系里都会出现的正常部分，一次分歧并不会因此就让关系走到尽头。\n\n9. 以后想到新的想法，随时把它加进这一页——这份清单永远可以由你继续写下去。</string>
+
+    <!-- 关于页面 -->
+    <string name="about_technique_heading">三栏认知技术</string>
+    <string name="about_technique_body">这个方法由精神科医生大卫·伯恩斯（David Burns）在《伯恩斯新情绪疗法》一书中推广，是一种回应让人难受的想法的简单方式。把自动化思维原样写下来，找出其中扭曲了你思考方式的认知歪曲，再写一个更公正、更有依据的合理回应。分别给这个想法在回应前后打一个相信程度的分数，可以帮你直观地看到这个转变。</string>
+    <string name="about_journal_heading">你的笔记本</string>
+    <string name="about_journal_body">\"笔记本\"标签页是一本围绕单一主题展开的笔记：\"%1$s\" 以后每当你对这个主题有了新的想法，随时新建一页，页数没有限制。</string>
+    <string name="about_disclaimer">本应用是一个独立、非官方的练习辅助工具，与原书作者或出版方没有任何关联，也未获得其认可。它不能替代专业的医疗或心理帮助。</string>
+</resources>

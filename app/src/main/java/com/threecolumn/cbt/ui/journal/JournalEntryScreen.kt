@@ -29,9 +29,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.JournalEntry
 import com.threecolumn.cbt.ui.theme.NotebookColors
 import com.threecolumn.cbt.ui.theme.NotebookFont
@@ -75,7 +77,7 @@ fun JournalEntryScreen(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = NotebookColors.paper),
                 navigationIcon = {
                     IconButton(onClick = onDone) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back", tint = NotebookColors.ink)
+                        Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.back_desc), tint = NotebookColors.ink)
                     }
                 },
                 actions = {
@@ -84,7 +86,7 @@ fun JournalEntryScreen(
                             existing?.let { viewModel.delete(it) }
                             onDone()
                         }) {
-                            Icon(Icons.Filled.Delete, contentDescription = "Delete", tint = NotebookColors.ink)
+                            Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.delete_desc), tint = NotebookColors.ink)
                         }
                     }
                     IconButton(
@@ -102,7 +104,7 @@ fun JournalEntryScreen(
                         },
                         enabled = body.isNotBlank()
                     ) {
-                        Icon(Icons.Filled.Check, contentDescription = "Save", tint = NotebookColors.ink)
+                        Icon(Icons.Filled.Check, contentDescription = stringResource(R.string.save_desc), tint = NotebookColors.ink)
                     }
                 }
             )
@@ -120,7 +122,7 @@ fun JournalEntryScreen(
                 .padding(start = 40.dp, top = 12.dp, end = 20.dp, bottom = 40.dp)
         ) {
             Text(
-                text = JOURNAL_TOPIC,
+                text = stringResource(R.string.journal_topic),
                 style = MaterialTheme.typography.titleSmall,
                 fontStyle = FontStyle.Italic,
                 color = NotebookColors.inkFaded,
@@ -129,7 +131,7 @@ fun JournalEntryScreen(
             Box(modifier = Modifier.fillMaxWidth()) {
                 if (body.isEmpty()) {
                     Text(
-                        text = "Write your thoughts on this…",
+                        text = stringResource(R.string.journal_write_placeholder),
                         style = MaterialTheme.typography.bodyLarge.copy(
                             fontFamily = NotebookFont,
                             fontSize = 17.sp,

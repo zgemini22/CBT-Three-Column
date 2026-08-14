@@ -1,3 +1,70 @@
 <resources>
     <string name="app_name">Three Column CBT</string>
+
+    <!-- Navigation -->
+    <string name="nav_thought_records">Thought Records</string>
+    <string name="nav_journal">Journal</string>
+    <string name="about_desc">About</string>
+    <string name="about_title">About this app</string>
+    <string name="back_desc">Back</string>
+    <string name="delete_desc">Delete</string>
+    <string name="save_desc">Save</string>
+
+    <!-- Thought record list -->
+    <string name="new_thought_record_desc">New thought record</string>
+    <string name="thought_records_empty_title">No thought records yet</string>
+    <string name="thought_records_empty_body">Tap + to write down an upsetting automatic thought, spot the distortion in it, and talk back with a rational response.</string>
+    <string name="belief_before_after">Belief %1$d%% → %2$d%%</string>
+
+    <!-- Thought record edit -->
+    <string name="new_thought_record_title">New thought record</string>
+    <string name="edit_thought_record_title">Edit thought record</string>
+    <string name="situation_label">Situation (optional)</string>
+    <string name="situation_placeholder">What was happening when the thought showed up?</string>
+    <string name="section_automatic_thought">Automatic Thought</string>
+    <string name="automatic_thought_placeholder">The upsetting thought that popped into your mind</string>
+    <string name="belief_before_label">How much did you believe it?</string>
+    <string name="section_distortions">Cognitive Distortion(s)</string>
+    <string name="distortions_hint">Tap any that apply — descriptions appear below once selected.</string>
+    <string name="section_rational_response">Rational Response</string>
+    <string name="rational_response_placeholder">Talk back to the distorted thought with a fairer, evidence-based response</string>
+    <string name="belief_after_label">How much do you believe the automatic thought now?</string>
+
+    <!-- Cognitive distortions -->
+    <string name="distortion_all_or_nothing_label">All-or-Nothing Thinking</string>
+    <string name="distortion_all_or_nothing_desc">You see things in black-and-white categories. If a situation falls short of perfect, you see it as a total failure.</string>
+    <string name="distortion_overgeneralization_label">Overgeneralization</string>
+    <string name="distortion_overgeneralization_desc">You see a single negative event as part of a never-ending pattern, often using words like \"always\" or \"never\".</string>
+    <string name="distortion_mental_filter_label">Mental Filter</string>
+    <string name="distortion_mental_filter_desc">You dwell on a single negative detail so much that your view of reality becomes darkened, like a drop of ink coloring a glass of water.</string>
+    <string name="distortion_discounting_positive_label">Discounting the Positive</string>
+    <string name="distortion_discounting_positive_desc">You reject positive experiences by insisting they \"don\'t count\" for some reason.</string>
+    <string name="distortion_jumping_to_conclusions_label">Jumping to Conclusions</string>
+    <string name="distortion_jumping_to_conclusions_desc">You interpret things negatively without facts to support it — mind reading what others think, or predicting things will turn out badly.</string>
+    <string name="distortion_magnification_minimization_label">Magnification or Minimization</string>
+    <string name="distortion_magnification_minimization_desc">You exaggerate the importance of problems and shortcomings, or shrink the importance of your good qualities.</string>
+    <string name="distortion_emotional_reasoning_label">Emotional Reasoning</string>
+    <string name="distortion_emotional_reasoning_desc">You assume your negative emotions reflect the way things really are: \"I feel it, therefore it must be true.\"</string>
+    <string name="distortion_should_statements_label">Should Statements</string>
+    <string name="distortion_should_statements_desc">You tell yourself things should be the way you hoped, using \"should,\" \"must,\" or \"ought to,\" which leaves you feeling guilty or resentful.</string>
+    <string name="distortion_labeling_label">Labeling</string>
+    <string name="distortion_labeling_desc">An extreme form of overgeneralization — instead of describing an error, you attach a fixed negative label to yourself or others.</string>
+    <string name="distortion_personalization_label">Personalization</string>
+    <string name="distortion_personalization_desc">You see yourself as the cause of some negative external event that you weren\'t primarily responsible for.</string>
+
+    <!-- Journal -->
+    <string name="journal_topic">Why is living in fear of opposition and criticism irrational and unnecessary?</string>
+    <string name="journal_topic_header">This journal\'s topic</string>
+    <string name="journal_new_page_desc">New journal page</string>
+    <string name="journal_empty_title">No pages yet</string>
+    <string name="journal_empty_body">Tap + to write your first page on this topic. Come back and add more pages whenever a new thought about it occurs to you.</string>
+    <string name="journal_write_placeholder">Write your thoughts on this…</string>
+    <string name="journal_seed_entry_body">A few starting thoughts on this topic:\n\n1. If someone reacts negatively to you, their reaction often says more about their own assumptions than about your worth.\n\n2. If a criticism is accurate, that\'s not a catastrophe — you can note the error, correct it, and move on without deciding it makes you a bad person.\n\n3. One mistake describes one moment, not your entire track record. You can keep changing after it.\n\n4. Other people can only judge a specific thing you did or said — no one is in a position to grade you as a whole person.\n\n5. No matter how well you do, someone will disagree with you. Disapproval doesn\'t spread on its own; one \"no\" isn\'t a verdict that follows you everywhere.\n\n6. Discomfort after criticism is normal and temporary — it fades on its own without needing to be argued away.\n\n7. Criticism mostly stings when you\'ve quietly accepted the negative label behind it. Question the label, not just the sting.\n\n8. Disagreement is an ordinary part of any relationship — it doesn\'t require the relationship to end.\n\n9. Add your own idea here whenever one occurs to you — this list is yours to keep building.</string>
+
+    <!-- About screen -->
+    <string name="about_technique_heading">The Three-Column Technique</string>
+    <string name="about_technique_body">This method, popularized by psychiatrist David Burns in \"Feeling Good: The New Mood Therapy,\" is a simple way to talk back to upsetting thoughts. Write down the automatic thought as it occurred to you, identify which distortion(s) are twisting your thinking, then write a rational response that answers the thought fairly. Rating how much you believe the thought before and after helps you see the shift.</string>
+    <string name="about_journal_heading">Your journal</string>
+    <string name="about_journal_body">The Journal tab is a single-topic notebook dedicated to: “%1$s” Add a new dated page any time a fresh thought about it occurs to you — there\'s no limit to how many pages you keep.</string>
+    <string name="about_disclaimer">This app is an independent, unofficial companion tool for practicing these techniques and is not affiliated with or endorsed by the book\'s author or publisher. It is not a substitute for professional care.</string>
 </resources>

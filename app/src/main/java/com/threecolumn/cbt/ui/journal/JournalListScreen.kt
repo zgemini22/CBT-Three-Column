@@ -24,8 +24,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.JournalEntry
 import com.threecolumn.cbt.ui.theme.NotebookColors
 import com.threecolumn.cbt.ui.theme.NotebookFont
@@ -44,7 +46,7 @@ fun JournalListScreen(
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = onNewEntry) {
-                Icon(Icons.Filled.Add, contentDescription = "New journal page")
+                Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.journal_new_page_desc))
             }
         }
     ) { padding ->
@@ -75,12 +77,12 @@ fun JournalListScreen(
 private fun TopicHeader() {
     Column(modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 8.dp)) {
         Text(
-            text = "This journal's topic",
+            text = stringResource(R.string.journal_topic_header),
             style = MaterialTheme.typography.labelLarge,
             color = NotebookColors.inkFaded
         )
         Text(
-            text = JOURNAL_TOPIC,
+            text = stringResource(R.string.journal_topic),
             style = MaterialTheme.typography.titleMedium,
             fontFamily = NotebookFont,
             fontWeight = FontWeight.Bold,
@@ -100,11 +102,11 @@ private fun EmptyState() {
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = "No pages yet",
+                text = stringResource(R.string.journal_empty_title),
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = "Tap + to write your first page on this topic. Come back and add more pages whenever a new thought about it occurs to you.",
+                text = stringResource(R.string.journal_empty_body),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

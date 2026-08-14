@@ -30,7 +30,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.CognitiveDistortion
 import com.threecolumn.cbt.data.ThoughtRecord
 import com.threecolumn.cbt.ui.theme.ruledPaper
@@ -73,10 +75,17 @@ fun ThoughtRecordEditScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (recordId == null) "New thought record" else "Edit thought record") },
+                title = {
+                    Text(
+                        stringResource(
+                            if (recordId == null) R.string.new_thought_record_title
+                            else R.string.edit_thought_record_title
+                        )
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onDone) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.back_desc))
                     }
                 },
                 actions = {
@@ -85,7 +94,7 @@ fun ThoughtRecordEditScreen(
                             existing?.let { viewModel.delete(it) }
                             onDone()
                         }) {
-                            Icon(Icons.Filled.Delete, contentDescription = "Delete")
+                            Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.delete_desc))
                         }
                     }
                     IconButton(
@@ -108,7 +117,7 @@ fun ThoughtRecordEditScreen(
                         },
                         enabled = automaticThought.isNotBlank() && rationalResponse.isNotBlank()
                     ) {
-                        Icon(Icons.Filled.Check, contentDescription = "Save")
+                        Icon(Icons.Filled.Check, contentDescription = stringResource(R.string.save_desc))
                     }
                 }
             )
@@ -128,28 +137,28 @@ fun ThoughtRecordEditScreen(
             OutlinedTextField(
                 value = situation,
                 onValueChange = { situation = it },
-                label = { Text("Situation (optional)") },
-                placeholder = { Text("What was happening when the thought showed up?") },
+                label = { Text(stringResource(R.string.situation_label)) },
+                placeholder = { Text(stringResource(R.string.situation_placeholder)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
-            SectionHeader(number = "1", title = "Automatic Thought")
+            SectionHeader(number = "1", title = stringResource(R.string.section_automatic_thought))
             OutlinedTextField(
                 value = automaticThought,
                 onValueChange = { automaticThought = it },
-                placeholder = { Text("The upsetting thought that popped into your mind") },
+                placeholder = { Text(stringResource(R.string.automatic_thought_placeholder)) },
                 minLines = 2,
                 modifier = Modifier.fillMaxWidth()
             )
             BeliefSlider(
-                label = "How much did you believe it?",
+                label = stringResource(R.string.belief_before_label),
                 value = beliefBefore,
                 onValueChange = { beliefBefore = it }
             )
 
-            SectionHeader(number = "2", title = "Cognitive Distortion(s)")
+            SectionHeader(number = "2", title = stringResource(R.string.section_distortions))
             Text(
-                text = "Tap any that apply — descriptions appear below once selected.",
+                text = stringResource(R.string.distortions_hint),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -165,14 +174,14 @@ fun ThoughtRecordEditScreen(
                                 selectedDistortions + distortion
                             }
                         },
-                        label = { Text(distortion.label) },
+                        label = { Text(stringResource(distortion.labelRes)) },
                         modifier = Modifier.padding(bottom = 4.dp)
                     )
                 }
             }
             selectedDistortions.forEach { distortion ->
                 Text(
-                    text = "${distortion.label}: ${distortion.description}",
+                    text = "${stringResource(distortion.labelRes)}: ${stringResource(distortion.descriptionRes)}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
@@ -181,16 +190,16 @@ fun ThoughtRecordEditScreen(
                 )
             }
 
-            SectionHeader(number = "3", title = "Rational Response")
+            SectionHeader(number = "3", title = stringResource(R.string.section_rational_response))
             OutlinedTextField(
                 value = rationalResponse,
                 onValueChange = { rationalResponse = it },
-                placeholder = { Text("Talk back to the distorted thought with a fairer, evidence-based response") },
+                placeholder = { Text(stringResource(R.string.rational_response_placeholder)) },
                 minLines = 2,
                 modifier = Modifier.fillMaxWidth()
             )
             BeliefSlider(
-                label = "How much do you believe the automatic thought now?",
+                label = stringResource(R.string.belief_after_label),
                 value = beliefAfter,
                 onValueChange = { beliefAfter = it }
             )

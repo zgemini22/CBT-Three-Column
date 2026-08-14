@@ -15,6 +15,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -25,6 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.NavType
 import com.threecolumn.cbt.CbtApplication
+import com.threecolumn.cbt.R
 import com.threecolumn.cbt.ui.about.AboutScreen
 import com.threecolumn.cbt.ui.journal.JournalEntryScreen
 import com.threecolumn.cbt.ui.journal.JournalListScreen
@@ -45,11 +47,15 @@ private object Routes {
     fun editJournalEntry(id: Long) = "journal_entry/$id"
 }
 
-private data class TopLevelDestination(val route: String, val label: String, val icon: androidx.compose.ui.graphics.vector.ImageVector)
+private data class TopLevelDestination(
+    val route: String,
+    @androidx.annotation.StringRes val labelRes: Int,
+    val icon: androidx.compose.ui.graphics.vector.ImageVector
+)
 
 private val topLevelDestinations = listOf(
-    TopLevelDestination(Routes.THOUGHTS, "Thought Records", Icons.Filled.SelfImprovement),
-    TopLevelDestination(Routes.JOURNAL, "Journal", Icons.Filled.MenuBook)
+    TopLevelDestination(Routes.THOUGHTS, R.string.nav_thought_records, Icons.Filled.SelfImprovement),
+    TopLevelDestination(Routes.JOURNAL, R.string.nav_journal, Icons.Filled.MenuBook)
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,10 +78,10 @@ fun CbtNavHost(application: CbtApplication) {
         topBar = {
             if (showChrome) {
                 TopAppBar(
-                    title = { Text("Three Column CBT") },
+                    title = { Text(stringResource(R.string.app_name)) },
                     actions = {
                         IconButton(onClick = { navController.navigate(Routes.ABOUT) }) {
-                            Icon(Icons.Filled.Info, contentDescription = "About")
+                            Icon(Icons.Filled.Info, contentDescription = stringResource(R.string.about_desc))
                         }
                     }
                 )
@@ -86,6 +92,7 @@ fun CbtNavHost(application: CbtApplication) {
                 NavigationBar {
                     topLevelDestinations.forEach { destination ->
                         val selected = currentRoute?.hierarchy?.any { it.route == destination.route } == true
+                        val label = stringResource(destination.labelRes)
                         NavigationBarItem(
                             selected = selected,
                             onClick = {
@@ -95,8 +102,8 @@ fun CbtNavHost(application: CbtApplication) {
                                     restoreState = true
                                 }
                             },
-                            icon = { Icon(destination.icon, contentDescription = destination.label) },
-                            label = { Text(destination.label) }
+                            icon = { Icon(destination.icon, contentDescription = label) },
+                            label = { Text(label) }
                         )
                     }
                 }

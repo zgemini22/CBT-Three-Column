@@ -1,50 +1,24 @@
 package com.threecolumn.cbt.data
 
+import androidx.annotation.StringRes
+import com.threecolumn.cbt.R
+
 /**
  * The ten cognitive distortions popularized by David Burns' "Feeling Good".
- * Descriptions here are original paraphrases, not quotes from the book.
+ * Label/description text lives in strings.xml (original paraphrases, not
+ * quotes from the book) so it's localized.
  */
-enum class CognitiveDistortion(val label: String, val description: String) {
-    ALL_OR_NOTHING(
-        "All-or-Nothing Thinking",
-        "You see things in black-and-white categories. If a situation falls short of perfect, you see it as a total failure."
-    ),
-    OVERGENERALIZATION(
-        "Overgeneralization",
-        "You see a single negative event as part of a never-ending pattern, often using words like \"always\" or \"never\"."
-    ),
-    MENTAL_FILTER(
-        "Mental Filter",
-        "You dwell on a single negative detail so much that your view of reality becomes darkened, like a drop of ink coloring a glass of water."
-    ),
-    DISCOUNTING_POSITIVE(
-        "Discounting the Positive",
-        "You reject positive experiences by insisting they \"don't count\" for some reason."
-    ),
-    JUMPING_TO_CONCLUSIONS(
-        "Jumping to Conclusions",
-        "You interpret things negatively without facts to support it — mind reading what others think, or predicting things will turn out badly."
-    ),
-    MAGNIFICATION_MINIMIZATION(
-        "Magnification or Minimization",
-        "You exaggerate the importance of problems and shortcomings, or shrink the importance of your good qualities."
-    ),
-    EMOTIONAL_REASONING(
-        "Emotional Reasoning",
-        "You assume your negative emotions reflect the way things really are: \"I feel it, therefore it must be true.\""
-    ),
-    SHOULD_STATEMENTS(
-        "Should Statements",
-        "You tell yourself things should be the way you hoped, using \"should,\" \"must,\" or \"ought to,\" which leaves you feeling guilty or resentful."
-    ),
-    LABELING(
-        "Labeling",
-        "An extreme form of overgeneralization — instead of describing an error, you attach a fixed negative label to yourself or others."
-    ),
-    PERSONALIZATION(
-        "Personalization",
-        "You see yourself as the cause of some negative external event that you weren't primarily responsible for."
-    );
+enum class CognitiveDistortion(@StringRes val labelRes: Int, @StringRes val descriptionRes: Int) {
+    ALL_OR_NOTHING(R.string.distortion_all_or_nothing_label, R.string.distortion_all_or_nothing_desc),
+    OVERGENERALIZATION(R.string.distortion_overgeneralization_label, R.string.distortion_overgeneralization_desc),
+    MENTAL_FILTER(R.string.distortion_mental_filter_label, R.string.distortion_mental_filter_desc),
+    DISCOUNTING_POSITIVE(R.string.distortion_discounting_positive_label, R.string.distortion_discounting_positive_desc),
+    JUMPING_TO_CONCLUSIONS(R.string.distortion_jumping_to_conclusions_label, R.string.distortion_jumping_to_conclusions_desc),
+    MAGNIFICATION_MINIMIZATION(R.string.distortion_magnification_minimization_label, R.string.distortion_magnification_minimization_desc),
+    EMOTIONAL_REASONING(R.string.distortion_emotional_reasoning_label, R.string.distortion_emotional_reasoning_desc),
+    SHOULD_STATEMENTS(R.string.distortion_should_statements_label, R.string.distortion_should_statements_desc),
+    LABELING(R.string.distortion_labeling_label, R.string.distortion_labeling_desc),
+    PERSONALIZATION(R.string.distortion_personalization_label, R.string.distortion_personalization_desc);
 
     companion object {
         fun fromStorageKey(key: String): CognitiveDistortion? = entries.find { it.name == key }

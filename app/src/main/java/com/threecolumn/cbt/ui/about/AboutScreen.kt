@@ -17,8 +17,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.threecolumn.cbt.ui.journal.JOURNAL_TOPIC
+import com.threecolumn.cbt.R
 import com.threecolumn.cbt.ui.theme.ruledPaper
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -27,10 +28,10 @@ fun AboutScreen(onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("About this app") },
+                title = { Text(stringResource(R.string.about_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.back_desc))
                     }
                 }
             )
@@ -45,27 +46,18 @@ fun AboutScreen(onBack: () -> Unit) {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text("The Three-Column Technique", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.about_technique_heading), style = MaterialTheme.typography.titleMedium)
             Text(
-                "This method, popularized by psychiatrist David Burns in \"Feeling Good: " +
-                    "The New Mood Therapy,\" is a simple way to talk back to upsetting " +
-                    "thoughts. Write down the automatic thought as it occurred to you, " +
-                    "identify which distortion(s) are twisting your thinking, then write " +
-                    "a rational response that answers the thought fairly. Rating how much " +
-                    "you believe the thought before and after helps you see the shift.",
+                stringResource(R.string.about_technique_body),
                 style = MaterialTheme.typography.bodyMedium
             )
-            Text("Your journal", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.about_journal_heading), style = MaterialTheme.typography.titleMedium)
             Text(
-                "The Journal tab is a single-topic notebook dedicated to: “$JOURNAL_TOPIC” " +
-                    "Add a new dated page any time a fresh thought about it occurs to you — " +
-                    "there's no limit to how many pages you keep.",
+                stringResource(R.string.about_journal_body, stringResource(R.string.journal_topic)),
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                "This app is an independent, unofficial companion tool for practicing " +
-                    "these techniques and is not affiliated with or endorsed by the book's " +
-                    "author or publisher. It is not a substitute for professional care.",
+                stringResource(R.string.about_disclaimer),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
