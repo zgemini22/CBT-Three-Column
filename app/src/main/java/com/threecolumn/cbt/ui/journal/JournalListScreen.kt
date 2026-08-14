@@ -8,45 +8,43 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SuggestionChip
-import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.threecolumn.cbt.data.JournalEntry
+import com.threecolumn.cbt.ui.theme.NotebookColors
+import com.threecolumn.cbt.ui.theme.NotebookFont
+import com.threecolumn.cbt.ui.theme.ruledPaper
 import java.text.DateFormat
 import java.util.Date
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JournalListScreen(
     viewModel: JournalViewModel,
     onOpenEntry: (Long) -> Unit,
-    onNewEntry: (String) -> Unit
+    onNewEntry: () -> Unit
 ) {
     val entries by viewModel.entries.collectAsState()
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = { onNewEntry("") }) {
-                Icon(Icons.Filled.Add, contentDescription = "New journal entry")
+            FloatingActionButton(onClick = onNewEntry) {
+                Icon(Icons.Filled.Add, contentDescription = "New journal page")
             }
         }
     ) { padding ->
@@ -55,7 +53,7 @@ fun JournalListScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            PromptRow(onPromptSelected = onNewEntry)
+            TopicHeader()
             if (entries.isEmpty()) {
                 EmptyState()
             } else {
@@ -73,26 +71,22 @@ fun JournalListScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PromptRow(onPromptSelected: (String) -> Unit) {
-    Text(
-        text = "Need a prompt?",
-        style = MaterialTheme.typography.labelLarge,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier.padding(start = 16.dp, top = 12.dp, bottom = 4.dp)
-    )
-    LazyRow(
-        contentPadding = PaddingValues(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(suggestedJournalPrompts) { prompt ->
-            SuggestionChip(
-                onClick = { onPromptSelected(prompt) },
-                label = { Text(prompt, maxLines = 2) },
-                colors = SuggestionChipDefaults.suggestionChipColors()
-            )
-        }
+private fun TopicHeader() {
+    Column(modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 8.dp)) {
+        Text(
+            text = "This journal's topic",
+            style = MaterialTheme.typography.labelLarge,
+            color = NotebookColors.inkFaded
+        )
+        Text(
+            text = JOURNAL_TOPIC,
+            style = MaterialTheme.typography.titleMedium,
+            fontFamily = NotebookFont,
+            fontWeight = FontWeight.Bold,
+            color = NotebookColors.ink,
+            modifier = Modifier.padding(top = 2.dp)
+        )
     }
 }
 
@@ -106,11 +100,11 @@ private fun EmptyState() {
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = "Your journal is empty",
+                text = "No pages yet",
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = "Pick a prompt above or tap + to start writing freely — about this topic, a hobby idea, or anything else on your mind.",
+                text = "Tap + to write your first page on this topic. Come back and add more pages whenever a new thought about it occurs to you.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -123,37 +117,25 @@ private fun JournalEntryCard(entry: JournalEntry, onClick: () -> Unit) {
     Card(
         onClick = onClick,
         shape = RoundedCornerShape(2.dp),
-        colors = CardDefaults.cardColors(containerColor = DiaryPalette.paper),
+        colors = CardDefaults.cardColors(containerColor = NotebookColors.paper),
         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .ruledPaper(lineSpacing = 28.dp, topInset = 46.dp, marginInset = 28.dp)
+                .ruledPaper(lineSpacing = 28.dp, topInset = 40.dp, marginInset = 28.dp)
                 .padding(start = 36.dp, top = 12.dp, end = 16.dp, bottom = 16.dp)
         ) {
             Text(
                 text = DateFormat.getDateInstance(DateFormat.FULL).format(Date(entry.createdAt)),
                 style = MaterialTheme.typography.labelMedium,
-                fontFamily = DiaryFont,
-                color = DiaryPalette.inkFaded
+                color = NotebookColors.inkFaded
             )
-            if (entry.prompt.isNotBlank()) {
-                Text(
-                    text = entry.prompt,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontFamily = DiaryFont,
-                    fontStyle = FontStyle.Italic,
-                    color = DiaryPalette.ink,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-            }
             Text(
                 text = entry.body,
                 style = MaterialTheme.typography.bodyLarge,
-                fontFamily = DiaryFont,
-                color = DiaryPalette.ink,
-                maxLines = 3,
+                color = NotebookColors.ink,
+                maxLines = 4,
                 modifier = Modifier.padding(top = 6.dp)
             )
         }

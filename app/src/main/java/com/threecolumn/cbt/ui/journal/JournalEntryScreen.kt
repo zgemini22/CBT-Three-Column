@@ -29,11 +29,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.threecolumn.cbt.data.JournalEntry
+import com.threecolumn.cbt.ui.theme.NotebookColors
+import com.threecolumn.cbt.ui.theme.NotebookFont
+import com.threecolumn.cbt.ui.theme.ruledPaper
 import java.text.DateFormat
 import java.util.Date
 
@@ -47,16 +49,14 @@ fun JournalEntryScreen(
     var existing by remember { mutableStateOf<JournalEntry?>(null) }
     var loaded by remember { mutableStateOf(entryId == null) }
 
-    var prompt by remember { mutableStateOf(if (entryId == null) viewModel.consumePendingPrompt() else "") }
     var body by remember { mutableStateOf("") }
-    val createdAt = remember { existing?.createdAt ?: System.currentTimeMillis() }
+    val newEntryCreatedAt = remember { System.currentTimeMillis() }
 
     LaunchedEffect(entryId) {
         if (entryId != null) {
             val entry = viewModel.getById(entryId)
             existing = entry
             if (entry != null) {
-                prompt = entry.prompt
                 body = entry.body
             }
             loaded = true
@@ -69,14 +69,13 @@ fun JournalEntryScreen(
                 title = {
                     Text(
                         DateFormat.getDateInstance(DateFormat.FULL)
-                            .format(Date(existing?.createdAt ?: createdAt)),
-                        fontFamily = DiaryFont
+                            .format(Date(existing?.createdAt ?: newEntryCreatedAt))
                     )
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = DiaryPalette.paper),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = NotebookColors.paper),
                 navigationIcon = {
                     IconButton(onClick = onDone) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back", tint = DiaryPalette.ink)
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back", tint = NotebookColors.ink)
                     }
                 },
                 actions = {
@@ -85,7 +84,7 @@ fun JournalEntryScreen(
                             existing?.let { viewModel.delete(it) }
                             onDone()
                         }) {
-                            Icon(Icons.Filled.Delete, contentDescription = "Delete", tint = DiaryPalette.ink)
+                            Icon(Icons.Filled.Delete, contentDescription = "Delete", tint = NotebookColors.ink)
                         }
                     }
                     IconButton(
@@ -94,8 +93,7 @@ fun JournalEntryScreen(
                                 viewModel.save(
                                     JournalEntry(
                                         id = existing?.id ?: 0,
-                                        createdAt = existing?.createdAt ?: createdAt,
-                                        prompt = prompt.trim(),
+                                        createdAt = existing?.createdAt ?: newEntryCreatedAt,
                                         body = body.trim()
                                     )
                                 )
@@ -104,7 +102,7 @@ fun JournalEntryScreen(
                         },
                         enabled = body.isNotBlank()
                     ) {
-                        Icon(Icons.Filled.Check, contentDescription = "Save", tint = DiaryPalette.ink)
+                        Icon(Icons.Filled.Check, contentDescription = "Save", tint = NotebookColors.ink)
                     }
                 }
             )
@@ -115,60 +113,44 @@ fun JournalEntryScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(DiaryPalette.paper)
+                .background(NotebookColors.paper)
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
-                .ruledPaper(lineSpacing = 32.dp, topInset = 8.dp, marginInset = 32.dp)
-                .padding(start = 40.dp, top = 8.dp, end = 20.dp, bottom = 40.dp)
+                .ruledPaper(lineSpacing = 32.dp, topInset = 60.dp, marginInset = 32.dp)
+                .padding(start = 40.dp, top = 12.dp, end = 20.dp, bottom = 40.dp)
         ) {
-            DiaryLineField(
-                value = prompt,
-                onValueChange = { prompt = it },
-                placeholder = "What are you writing about? (optional)",
-                textStyle = MaterialTheme.typography.titleSmall.copy(
-                    fontFamily = DiaryFont,
-                    fontStyle = FontStyle.Italic,
-                    color = DiaryPalette.ink
-                ),
-                singleLine = true
+            Text(
+                text = JOURNAL_TOPIC,
+                style = MaterialTheme.typography.titleSmall,
+                fontStyle = FontStyle.Italic,
+                color = NotebookColors.inkFaded,
+                modifier = Modifier.padding(bottom = 12.dp)
             )
-            DiaryLineField(
-                value = body,
-                onValueChange = { body = it },
-                placeholder = "Dear diary…",
-                textStyle = MaterialTheme.typography.bodyLarge.copy(
-                    fontFamily = DiaryFont,
-                    fontSize = 17.sp,
-                    lineHeight = 32.sp,
-                    color = DiaryPalette.ink
-                ),
-                singleLine = false,
-                modifier = Modifier.padding(top = 8.dp)
-            )
+            Box(modifier = Modifier.fillMaxWidth()) {
+                if (body.isEmpty()) {
+                    Text(
+                        text = "Write your thoughts on this…",
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            fontFamily = NotebookFont,
+                            fontSize = 17.sp,
+                            lineHeight = 32.sp
+                        ),
+                        color = NotebookColors.inkFaded
+                    )
+                }
+                BasicTextField(
+                    value = body,
+                    onValueChange = { body = it },
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(
+                        fontFamily = NotebookFont,
+                        fontSize = 17.sp,
+                        lineHeight = 32.sp,
+                        color = NotebookColors.ink
+                    ),
+                    cursorBrush = SolidColor(NotebookColors.ink),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
-    }
-}
-
-@Composable
-private fun DiaryLineField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    placeholder: String,
-    textStyle: TextStyle,
-    singleLine: Boolean,
-    modifier: Modifier = Modifier
-) {
-    Box(modifier = modifier.fillMaxWidth()) {
-        if (value.isEmpty()) {
-            Text(text = placeholder, style = textStyle, color = DiaryPalette.inkFaded)
-        }
-        BasicTextField(
-            value = value,
-            onValueChange = onValueChange,
-            textStyle = textStyle,
-            singleLine = singleLine,
-            cursorBrush = SolidColor(DiaryPalette.ink),
-            modifier = Modifier.fillMaxWidth()
-        )
     }
 }

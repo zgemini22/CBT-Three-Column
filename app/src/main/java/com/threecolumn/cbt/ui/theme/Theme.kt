@@ -1,47 +1,55 @@
 package com.threecolumn.cbt.ui.theme
 
-import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
+import androidx.compose.material3.Typography
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 
-private val SeaGreen = Color(0xFF2E6F6B)
-private val SeaGreenDark = Color(0xFF4C9A94)
-private val Amber = Color(0xFFC98A2C)
-
-private val LightColors = lightColorScheme(
-    primary = SeaGreen,
-    secondary = Amber
+private val NotebookColorScheme = lightColorScheme(
+    primary = NotebookColors.penBlue,
+    onPrimary = NotebookColors.onPenBlue,
+    primaryContainer = NotebookColors.paperAlt,
+    onPrimaryContainer = NotebookColors.ink,
+    secondary = NotebookColors.penBlue,
+    onSecondary = NotebookColors.onPenBlue,
+    secondaryContainer = NotebookColors.highlighter,
+    onSecondaryContainer = NotebookColors.onHighlighter,
+    background = NotebookColors.paper,
+    onBackground = NotebookColors.ink,
+    surface = NotebookColors.paper,
+    onSurface = NotebookColors.ink,
+    surfaceVariant = NotebookColors.paperAlt,
+    onSurfaceVariant = NotebookColors.inkFaded,
+    outline = NotebookColors.inkFaded,
+    error = NotebookColors.errorPen,
+    onError = NotebookColors.onErrorPen
 )
 
-private val DarkColors = darkColorScheme(
-    primary = SeaGreenDark,
-    secondary = Amber
+private val baseTypography = Typography()
+
+private val NotebookTypography = Typography(
+    displayLarge = baseTypography.displayLarge.copy(fontFamily = NotebookFont),
+    displayMedium = baseTypography.displayMedium.copy(fontFamily = NotebookFont),
+    displaySmall = baseTypography.displaySmall.copy(fontFamily = NotebookFont),
+    headlineLarge = baseTypography.headlineLarge.copy(fontFamily = NotebookFont),
+    headlineMedium = baseTypography.headlineMedium.copy(fontFamily = NotebookFont),
+    headlineSmall = baseTypography.headlineSmall.copy(fontFamily = NotebookFont),
+    titleLarge = baseTypography.titleLarge.copy(fontFamily = NotebookFont),
+    titleMedium = baseTypography.titleMedium.copy(fontFamily = NotebookFont),
+    titleSmall = baseTypography.titleSmall.copy(fontFamily = NotebookFont),
+    bodyLarge = baseTypography.bodyLarge.copy(fontFamily = NotebookFont),
+    bodyMedium = baseTypography.bodyMedium.copy(fontFamily = NotebookFont),
+    bodySmall = baseTypography.bodySmall.copy(fontFamily = NotebookFont),
+    labelLarge = baseTypography.labelLarge.copy(fontFamily = NotebookFont),
+    labelMedium = baseTypography.labelMedium.copy(fontFamily = NotebookFont),
+    labelSmall = baseTypography.labelSmall.copy(fontFamily = NotebookFont)
 )
 
 @Composable
-fun ThreeColumnCbtTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
-    content: @Composable () -> Unit
-) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-        darkTheme -> DarkColors
-        else -> LightColors
-    }
-
+fun ThreeColumnCbtTheme(content: @Composable () -> Unit) {
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = NotebookColorScheme,
+        typography = NotebookTypography,
         content = content
     )
 }

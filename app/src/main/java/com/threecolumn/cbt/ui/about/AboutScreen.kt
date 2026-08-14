@@ -18,6 +18,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.threecolumn.cbt.ui.journal.JOURNAL_TOPIC
+import com.threecolumn.cbt.ui.theme.ruledPaper
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,6 +41,7 @@ fun AboutScreen(onBack: () -> Unit) {
                 .fillMaxSize()
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
+                .ruledPaper(lineSpacing = 36.dp, topInset = 12.dp, marginInset = 20.dp, drawMargin = false)
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -54,11 +57,9 @@ fun AboutScreen(onBack: () -> Unit) {
             )
             Text("Your journal", style = MaterialTheme.typography.titleMedium)
             Text(
-                "The Journal tab is a free-write space, styled like a paper diary, for " +
-                    "reflecting on anything — including topics the book raises, like why " +
-                    "chasing everyone's approval is neither realistic nor necessary. Pick " +
-                    "a suggested prompt or start blank; whenever a new hobby or activity " +
-                    "idea occurs to you, jot it down there too — no approval required.",
+                "The Journal tab is a single-topic notebook dedicated to: “$JOURNAL_TOPIC” " +
+                    "Add a new dated page any time a fresh thought about it occurs to you — " +
+                    "there's no limit to how many pages you keep.",
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(

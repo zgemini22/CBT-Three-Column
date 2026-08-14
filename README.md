@@ -3,9 +3,8 @@
 A small, private, offline Android app for practicing David Burns' three-column
 technique from *Feeling Good: The New Mood Therapy* — write down an automatic
 thought, name the cognitive distortion(s) in it, and answer it with a rational
-response. It also includes a diary-style Journal for free-form reflection —
-on topics the book raises (like the pull of seeking everyone's approval), on
-hobby ideas you don't need anyone's sign-off to try, or on anything else.
+response. The whole app is themed to look and feel like a physical notebook:
+cream paper, ruled lines, serif type, everywhere — not just one screen.
 
 This is an independent, unofficial tool. It is not affiliated with or
 endorsed by the book's author or publisher, and it is not a substitute for
@@ -15,11 +14,16 @@ professional care.
 
 - **Thought Records** — three-column entries (automatic thought → distortion →
   rational response) with before/after belief-strength sliders (0–100%) and
-  an optional situation note. All ten of Burns' cognitive distortions are
-  available as tappable chips, each with a short description.
-- **Journal** — a diary-styled free-write space (paper background, ruled
-  lines, serif type). Start from a suggested reflection prompt or write
-  blank; entries are dated and listed like diary pages.
+  an optional situation note, laid out on ruled notebook paper. All ten of
+  Burns' cognitive distortions are available as tappable chips, each with a
+  short description.
+- **Journal** — a single-topic notebook dedicated to *"Why is living in fear
+  of opposition and criticism irrational and unnecessary?"* Add a new dated
+  page any time a fresh thought about it occurs to you; pages list like a
+  running notebook.
+- **Notebook-styled throughout** — every screen (including the shell, forms,
+  and About page) shares one paper/ink palette and serif typography, not just
+  the Journal.
 - **Fully offline** — everything is stored locally on-device with Room
   (SQLite); nothing is sent anywhere.
 
@@ -35,9 +39,9 @@ professional care.
 app/src/main/java/com/threecolumn/cbt/
   data/                  Room entities, DAOs, database, repositories
   ui/thoughts/           Thought record list + edit screens, ViewModel
-  ui/journal/            Diary-style journal list + entry screens, ViewModel
+  ui/journal/            Single-topic journal list + entry screens, ViewModel
   ui/about/              In-app explanation of the technique
-  ui/theme/              Material 3 theme
+  ui/theme/              App-wide notebook palette, typography, ruled-paper modifier
   ui/CbtNavHost.kt       Bottom-nav navigation graph
   MainActivity.kt
   CbtApplication.kt      Wires repositories to the Room database

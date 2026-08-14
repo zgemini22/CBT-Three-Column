@@ -15,19 +15,6 @@ class JournalViewModel(private val repository: JournalEntryRepository) : ViewMod
     val entries: StateFlow<List<JournalEntry>> = repository.observeAll()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
-    private var pendingPrompt: String = ""
-
-    fun setPendingPrompt(prompt: String) {
-        pendingPrompt = prompt
-    }
-
-    /** Reads and clears the prompt queued by the journal list's "new entry" action. */
-    fun consumePendingPrompt(): String {
-        val prompt = pendingPrompt
-        pendingPrompt = ""
-        return prompt
-    }
-
     suspend fun getById(id: Long): JournalEntry? = repository.getById(id)
 
     fun save(entry: JournalEntry) {

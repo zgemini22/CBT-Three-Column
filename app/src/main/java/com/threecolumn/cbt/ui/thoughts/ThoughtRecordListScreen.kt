@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.threecolumn.cbt.data.CognitiveDistortion
 import com.threecolumn.cbt.data.ThoughtRecord
+import com.threecolumn.cbt.ui.theme.ruledPaper
 import java.text.DateFormat
 import java.util.Date
 
@@ -55,6 +56,7 @@ fun ThoughtRecordListScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
+                    .ruledPaper()
             ) {
                 items(records, key = { it.id }) { record ->
                     ThoughtRecordCard(record = record, onClick = { onOpenRecord(record.id) })

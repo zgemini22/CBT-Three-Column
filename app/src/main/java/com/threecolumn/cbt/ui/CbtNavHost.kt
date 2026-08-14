@@ -119,10 +119,7 @@ fun CbtNavHost(application: CbtApplication) {
                 JournalListScreen(
                     viewModel = journalViewModel,
                     onOpenEntry = { id -> navController.navigate(Routes.editJournalEntry(id)) },
-                    onNewEntry = { prompt ->
-                        journalViewModel.setPendingPrompt(prompt)
-                        navController.navigate(Routes.NEW_JOURNAL_ENTRY)
-                    }
+                    onNewEntry = { navController.navigate(Routes.NEW_JOURNAL_ENTRY) }
                 )
             }
             composable(Routes.ABOUT) {
