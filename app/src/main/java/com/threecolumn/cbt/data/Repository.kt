@@ -9,8 +9,9 @@ class ThoughtRecordRepository(private val dao: ThoughtRecordDao) {
     suspend fun delete(record: ThoughtRecord) = dao.delete(record)
 }
 
-class HobbyIdeaRepository(private val dao: HobbyIdeaDao) {
-    fun observeAll(): Flow<List<HobbyIdea>> = dao.observeAll()
-    suspend fun save(idea: HobbyIdea): Long = dao.upsert(idea)
-    suspend fun delete(idea: HobbyIdea) = dao.delete(idea)
+class JournalEntryRepository(private val dao: JournalEntryDao) {
+    fun observeAll(): Flow<List<JournalEntry>> = dao.observeAll()
+    suspend fun getById(id: Long): JournalEntry? = dao.getById(id)
+    suspend fun save(entry: JournalEntry): Long = dao.upsert(entry)
+    suspend fun delete(entry: JournalEntry) = dao.delete(entry)
 }

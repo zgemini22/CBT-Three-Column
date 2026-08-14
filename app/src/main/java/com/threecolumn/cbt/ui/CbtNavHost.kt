@@ -2,8 +2,8 @@ package com.threecolumn.cbt.ui
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.SelfImprovement
-import androidx.compose.material.icons.filled.Spa
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,26 +26,30 @@ import androidx.navigation.navArgument
 import androidx.navigation.NavType
 import com.threecolumn.cbt.CbtApplication
 import com.threecolumn.cbt.ui.about.AboutScreen
-import com.threecolumn.cbt.ui.hobbies.HobbyIdeaViewModel
-import com.threecolumn.cbt.ui.hobbies.HobbyListScreen
+import com.threecolumn.cbt.ui.journal.JournalEntryScreen
+import com.threecolumn.cbt.ui.journal.JournalListScreen
+import com.threecolumn.cbt.ui.journal.JournalViewModel
 import com.threecolumn.cbt.ui.thoughts.ThoughtRecordEditScreen
 import com.threecolumn.cbt.ui.thoughts.ThoughtRecordListScreen
 import com.threecolumn.cbt.ui.thoughts.ThoughtRecordViewModel
 
 private object Routes {
     const val THOUGHTS = "thoughts"
-    const val HOBBIES = "hobbies"
+    const val JOURNAL = "journal"
     const val ABOUT = "about"
     const val NEW_RECORD = "record/new"
     const val EDIT_RECORD = "record/{id}"
+    const val NEW_JOURNAL_ENTRY = "journal_entry/new"
+    const val EDIT_JOURNAL_ENTRY = "journal_entry/{id}"
     fun editRecord(id: Long) = "record/$id"
+    fun editJournalEntry(id: Long) = "journal_entry/$id"
 }
 
 private data class TopLevelDestination(val route: String, val label: String, val icon: androidx.compose.ui.graphics.vector.ImageVector)
 
 private val topLevelDestinations = listOf(
     TopLevelDestination(Routes.THOUGHTS, "Thought Records", Icons.Filled.SelfImprovement),
-    TopLevelDestination(Routes.HOBBIES, "Hobbies", Icons.Filled.Spa)
+    TopLevelDestination(Routes.JOURNAL, "Journal", Icons.Filled.MenuBook)
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,11 +62,11 @@ fun CbtNavHost(application: CbtApplication) {
     val thoughtViewModel: ThoughtRecordViewModel = viewModel(
         factory = ThoughtRecordViewModel.Factory(application.thoughtRecordRepository)
     )
-    val hobbyViewModel: HobbyIdeaViewModel = viewModel(
-        factory = HobbyIdeaViewModel.Factory(application.hobbyIdeaRepository)
+    val journalViewModel: JournalViewModel = viewModel(
+        factory = JournalViewModel.Factory(application.journalEntryRepository)
     )
 
-    val showChrome = currentRoute?.hierarchy?.any { it.route == Routes.THOUGHTS || it.route == Routes.HOBBIES } == true
+    val showChrome = currentRoute?.hierarchy?.any { it.route == Routes.THOUGHTS || it.route == Routes.JOURNAL } == true
 
     Scaffold(
         topBar = {
@@ -111,8 +115,15 @@ fun CbtNavHost(application: CbtApplication) {
                     onNewRecord = { navController.navigate(Routes.NEW_RECORD) }
                 )
             }
-            composable(Routes.HOBBIES) {
-                HobbyListScreen(viewModel = hobbyViewModel)
+            composable(Routes.JOURNAL) {
+                JournalListScreen(
+                    viewModel = journalViewModel,
+                    onOpenEntry = { id -> navController.navigate(Routes.editJournalEntry(id)) },
+                    onNewEntry = { prompt ->
+                        journalViewModel.setPendingPrompt(prompt)
+                        navController.navigate(Routes.NEW_JOURNAL_ENTRY)
+                    }
+                )
             }
             composable(Routes.ABOUT) {
                 AboutScreen(onBack = { navController.popBackStack() })
@@ -132,6 +143,24 @@ fun CbtNavHost(application: CbtApplication) {
                 ThoughtRecordEditScreen(
                     recordId = id,
                     viewModel = thoughtViewModel,
+                    onDone = { navController.popBackStack() }
+                )
+            }
+            composable(Routes.NEW_JOURNAL_ENTRY) {
+                JournalEntryScreen(
+                    entryId = null,
+                    viewModel = journalViewModel,
+                    onDone = { navController.popBackStack() }
+                )
+            }
+            composable(
+                route = Routes.EDIT_JOURNAL_ENTRY,
+                arguments = listOf(navArgument("id") { type = NavType.LongType })
+            ) { backStackEntry ->
+                val id = backStackEntry.arguments?.getLong("id") ?: return@composable
+                JournalEntryScreen(
+                    entryId = id,
+                    viewModel = journalViewModel,
                     onDone = { navController.popBackStack() }
                 )
             }

@@ -52,14 +52,13 @@ fun AboutScreen(onBack: () -> Unit) {
                     "you believe the thought before and after helps you see the shift.",
                 style = MaterialTheme.typography.bodyMedium
             )
-            Text("Building your own idea list", style = MaterialTheme.typography.titleMedium)
+            Text("Your journal", style = MaterialTheme.typography.titleMedium)
             Text(
-                "A separate chapter of the book tackles the need for other people's " +
-                    "approval — the belief that an activity is only worth doing if someone " +
-                    "else signs off on it. One antidote is keeping a running list of " +
-                    "hobbies and activities you'd like to try simply because they interest " +
-                    "you. Whenever a new idea occurs to you, add it to the list on the " +
-                    "Hobbies tab — no one else's approval required.",
+                "The Journal tab is a free-write space, styled like a paper diary, for " +
+                    "reflecting on anything — including topics the book raises, like why " +
+                    "chasing everyone's approval is neither realistic nor necessary. Pick " +
+                    "a suggested prompt or start blank; whenever a new hobby or activity " +
+                    "idea occurs to you, jot it down there too — no approval required.",
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
