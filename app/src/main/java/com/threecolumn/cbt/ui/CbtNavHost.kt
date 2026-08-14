@@ -31,6 +31,7 @@ import com.threecolumn.cbt.ui.about.AboutScreen
 import com.threecolumn.cbt.ui.journal.JournalEntryScreen
 import com.threecolumn.cbt.ui.journal.JournalListScreen
 import com.threecolumn.cbt.ui.journal.JournalViewModel
+import com.threecolumn.cbt.ui.thoughts.ThoughtRecordDetailScreen
 import com.threecolumn.cbt.ui.thoughts.ThoughtRecordEditScreen
 import com.threecolumn.cbt.ui.thoughts.ThoughtRecordListScreen
 import com.threecolumn.cbt.ui.thoughts.ThoughtRecordViewModel
@@ -40,10 +41,12 @@ private object Routes {
     const val JOURNAL = "journal"
     const val ABOUT = "about"
     const val NEW_RECORD = "record/new"
-    const val EDIT_RECORD = "record/{id}"
+    const val RECORD_DETAIL = "record/{id}"
+    const val EDIT_RECORD = "record/{id}/edit"
     const val NEW_JOURNAL_ENTRY = "journal_entry/new"
     const val EDIT_JOURNAL_ENTRY = "journal_entry/{id}"
-    fun editRecord(id: Long) = "record/$id"
+    fun recordDetail(id: Long) = "record/$id"
+    fun editRecord(id: Long) = "record/$id/edit"
     fun editJournalEntry(id: Long) = "journal_entry/$id"
 }
 
@@ -118,7 +121,7 @@ fun CbtNavHost(application: CbtApplication) {
             composable(Routes.THOUGHTS) {
                 ThoughtRecordListScreen(
                     viewModel = thoughtViewModel,
-                    onOpenRecord = { id -> navController.navigate(Routes.editRecord(id)) },
+                    onOpenRecord = { id -> navController.navigate(Routes.recordDetail(id)) },
                     onNewRecord = { navController.navigate(Routes.NEW_RECORD) }
                 )
             }
@@ -137,6 +140,18 @@ fun CbtNavHost(application: CbtApplication) {
                     recordId = null,
                     viewModel = thoughtViewModel,
                     onDone = { navController.popBackStack() }
+                )
+            }
+            composable(
+                route = Routes.RECORD_DETAIL,
+                arguments = listOf(navArgument("id") { type = NavType.LongType })
+            ) { backStackEntry ->
+                val id = backStackEntry.arguments?.getLong("id") ?: return@composable
+                ThoughtRecordDetailScreen(
+                    recordId = id,
+                    viewModel = thoughtViewModel,
+                    onBack = { navController.popBackStack() },
+                    onEdit = { editId -> navController.navigate(Routes.editRecord(editId)) }
                 )
             }
             composable(

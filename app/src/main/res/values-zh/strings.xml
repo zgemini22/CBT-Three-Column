@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">三栏认知疗法</string>
+    <string name="app_name">三栏法</string>
 
     <!-- 导航 -->
     <string name="nav_thought_records">思维记录</string>
@@ -9,12 +9,19 @@
     <string name="back_desc">返回</string>
     <string name="delete_desc">删除</string>
     <string name="save_desc">保存</string>
+    <string name="edit_desc">编辑</string>
 
     <!-- 思维记录列表 -->
     <string name="new_thought_record_desc">新建思维记录</string>
     <string name="thought_records_empty_title">还没有任何记录</string>
     <string name="thought_records_empty_body">点击右下角的 + ，写下让你难受的自动化思维，找出其中的认知歪曲，再写下一个更合理的回应。</string>
     <string name="belief_before_after">相信程度 %1$d%% → %2$d%%</string>
+
+    <!-- 思维记录详情（只读） -->
+    <string name="situation_display_label">情境</string>
+    <string name="distortions_none_selected">未选择任何认知歪曲</string>
+    <string name="belief_before_display">当时的相信程度：%1$d%%</string>
+    <string name="belief_after_display">现在的相信程度：%1$d%%</string>
 
     <!-- 思维记录编辑 -->
     <string name="new_thought_record_title">新建思维记录</string>

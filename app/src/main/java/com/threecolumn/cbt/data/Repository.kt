@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 class ThoughtRecordRepository(private val dao: ThoughtRecordDao) {
     fun observeAll(): Flow<List<ThoughtRecord>> = dao.observeAll()
     suspend fun getById(id: Long): ThoughtRecord? = dao.getById(id)
+    fun observeById(id: Long): Flow<ThoughtRecord?> = dao.observeById(id)
     suspend fun save(record: ThoughtRecord): Long = dao.upsert(record)
     suspend fun delete(record: ThoughtRecord) = dao.delete(record)
 }

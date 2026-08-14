@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Three Column CBT</string>
+    <string name="app_name">Three Column Method</string>
 
     <!-- Navigation -->
     <string name="nav_thought_records">Thought Records</string>
@@ -9,12 +9,19 @@
     <string name="back_desc">Back</string>
     <string name="delete_desc">Delete</string>
     <string name="save_desc">Save</string>
+    <string name="edit_desc">Edit</string>
 
     <!-- Thought record list -->
     <string name="new_thought_record_desc">New thought record</string>
     <string name="thought_records_empty_title">No thought records yet</string>
     <string name="thought_records_empty_body">Tap + to write down an upsetting automatic thought, spot the distortion in it, and talk back with a rational response.</string>
     <string name="belief_before_after">Belief %1$d%% → %2$d%%</string>
+
+    <!-- Thought record detail (read-only) -->
+    <string name="situation_display_label">Situation</string>
+    <string name="distortions_none_selected">No distortions selected</string>
+    <string name="belief_before_display">You believed this: %1$d%%</string>
+    <string name="belief_after_display">You believe it now: %1$d%%</string>
 
     <!-- Thought record edit -->
     <string name="new_thought_record_title">New thought record</string>

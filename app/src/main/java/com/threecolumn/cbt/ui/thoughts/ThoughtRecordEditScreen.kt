@@ -12,7 +12,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -89,14 +88,6 @@ fun ThoughtRecordEditScreen(
                     }
                 },
                 actions = {
-                    if (existing != null) {
-                        IconButton(onClick = {
-                            existing?.let { viewModel.delete(it) }
-                            onDone()
-                        }) {
-                            Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.delete_desc))
-                        }
-                    }
                     IconButton(
                         onClick = {
                             if (automaticThought.isNotBlank() && rationalResponse.isNotBlank()) {

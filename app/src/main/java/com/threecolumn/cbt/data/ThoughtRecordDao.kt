@@ -16,6 +16,9 @@ interface ThoughtRecordDao {
     @Query("SELECT * FROM thought_records WHERE id = :id")
     suspend fun getById(id: Long): ThoughtRecord?
 
+    @Query("SELECT * FROM thought_records WHERE id = :id")
+    fun observeById(id: Long): Flow<ThoughtRecord?>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(record: ThoughtRecord): Long
 

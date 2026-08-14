@@ -1,4 +1,4 @@
-# Three Column CBT
+# Three Column Method
 
 A small, private, offline Android app for practicing David Burns' three-column
 technique from *Feeling Good: The New Mood Therapy* — write down an automatic
@@ -16,7 +16,11 @@ professional care.
   rational response) with before/after belief-strength sliders (0–100%) and
   an optional situation note, laid out on ruled notebook paper. All ten of
   Burns' cognitive distortions are available as tappable chips, each with a
-  short description.
+  short description. Tapping a record opens a read-only detail page first;
+  an edit icon there opens the editable form.
+- **English / 简体中文** — every string in the app is localized, and a
+  Language section on the About page lets you override the display language
+  independent of the device's system setting.
 - **Journal** — a single-topic notebook dedicated to *"Why is living in fear
   of opposition and criticism irrational and unnecessary?"* Add a new dated
   page any time a fresh thought about it occurs to you; pages list like a
