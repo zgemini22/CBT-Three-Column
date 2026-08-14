@@ -133,7 +133,11 @@ fun CbtNavHost(application: CbtApplication) {
                 )
             }
             composable(Routes.ABOUT) {
-                AboutScreen(onBack = { navController.popBackStack() })
+                AboutScreen(
+                    thoughtRecordRepository = application.thoughtRecordRepository,
+                    journalEntryRepository = application.journalEntryRepository,
+                    onBack = { navController.popBackStack() }
+                )
             }
             composable(Routes.NEW_RECORD) {
                 ThoughtRecordEditScreen(

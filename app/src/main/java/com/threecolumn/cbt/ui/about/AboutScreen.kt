@@ -1,5 +1,6 @@
 package com.threecolumn.cbt.ui.about
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,14 +18,21 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.threecolumn.cbt.R
-import com.threecolumn.cbt.ui.theme.ruledPaper
+import com.threecolumn.cbt.data.JournalEntryRepository
+import com.threecolumn.cbt.data.ThoughtRecordRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AboutScreen(onBack: () -> Unit) {
+fun AboutScreen(
+    thoughtRecordRepository: ThoughtRecordRepository,
+    journalEntryRepository: JournalEntryRepository,
+    onBack: () -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -37,12 +45,14 @@ fun AboutScreen(onBack: () -> Unit) {
             )
         }
     ) { padding ->
+        val uriHandler = LocalUriHandler.current
+        val licenseUrl = stringResource(R.string.license_url)
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
-                .ruledPaper(lineSpacing = 36.dp, topInset = 12.dp, marginInset = 20.dp, drawMargin = false)
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -56,7 +66,29 @@ fun AboutScreen(onBack: () -> Unit) {
                 stringResource(R.string.about_journal_body, stringResource(R.string.journal_topic)),
                 style = MaterialTheme.typography.bodyMedium
             )
+
+            ThemePicker()
             LanguagePicker()
+            DataTransferSection(
+                thoughtRecordRepository = thoughtRecordRepository,
+                journalEntryRepository = journalEntryRepository
+            )
+
+            Column {
+                Text(
+                    text = "${stringResource(R.string.about_author_label)}: ${stringResource(R.string.author_name)}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = "${stringResource(R.string.about_license_label)}: $licenseUrl",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    textDecoration = TextDecoration.Underline,
+                    modifier = Modifier.clickable { uriHandler.openUri(licenseUrl) }
+                )
+            }
+
             Text(
                 stringResource(R.string.about_disclaimer),
                 style = MaterialTheme.typography.bodySmall,

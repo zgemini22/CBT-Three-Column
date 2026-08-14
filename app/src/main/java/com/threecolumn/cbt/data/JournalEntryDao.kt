@@ -12,11 +12,17 @@ interface JournalEntryDao {
     @Query("SELECT * FROM journal_entries ORDER BY createdAt DESC")
     fun observeAll(): Flow<List<JournalEntry>>
 
+    @Query("SELECT * FROM journal_entries ORDER BY createdAt DESC")
+    suspend fun getAllOnce(): List<JournalEntry>
+
     @Query("SELECT * FROM journal_entries WHERE id = :id")
     suspend fun getById(id: Long): JournalEntry?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(entry: JournalEntry): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(entries: List<JournalEntry>)
 
     @Delete
     suspend fun delete(entry: JournalEntry)

@@ -3,7 +3,6 @@ package com.threecolumn.cbt.ui.thoughts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -23,12 +22,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.CognitiveDistortion
-import com.threecolumn.cbt.ui.theme.ruledPaper
 import java.text.DateFormat
 import java.util.Date
 
@@ -78,7 +77,6 @@ fun ThoughtRecordDetailScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
-                .ruledPaper(lineSpacing = 40.dp, topInset = 12.dp, marginInset = 20.dp, drawMargin = false)
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
@@ -108,24 +106,18 @@ fun ThoughtRecordDetailScreen(
             }
 
             DetailSection(number = "2", title = stringResource(R.string.section_distortions)) {
-                val distortions = current.distortionKeys.mapNotNull { CognitiveDistortion.fromStorageKey(it) }
-                if (distortions.isEmpty()) {
-                    Text(
-                        text = stringResource(R.string.distortions_none_selected),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                } else {
-                    distortions.forEach { distortion ->
-                        Text(
-                            text = "${stringResource(distortion.labelRes)}: ${stringResource(distortion.descriptionRes)}",
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 2.dp)
-                        )
-                    }
-                }
+                val distortionLabels = current.distortionKeys
+                    .mapNotNull { CognitiveDistortion.fromStorageKey(it) }
+                    .map { stringResource(it.labelRes) }
+                Text(
+                    text = if (distortionLabels.isEmpty()) {
+                        stringResource(R.string.distortions_none_selected)
+                    } else {
+                        distortionLabels.joinToString(" · ")
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (distortionLabels.isEmpty()) MaterialTheme.colorScheme.onSurfaceVariant else Color.Unspecified
+                )
             }
 
             DetailSection(number = "3", title = stringResource(R.string.section_rational_response)) {

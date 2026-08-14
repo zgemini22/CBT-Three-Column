@@ -31,7 +31,7 @@ import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.JournalEntry
 import com.threecolumn.cbt.ui.theme.NotebookColors
 import com.threecolumn.cbt.ui.theme.NotebookFont
-import com.threecolumn.cbt.ui.theme.ruledPaper
+import com.threecolumn.cbt.ui.theme.notebookMargin
 import java.text.DateFormat
 import java.util.Date
 
@@ -125,7 +125,7 @@ private fun JournalEntryCard(entry: JournalEntry, onClick: () -> Unit) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .ruledPaper(lineSpacing = 28.dp, topInset = 40.dp, marginInset = 28.dp)
+                .notebookMargin(marginInset = 28.dp)
                 .padding(start = 36.dp, top = 12.dp, end = 16.dp, bottom = 16.dp)
         ) {
             Text(

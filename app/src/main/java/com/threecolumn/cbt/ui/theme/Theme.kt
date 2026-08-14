@@ -1,29 +1,56 @@
 package com.threecolumn.cbt.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 
-private val NotebookColorScheme = lightColorScheme(
-    primary = NotebookColors.penBlue,
-    onPrimary = NotebookColors.onPenBlue,
-    primaryContainer = NotebookColors.paperAlt,
-    onPrimaryContainer = NotebookColors.ink,
-    secondary = NotebookColors.penBlue,
-    onSecondary = NotebookColors.onPenBlue,
-    secondaryContainer = NotebookColors.highlighter,
-    onSecondaryContainer = NotebookColors.onHighlighter,
-    background = NotebookColors.paper,
-    onBackground = NotebookColors.ink,
-    surface = NotebookColors.paper,
-    onSurface = NotebookColors.ink,
-    surfaceVariant = NotebookColors.paperAlt,
-    onSurfaceVariant = NotebookColors.inkFaded,
-    outline = NotebookColors.inkFaded,
-    error = NotebookColors.errorPen,
-    onError = NotebookColors.onErrorPen
-)
+private fun colorSchemeFor(palette: NotebookPalette, dark: Boolean): ColorScheme =
+    if (dark) {
+        darkColorScheme(
+            primary = palette.penBlue,
+            onPrimary = palette.onPenBlue,
+            primaryContainer = palette.paperAlt,
+            onPrimaryContainer = palette.ink,
+            secondary = palette.penBlue,
+            onSecondary = palette.onPenBlue,
+            secondaryContainer = palette.highlighter,
+            onSecondaryContainer = palette.onHighlighter,
+            background = palette.paper,
+            onBackground = palette.ink,
+            surface = palette.paper,
+            onSurface = palette.ink,
+            surfaceVariant = palette.paperAlt,
+            onSurfaceVariant = palette.inkFaded,
+            outline = palette.inkFaded,
+            error = palette.errorPen,
+            onError = palette.onErrorPen
+        )
+    } else {
+        lightColorScheme(
+            primary = palette.penBlue,
+            onPrimary = palette.onPenBlue,
+            primaryContainer = palette.paperAlt,
+            onPrimaryContainer = palette.ink,
+            secondary = palette.penBlue,
+            onSecondary = palette.onPenBlue,
+            secondaryContainer = palette.highlighter,
+            onSecondaryContainer = palette.onHighlighter,
+            background = palette.paper,
+            onBackground = palette.ink,
+            surface = palette.paper,
+            onSurface = palette.ink,
+            surfaceVariant = palette.paperAlt,
+            onSurfaceVariant = palette.inkFaded,
+            outline = palette.inkFaded,
+            error = palette.errorPen,
+            onError = palette.onErrorPen
+        )
+    }
 
 private val baseTypography = Typography()
 
@@ -47,9 +74,13 @@ private val NotebookTypography = Typography(
 
 @Composable
 fun ThreeColumnCbtTheme(content: @Composable () -> Unit) {
-    MaterialTheme(
-        colorScheme = NotebookColorScheme,
-        typography = NotebookTypography,
-        content = content
-    )
+    val dark = isSystemInDarkTheme()
+    val palette = if (dark) DarkNotebookPalette else LightNotebookPalette
+    CompositionLocalProvider(LocalNotebookPalette provides palette) {
+        MaterialTheme(
+            colorScheme = colorSchemeFor(palette, dark),
+            typography = NotebookTypography,
+            content = content
+        )
+    }
 }

@@ -75,10 +75,37 @@
     <string name="language_english">English</string>
     <string name="language_chinese">简体中文</string>
 
+    <!-- Theme picker -->
+    <string name="theme_section_title">Theme</string>
+    <string name="theme_system_default">System default</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+
+    <!-- Data export / import -->
+    <string name="data_section_title">Data</string>
+    <string name="data_export_action">Export</string>
+    <string name="data_import_action">Import</string>
+    <string name="data_export_success">Exported successfully.</string>
+    <string name="data_export_failed">Export failed.</string>
+    <string name="data_import_success">Imported %1$d thought record(s) and %2$d journal page(s).</string>
+    <string name="data_import_failed">Import failed. Check the file format and try again.</string>
+    <string name="data_import_format_title">Expected file format</string>
+    <string name="data_import_format_intro">Import a .json file shaped like this. Use it to add many records at once — hand-write or generate the file yourself, then import it.</string>
+    <string name="data_import_format_note">\"createdAt\" (milliseconds since epoch) is optional on every entry and defaults to now if left out.</string>
+    <string name="data_import_format_distortion_codes">Valid \"distortions\" codes:</string>
+    <string name="data_import_choose_file">Choose file</string>
+    <string name="cancel_desc">Cancel</string>
+
     <!-- About screen -->
     <string name="about_technique_heading">The Three-Column Technique</string>
     <string name="about_technique_body">This method, popularized by psychiatrist David Burns in \"Feeling Good: The New Mood Therapy,\" is a simple way to talk back to upsetting thoughts. Write down the automatic thought as it occurred to you, identify which distortion(s) are twisting your thinking, then write a rational response that answers the thought fairly. Rating how much you believe the thought before and after helps you see the shift.</string>
     <string name="about_journal_heading">Your journal</string>
     <string name="about_journal_body">The Journal tab is a single-topic notebook dedicated to: “%1$s” Add a new dated page any time a fresh thought about it occurs to you — there\'s no limit to how many pages you keep.</string>
+    <string name="about_author_label">Author</string>
+    <string name="about_license_label">License</string>
     <string name="about_disclaimer">This app is an independent, unofficial companion tool for practicing these techniques and is not affiliated with or endorsed by the book\'s author or publisher. It is not a substitute for professional care.</string>
+
+    <!-- Proper names / fixed data, intentionally identical in every locale file -->
+    <string name="author_name">Shengxing Zhang</string>
+    <string name="license_url">https://52.77.216.225/psychology/cbt/three-column-notebook/license/</string>
 </resources>
