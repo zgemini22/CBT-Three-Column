@@ -56,6 +56,7 @@ fun AboutScreen(onBack: () -> Unit) {
                 stringResource(R.string.about_journal_body, stringResource(R.string.journal_topic)),
                 style = MaterialTheme.typography.bodyMedium
             )
+            LanguagePicker()
             Text(
                 stringResource(R.string.about_disclaimer),
                 style = MaterialTheme.typography.bodySmall,
