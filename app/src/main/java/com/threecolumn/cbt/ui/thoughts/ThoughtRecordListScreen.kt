@@ -107,6 +107,7 @@ private fun ThoughtRecordCard(record: ThoughtRecord, onClick: () -> Unit) {
             Text(
                 text = record.automaticThought,
                 style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Medium,
                 maxLines = 3,
                 modifier = Modifier.padding(top = 4.dp, bottom = 6.dp)

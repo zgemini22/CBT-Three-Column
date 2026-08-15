@@ -93,8 +93,11 @@ fun ThoughtRecordDetailScreen(
                         style = MaterialTheme.typography.bodyMedium,
                         fontStyle = FontStyle.Italic
                     )
+                    HorizontalDivider(
+                        modifier = Modifier.padding(top = 12.dp),
+                        color = MaterialTheme.colorScheme.outline
+                    )
                 }
-                HorizontalDivider(color = MaterialTheme.colorScheme.outline)
             }
 
             DetailSection(number = "1", title = stringResource(R.string.section_automatic_thought)) {
