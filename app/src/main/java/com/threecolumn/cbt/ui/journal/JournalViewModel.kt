@@ -25,8 +25,14 @@ class JournalViewModel(private val repository: JournalEntryRepository) : ViewMod
         viewModelScope.launch { repository.delete(entry) }
     }
 
-    fun togglePin(entry: JournalEntry) {
-        viewModelScope.launch { repository.save(entry.copy(pinned = !entry.pinned)) }
+    /** Persists a drag-reordered list by assigning each entry a fresh, position-based sortIndex. */
+    fun persistOrder(orderedEntries: List<JournalEntry>) {
+        if (orderedEntries.isEmpty()) return
+        val base = orderedEntries.size.toLong()
+        val reindexed = orderedEntries.mapIndexed { index, entry ->
+            entry.copy(sortIndex = base - index)
+        }
+        viewModelScope.launch { repository.saveAll(reindexed) }
     }
 
     class Factory(private val repository: JournalEntryRepository) : ViewModelProvider.Factory {

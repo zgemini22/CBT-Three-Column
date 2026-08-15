@@ -26,11 +26,11 @@ data class NotebookPalette(
 )
 
 val LightNotebookPalette = NotebookPalette(
-    paper = Color(0xFFFBF3E3),
-    paperAlt = Color(0xFFF3E7C9),
+    paper = Color(0xFFFDF9EF),
+    paperAlt = Color(0xFFF5EDD9),
     marginLine = Color(0xFFD3897E),
-    ink = Color(0xFF33291F),
-    inkFaded = Color(0xFF5C5044),
+    ink = Color(0xFF221A12),
+    inkFaded = Color(0xFF4A4034),
     penBlue = Color(0xFF2C4A78),
     onPenBlue = Color(0xFFFBF3E3),
     highlighter = Color(0xFFF3D48A),
