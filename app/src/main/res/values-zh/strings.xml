@@ -10,6 +10,7 @@
     <string name="delete_desc">删除</string>
     <string name="save_desc">保存</string>
     <string name="edit_desc">编辑</string>
+    <string name="share_desc">分享</string>
 
     <!-- 思维记录列表 -->
     <string name="new_thought_record_desc">新建思维记录</string>
@@ -46,8 +47,10 @@
     <string name="distortion_mental_filter_desc">你只盯着一个负面细节不放，就像一滴墨水染黑了一整杯水，让你对整件事的看法都变得灰暗。</string>
     <string name="distortion_discounting_positive_label">否定正面评价</string>
     <string name="distortion_discounting_positive_desc">你把好的经历或成绩都说成\"不算数\"，找各种理由把它们排除在外。</string>
-    <string name="distortion_jumping_to_conclusions_label">妄下结论</string>
-    <string name="distortion_jumping_to_conclusions_desc">你在没有足够依据的情况下就往坏处想——要么猜测别人在怎么看你，要么提前断定事情会有糟糕的结局。</string>
+    <string name="distortion_mind_reading_label">妄下结论——臆测人心</string>
+    <string name="distortion_mind_reading_desc">你在没有确凿依据的情况下，就认定自己知道别人在想什么，而且通常会往坏处猜测。</string>
+    <string name="distortion_fortune_telling_label">妄下结论——未卜先知</string>
+    <string name="distortion_fortune_telling_desc">你预测事情将会有糟糕的结局，并把这个预测当成已经发生的事实来对待。</string>
     <string name="distortion_magnification_minimization_label">放大或缩小</string>
     <string name="distortion_magnification_minimization_desc">你把问题和缺点看得过分严重，却把自己的优点和长处看得微不足道。</string>
     <string name="distortion_emotional_reasoning_label">情绪化推理</string>
@@ -66,6 +69,10 @@
     <string name="journal_empty_title">还没有任何一页</string>
     <string name="journal_empty_body">点击 + ，写下关于这个主题的第一页。以后每当有新的想法，随时回来再写一页。</string>
     <string name="journal_write_placeholder">写下你此刻的想法……</string>
+    <string name="journal_pin_desc">置顶</string>
+    <string name="journal_unpin_desc">取消置顶</string>
+    <string name="journal_sort_newest">最新优先</string>
+    <string name="journal_sort_oldest">最早优先</string>
     <string name="journal_seed_entry_body">关于这个主题，先记下几个想法作为开始：\n\n1. 如果有人对你表现出反对或不满，这更可能反映了对方自己的想法和局限，而不一定说明你做错了什么。\n\n2. 就算批评说得没错，那也不是灾难——你可以承认这个错误、把它改过来，并从中学到东西，而不必因此认定自己是个糟糕的人；毕竟没有人能做到从不犯错。\n\n3. 一次没做好，说明的只是这一件事没做好，不能代表你这个人整体的价值。你随时可以调整、可以改变、可以继续成长。\n\n4. 别人能评价的，永远只是你某一次具体的言行，没有谁有资格给你整个人打一个总分。\n\n5. 不管你表现得多好，总会有人不认同你。不认同不会像野火一样蔓延开来，一次被否定，不等于你以后永远都会被否定。\n\n6. 被反对或被批评之后感到不舒服，是很正常的反应，但这种不适感会随着时间自己慢慢过去，不需要你费力去消灭它。\n\n7. 批评之所以刺痛你，往往是因为你在心里悄悄接受了对方给你贴的那个负面标签。去质疑那个标签本身，而不是只顾着感受那份刺痛。\n\n8. 意见不合、发生争执，是任何一段关系里都会出现的正常部分，一次分歧并不会因此就让关系走到尽头。\n\n9. 以后想到新的想法，随时把它加进这一页——这份清单永远可以由你继续写下去。</string>
 
     <!-- 语言选择（language_english / language_chinese 是语言本身的名称，
@@ -89,7 +96,7 @@
     <string name="data_import_failed">导入失败，请检查文件格式后重试。</string>
     <string name="data_import_format_title">文件格式说明</string>
     <string name="data_import_format_intro">导入的 .json 文件需要符合以下结构。用它可以一次性批量添加多条记录——自己手写或用工具生成这个文件后再导入。</string>
-    <string name="data_import_format_note">每条记录中的 \"createdAt\"（从纪元开始的毫秒数）都是可选项，省略时默认为当前时间。</string>
+    <string name="data_import_format_note">每条记录中的 \"createdAt\"（从纪元开始的毫秒数）都是可选项，省略时默认为当前时间。笔记条目中的 \"pinned\" 也是可选项，省略时默认为 false。</string>
     <string name="data_import_format_distortion_codes">\"distortions\" 可用的代码：</string>
     <string name="data_import_choose_file">选择文件</string>
     <string name="cancel_desc">取消</string>

@@ -42,7 +42,7 @@ private const val IMPORT_FORMAT_EXAMPLE = """{
     }
   ],
   "journalEntries": [
-    { "body": "Free-form text for a page" }
+    { "body": "Free-form text for a page", "pinned": false }
   ]
 }"""
 

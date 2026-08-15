@@ -8,5 +8,6 @@ import androidx.room.PrimaryKey
 data class JournalEntry(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val createdAt: Long,
-    val body: String
+    val body: String,
+    val pinned: Boolean = false
 )

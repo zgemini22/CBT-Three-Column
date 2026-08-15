@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -24,13 +25,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.CognitiveDistortion
+import com.threecolumn.cbt.util.shareText
 import java.text.DateFormat
 import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,6 +45,17 @@ fun ThoughtRecordDetailScreen(
     onEdit: (Long) -> Unit
 ) {
     val record by remember(recordId) { viewModel.observeById(recordId) }.collectAsState(initial = null)
+    val context = LocalContext.current
+
+    val situationLabel = stringResource(R.string.situation_display_label)
+    val automaticThoughtLabel = stringResource(R.string.section_automatic_thought)
+    val beliefBeforePattern = stringResource(R.string.belief_before_display)
+    val distortionsLabel = stringResource(R.string.section_distortions)
+    val noneSelectedLabel = stringResource(R.string.distortions_none_selected)
+    val rationalResponseLabel = stringResource(R.string.section_rational_response)
+    val beliefAfterPattern = stringResource(R.string.belief_after_display)
+    val shareChooserTitle = stringResource(R.string.share_desc)
+    val distortionLabelByEntry = CognitiveDistortion.entries.associateWith { stringResource(it.labelRes) }
 
     Scaffold(
         topBar = {
@@ -58,6 +73,32 @@ fun ThoughtRecordDetailScreen(
                     }
                 },
                 actions = {
+                    IconButton(onClick = {
+                        record?.let { rec ->
+                            val distortionLabels = rec.distortionKeys
+                                .mapNotNull { CognitiveDistortion.fromStorageKey(it) }
+                                .mapNotNull { distortionLabelByEntry[it] }
+                            val text = buildString {
+                                if (rec.situation.isNotBlank()) {
+                                    appendLine("$situationLabel: ${rec.situation}")
+                                    appendLine()
+                                }
+                                appendLine("1. $automaticThoughtLabel")
+                                appendLine(rec.automaticThought)
+                                appendLine(String.format(Locale.getDefault(), beliefBeforePattern, rec.beliefBefore))
+                                appendLine()
+                                appendLine("2. $distortionsLabel")
+                                appendLine(if (distortionLabels.isEmpty()) noneSelectedLabel else distortionLabels.joinToString(" · "))
+                                appendLine()
+                                appendLine("3. $rationalResponseLabel")
+                                appendLine(rec.rationalResponse)
+                                append(String.format(Locale.getDefault(), beliefAfterPattern, rec.beliefAfter))
+                            }
+                            shareText(context, text, shareChooserTitle)
+                        }
+                    }) {
+                        Icon(Icons.Filled.Share, contentDescription = shareChooserTitle)
+                    }
                     IconButton(onClick = {
                         record?.let { viewModel.delete(it) }
                         onBack()

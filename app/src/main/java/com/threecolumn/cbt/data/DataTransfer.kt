@@ -43,6 +43,7 @@ object DataTransfer {
                 JSONObject().apply {
                     put("createdAt", entry.createdAt)
                     put("body", entry.body)
+                    put("pinned", entry.pinned)
                 }
             )
         }
@@ -89,7 +90,8 @@ object DataTransfer {
                 if (body.isBlank()) continue
                 entries += JournalEntry(
                     createdAt = if (obj.has("createdAt")) obj.optLong("createdAt") else System.currentTimeMillis(),
-                    body = body
+                    body = body,
+                    pinned = obj.optBoolean("pinned", false)
                 )
             }
         }

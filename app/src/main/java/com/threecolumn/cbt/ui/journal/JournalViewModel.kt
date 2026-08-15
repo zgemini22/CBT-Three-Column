@@ -25,6 +25,10 @@ class JournalViewModel(private val repository: JournalEntryRepository) : ViewMod
         viewModelScope.launch { repository.delete(entry) }
     }
 
+    fun togglePin(entry: JournalEntry) {
+        viewModelScope.launch { repository.save(entry.copy(pinned = !entry.pinned)) }
+    }
+
     class Factory(private val repository: JournalEntryRepository) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T =

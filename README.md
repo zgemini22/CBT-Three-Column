@@ -17,14 +17,19 @@ professional care.
 
 - **Thought Records** — three-column entries (automatic thought → distortion →
   rational response) with before/after belief-strength sliders (0–100%) and
-  an optional situation note. All ten of Burns' cognitive distortions are
-  available as tappable chips, each with a short description. Tapping a
-  record opens a read-only detail page first (distortions shown by name
-  only, no descriptions); an edit icon there opens the editable form.
+  an optional situation note. Burns' cognitive distortions are available as
+  tappable chips, each with a short description; "Jumping to Conclusions" is
+  split into its two named forms (Mind Reading and Fortune Telling) so they
+  can be chosen separately. Tapping a record opens a read-only detail page
+  first (distortions shown by name only, no descriptions); an edit icon
+  there opens the editable form. A share icon sends a formatted text version
+  of the record to any app via the system share sheet.
 - **Journal** — a single-topic notebook dedicated to *"Why is living in fear
   of opposition and criticism irrational and unnecessary?"* Add a new dated
   page any time a fresh thought about it occurs to you; pages list like a
-  running notebook.
+  running notebook. Pin any page to keep it at the top regardless of sort
+  order, and toggle Newest first / Oldest first from the list. A share icon
+  on each page sends its text to any app via the system share sheet.
 - **English / 简体中文** — every string in the app is localized, and a
   Language section on the About page lets you override the display language
   independent of the device's system setting.
@@ -85,13 +90,14 @@ the authoritative, always-current version and the list of valid
     }
   ],
   "journalEntries": [
-    { "body": "Free-form text for a page" }
+    { "body": "Free-form text for a page", "pinned": false }
   ]
 }
 ```
 
 `createdAt` (milliseconds since epoch) is optional on every entry and
-defaults to the import time if omitted.
+defaults to the import time if omitted. `pinned` on journal entries is
+optional and defaults to `false`.
 
 ## Building
 

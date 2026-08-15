@@ -10,6 +10,7 @@
     <string name="delete_desc">Delete</string>
     <string name="save_desc">Save</string>
     <string name="edit_desc">Edit</string>
+    <string name="share_desc">Share</string>
 
     <!-- Thought record list -->
     <string name="new_thought_record_desc">New thought record</string>
@@ -46,8 +47,10 @@
     <string name="distortion_mental_filter_desc">You dwell on a single negative detail so much that your view of reality becomes darkened, like a drop of ink coloring a glass of water.</string>
     <string name="distortion_discounting_positive_label">Discounting the Positive</string>
     <string name="distortion_discounting_positive_desc">You reject positive experiences by insisting they \"don\'t count\" for some reason.</string>
-    <string name="distortion_jumping_to_conclusions_label">Jumping to Conclusions</string>
-    <string name="distortion_jumping_to_conclusions_desc">You interpret things negatively without facts to support it — mind reading what others think, or predicting things will turn out badly.</string>
+    <string name="distortion_mind_reading_label">Jumping to Conclusions — Mind Reading</string>
+    <string name="distortion_mind_reading_desc">You assume you know what someone else is thinking, without real evidence for it — and usually assume the worst.</string>
+    <string name="distortion_fortune_telling_label">Jumping to Conclusions — Fortune Telling</string>
+    <string name="distortion_fortune_telling_desc">You predict that things will turn out badly, and treat that prediction as if it were already an established fact.</string>
     <string name="distortion_magnification_minimization_label">Magnification or Minimization</string>
     <string name="distortion_magnification_minimization_desc">You exaggerate the importance of problems and shortcomings, or shrink the importance of your good qualities.</string>
     <string name="distortion_emotional_reasoning_label">Emotional Reasoning</string>
@@ -66,6 +69,10 @@
     <string name="journal_empty_title">No pages yet</string>
     <string name="journal_empty_body">Tap + to write your first page on this topic. Come back and add more pages whenever a new thought about it occurs to you.</string>
     <string name="journal_write_placeholder">Write your thoughts on this…</string>
+    <string name="journal_pin_desc">Pin</string>
+    <string name="journal_unpin_desc">Unpin</string>
+    <string name="journal_sort_newest">Newest first</string>
+    <string name="journal_sort_oldest">Oldest first</string>
     <string name="journal_seed_entry_body">A few starting thoughts on this topic:\n\n1. If someone reacts negatively to you, their reaction often says more about their own assumptions than about your worth.\n\n2. If a criticism is accurate, that\'s not a catastrophe — you can note the error, correct it, and move on without deciding it makes you a bad person.\n\n3. One mistake describes one moment, not your entire track record. You can keep changing after it.\n\n4. Other people can only judge a specific thing you did or said — no one is in a position to grade you as a whole person.\n\n5. No matter how well you do, someone will disagree with you. Disapproval doesn\'t spread on its own; one \"no\" isn\'t a verdict that follows you everywhere.\n\n6. Discomfort after criticism is normal and temporary — it fades on its own without needing to be argued away.\n\n7. Criticism mostly stings when you\'ve quietly accepted the negative label behind it. Question the label, not just the sting.\n\n8. Disagreement is an ordinary part of any relationship — it doesn\'t require the relationship to end.\n\n9. Add your own idea here whenever one occurs to you — this list is yours to keep building.</string>
 
     <!-- Language picker. language_english / language_chinese are proper names of
@@ -91,7 +98,7 @@
     <string name="data_import_failed">Import failed. Check the file format and try again.</string>
     <string name="data_import_format_title">Expected file format</string>
     <string name="data_import_format_intro">Import a .json file shaped like this. Use it to add many records at once — hand-write or generate the file yourself, then import it.</string>
-    <string name="data_import_format_note">\"createdAt\" (milliseconds since epoch) is optional on every entry and defaults to now if left out.</string>
+    <string name="data_import_format_note">\"createdAt\" (milliseconds since epoch) is optional on every entry and defaults to now if left out. \"pinned\" on journal entries is also optional and defaults to false.</string>
     <string name="data_import_format_distortion_codes">Valid \"distortions\" codes:</string>
     <string name="data_import_choose_file">Choose file</string>
     <string name="cancel_desc">Cancel</string>
