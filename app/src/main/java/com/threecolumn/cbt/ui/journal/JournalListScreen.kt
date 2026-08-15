@@ -1,22 +1,24 @@
 package com.threecolumn.cbt.ui.journal
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.DragHandle
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -25,24 +27,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.JournalEntry
 import com.threecolumn.cbt.ui.theme.NotebookColors
@@ -51,8 +47,6 @@ import com.threecolumn.cbt.ui.theme.notebookMargin
 import java.text.DateFormat
 import java.util.Date
 
-private val ItemSpacing = 14.dp
-
 @Composable
 fun JournalListScreen(
     viewModel: JournalViewModel,
@@ -60,15 +54,14 @@ fun JournalListScreen(
     onNewEntry: () -> Unit
 ) {
     val entries by viewModel.entries.collectAsState()
-    var localOrder by remember { mutableStateOf(entries) }
-    var draggingId by remember { mutableStateOf<Long?>(null) }
-    var dragOffsetY by remember { mutableStateOf(0f) }
-    val itemHeights = remember { mutableStateMapOf<Long, Int>() }
-    val itemSpacingPx = with(LocalDensity.current) { ItemSpacing.toPx() }
-    val reorderDesc = stringResource(R.string.journal_reorder_desc)
-
-    LaunchedEffect(entries) {
-        if (draggingId == null) localOrder = entries
+    var sortAscending by remember { mutableStateOf(false) }
+    val sortedEntries = remember(entries, sortAscending) {
+        val byDate = if (sortAscending) {
+            compareByDescending<JournalEntry> { it.pinned }.thenBy { it.createdAt }
+        } else {
+            compareByDescending<JournalEntry> { it.pinned }.thenByDescending { it.createdAt }
+        }
+        entries.sortedWith(byDate)
     }
 
     Scaffold(
@@ -84,70 +77,48 @@ fun JournalListScreen(
                 .padding(padding)
         ) {
             TopicHeader()
-            if (localOrder.isEmpty()) {
+            if (sortedEntries.isEmpty()) {
                 EmptyState()
             } else {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    SortToggle(ascending = sortAscending, onToggle = { sortAscending = !sortAscending })
+                }
                 LazyColumn(
-                    contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 96.dp),
-                    verticalArrangement = Arrangement.spacedBy(ItemSpacing),
+                    contentPadding = PaddingValues(16.dp, 0.dp, 16.dp, 96.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    items(localOrder, key = { it.id }) { entry ->
-                        val isDragging = entry.id == draggingId
-                        val cardModifier = Modifier
-                            .onGloballyPositioned { coords -> itemHeights[entry.id] = coords.size.height }
-                            .zIndex(if (isDragging) 1f else 0f)
-                            .graphicsLayer(translationY = if (isDragging) dragOffsetY else 0f)
-                            .let { if (isDragging) it else it.animateItem() }
-                        val dragHandleModifier = Modifier.pointerInput(entry.id) {
-                            detectDragGesturesAfterLongPress(
-                                onDragStart = {
-                                    draggingId = entry.id
-                                    dragOffsetY = 0f
-                                },
-                                onDragEnd = {
-                                    draggingId = null
-                                    dragOffsetY = 0f
-                                    viewModel.persistOrder(localOrder)
-                                },
-                                onDragCancel = {
-                                    draggingId = null
-                                    dragOffsetY = 0f
-                                },
-                                onDrag = { change, dragAmount ->
-                                    change.consume()
-                                    dragOffsetY += dragAmount.y
-                                    val height = itemHeights[entry.id]
-                                    if (height != null) {
-                                        val step = height + itemSpacingPx
-                                        val currentIndex = localOrder.indexOfFirst { it.id == entry.id }
-                                        if (dragOffsetY > step / 2 && currentIndex < localOrder.lastIndex) {
-                                            localOrder = localOrder.toMutableList().apply {
-                                                add(currentIndex + 1, removeAt(currentIndex))
-                                            }
-                                            dragOffsetY -= step
-                                        } else if (dragOffsetY < -step / 2 && currentIndex > 0) {
-                                            localOrder = localOrder.toMutableList().apply {
-                                                add(currentIndex - 1, removeAt(currentIndex))
-                                            }
-                                            dragOffsetY += step
-                                        }
-                                    }
-                                }
-                            )
-                        }
+                    items(sortedEntries, key = { it.id }) { entry ->
                         JournalEntryCard(
                             entry = entry,
-                            onClick = { if (draggingId == null) onOpenEntry(entry.id) },
-                            onTogglePin = { viewModel.togglePin(entry) },
-                            reorderDesc = reorderDesc,
-                            modifier = cardModifier,
-                            dragHandleModifier = dragHandleModifier
+                            onClick = { onOpenEntry(entry.id) },
+                            onTogglePin = { viewModel.togglePin(entry) }
                         )
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun SortToggle(ascending: Boolean, onToggle: () -> Unit) {
+    TextButton(onClick = onToggle) {
+        Icon(
+            imageVector = if (ascending) Icons.Filled.ArrowUpward else Icons.Filled.ArrowDownward,
+            contentDescription = null,
+            modifier = Modifier.size(18.dp)
+        )
+        Spacer(Modifier.width(4.dp))
+        Text(
+            text = if (ascending) stringResource(R.string.journal_sort_oldest) else stringResource(R.string.journal_sort_newest),
+            style = MaterialTheme.typography.labelLarge
+        )
     }
 }
 
@@ -193,20 +164,12 @@ private fun EmptyState() {
 }
 
 @Composable
-private fun JournalEntryCard(
-    entry: JournalEntry,
-    onClick: () -> Unit,
-    onTogglePin: () -> Unit,
-    reorderDesc: String,
-    modifier: Modifier = Modifier,
-    dragHandleModifier: Modifier = Modifier
-) {
+private fun JournalEntryCard(entry: JournalEntry, onClick: () -> Unit, onTogglePin: () -> Unit) {
     Card(
         onClick = onClick,
         shape = RoundedCornerShape(2.dp),
         colors = CardDefaults.cardColors(containerColor = NotebookColors.paper),
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-        modifier = modifier
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
     ) {
         Column(
             modifier = Modifier
@@ -230,15 +193,6 @@ private fun JournalEntryCard(
                     modifier = Modifier
                         .size(20.dp)
                         .clickable(onClick = onTogglePin)
-                )
-                Icon(
-                    imageVector = Icons.Filled.DragHandle,
-                    contentDescription = reorderDesc,
-                    tint = NotebookColors.inkFaded,
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                        .size(20.dp)
-                        .then(dragHandleModifier)
                 )
             }
             Text(

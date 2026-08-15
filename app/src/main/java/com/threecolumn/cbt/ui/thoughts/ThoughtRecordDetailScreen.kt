@@ -3,7 +3,6 @@ package com.threecolumn.cbt.ui.thoughts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -136,9 +135,7 @@ fun ThoughtRecordDetailScreen(
                         fontStyle = FontStyle.Italic
                     )
                     HorizontalDivider(
-                        modifier = Modifier
-                            .padding(top = 12.dp)
-                            .fillMaxWidth(0.4f),
+                        modifier = Modifier.padding(top = 12.dp),
                         color = MaterialTheme.colorScheme.outline
                     )
                 }

@@ -27,9 +27,9 @@ professional care.
 - **Journal** — a single-topic notebook dedicated to *"Why is living in fear
   of opposition and criticism irrational and unnecessary?"* Add a new dated
   page any time a fresh thought about it occurs to you; pages list like a
-  running notebook. Pin any page to keep it at the top; long-press-and-drag
-  the handle on any page to manually reorder the rest. A share icon on each
-  page sends its text to any app via the system share sheet.
+  running notebook. Pin any page to keep it at the top regardless of sort
+  order, and toggle Newest first / Oldest first from the list. A share icon
+  on each page sends its text to any app via the system share sheet.
 - **English / 简体中文** — every string in the app is localized, and a
   Language section on the About page lets you override the display language
   independent of the device's system setting.

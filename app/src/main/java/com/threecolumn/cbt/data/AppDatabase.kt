@@ -11,7 +11,7 @@ import com.threecolumn.cbt.R
 
 @Database(
     entities = [ThoughtRecord::class, JournalEntry::class],
-    version = 3,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -29,20 +29,13 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        private val MIGRATION_2_3 = object : Migration(2, 3) {
-            override fun migrate(db: SupportSQLiteDatabase) {
-                db.execSQL("ALTER TABLE journal_entries ADD COLUMN sortIndex INTEGER NOT NULL DEFAULT 0")
-                db.execSQL("UPDATE journal_entries SET sortIndex = createdAt")
-            }
-        }
-
         fun getInstance(context: Context): AppDatabase =
             instance ?: synchronized(this) {
                 instance ?: Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
                     "three_column_cbt.db"
-                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                ).addMigrations(MIGRATION_1_2)
                     .addCallback(SeedJournalCallback(context.applicationContext))
                     .build().also { instance = it }
             }
@@ -53,10 +46,9 @@ abstract class AppDatabase : RoomDatabase() {
 private class SeedJournalCallback(private val context: Context) : RoomDatabase.Callback() {
     override fun onCreate(db: SupportSQLiteDatabase) {
         super.onCreate(db)
-        val now = System.currentTimeMillis()
         db.execSQL(
-            "INSERT INTO journal_entries (createdAt, body, pinned, sortIndex) VALUES (?, ?, ?, ?)",
-            arrayOf(now, context.getString(R.string.journal_seed_entry_body), 0, now)
+            "INSERT INTO journal_entries (createdAt, body) VALUES (?, ?)",
+            arrayOf(System.currentTimeMillis(), context.getString(R.string.journal_seed_entry_body))
         )
     }
 }
