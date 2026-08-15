@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface JournalEntryDao {
-    @Query("SELECT * FROM journal_entries ORDER BY pinned DESC, createdAt DESC")
+    @Query("SELECT * FROM journal_entries ORDER BY pinned DESC, sortIndex DESC")
     fun observeAll(): Flow<List<JournalEntry>>
 
-    @Query("SELECT * FROM journal_entries ORDER BY pinned DESC, createdAt DESC")
+    @Query("SELECT * FROM journal_entries ORDER BY pinned DESC, sortIndex DESC")
     suspend fun getAllOnce(): List<JournalEntry>
 
     @Query("SELECT * FROM journal_entries WHERE id = :id")

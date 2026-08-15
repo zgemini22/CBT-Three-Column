@@ -71,8 +71,7 @@
     <string name="journal_write_placeholder">Write your thoughts on this…</string>
     <string name="journal_pin_desc">Pin</string>
     <string name="journal_unpin_desc">Unpin</string>
-    <string name="journal_sort_newest">Newest first</string>
-    <string name="journal_sort_oldest">Oldest first</string>
+    <string name="journal_reorder_desc">Drag to reorder</string>
     <string name="journal_seed_entry_body">A few starting thoughts on this topic:\n\n1. If someone reacts negatively to you, their reaction often says more about their own assumptions than about your worth.\n\n2. If a criticism is accurate, that\'s not a catastrophe — you can note the error, correct it, and move on without deciding it makes you a bad person.\n\n3. One mistake describes one moment, not your entire track record. You can keep changing after it.\n\n4. Other people can only judge a specific thing you did or said — no one is in a position to grade you as a whole person.\n\n5. No matter how well you do, someone will disagree with you. Disapproval doesn\'t spread on its own; one \"no\" isn\'t a verdict that follows you everywhere.\n\n6. Discomfort after criticism is normal and temporary — it fades on its own without needing to be argued away.\n\n7. Criticism mostly stings when you\'ve quietly accepted the negative label behind it. Question the label, not just the sting.\n\n8. Disagreement is an ordinary part of any relationship — it doesn\'t require the relationship to end.\n\n9. Add your own idea here whenever one occurs to you — this list is yours to keep building.</string>
 
     <!-- Language picker. language_english / language_chinese are proper names of
