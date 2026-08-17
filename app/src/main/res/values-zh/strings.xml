@@ -17,6 +17,10 @@
     <string name="thought_records_empty_title">还没有任何记录</string>
     <string name="thought_records_empty_body">点击右下角的 + ，写下让你难受的自动化思维，找出其中的认知歪曲，再写下一个更合理的回应。</string>
     <string name="belief_before_after">相信程度 %1$d%% → %2$d%%</string>
+    <string name="group_today">今天</string>
+    <string name="group_yesterday">昨天</string>
+    <string name="group_this_week">本周</string>
+    <string name="group_this_month">本月</string>
 
     <!-- 思维记录详情（只读） -->
     <string name="situation_display_label">情境</string>
@@ -97,6 +101,15 @@
     <string name="data_import_format_distortion_codes">\"distortions\" 可用的代码：</string>
     <string name="data_import_choose_file">选择文件</string>
     <string name="cancel_desc">取消</string>
+
+    <!-- 隐私 -->
+    <string name="privacy_section_title">隐私</string>
+    <string name="privacy_lock_label">打开应用时需要解锁</string>
+    <string name="privacy_lock_description">使用指纹、面容或设备密码打开应用。</string>
+    <string name="privacy_lock_unavailable">请先在此设备上设置指纹、面容或屏幕锁定后再使用此功能。</string>
+    <string name="lock_screen_title">已锁定</string>
+    <string name="lock_screen_subtitle">解锁后即可查看你的思维记录和笔记本。</string>
+    <string name="lock_screen_unlock_button">解锁</string>
 
     <!-- 关于页面 -->
     <string name="about_technique_heading">三栏认知技术</string>

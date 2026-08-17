@@ -25,12 +25,16 @@ import androidx.compose.ui.unit.dp
 import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.JournalEntryRepository
 import com.threecolumn.cbt.data.ThoughtRecordRepository
+import com.threecolumn.cbt.ui.privacy.PrivacySection
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(
     thoughtRecordRepository: ThoughtRecordRepository,
     journalEntryRepository: JournalEntryRepository,
+    appLockEnabled: Boolean,
+    biometricAvailable: Boolean,
+    onToggleAppLock: (Boolean) -> Unit,
     onBack: () -> Unit
 ) {
     Scaffold(
@@ -69,6 +73,11 @@ fun AboutScreen(
 
             ThemePicker()
             LanguagePicker()
+            PrivacySection(
+                appLockEnabled = appLockEnabled,
+                biometricAvailable = biometricAvailable,
+                onToggleAppLock = onToggleAppLock
+            )
             DataTransferSection(
                 thoughtRecordRepository = thoughtRecordRepository,
                 journalEntryRepository = journalEntryRepository

@@ -17,6 +17,10 @@
     <string name="thought_records_empty_title">No thought records yet</string>
     <string name="thought_records_empty_body">Tap + to write down an upsetting automatic thought, spot the distortion in it, and talk back with a rational response.</string>
     <string name="belief_before_after">Belief %1$d%% → %2$d%%</string>
+    <string name="group_today">Today</string>
+    <string name="group_yesterday">Yesterday</string>
+    <string name="group_this_week">This Week</string>
+    <string name="group_this_month">This Month</string>
 
     <!-- Thought record detail (read-only) -->
     <string name="situation_display_label">Situation</string>
@@ -99,6 +103,15 @@
     <string name="data_import_format_distortion_codes">Valid \"distortions\" codes:</string>
     <string name="data_import_choose_file">Choose file</string>
     <string name="cancel_desc">Cancel</string>
+
+    <!-- Privacy -->
+    <string name="privacy_section_title">Privacy</string>
+    <string name="privacy_lock_label">Require unlock to open app</string>
+    <string name="privacy_lock_description">Use your fingerprint, face, or device passcode to open the app.</string>
+    <string name="privacy_lock_unavailable">Set up a fingerprint, face, or screen lock on this device to use this.</string>
+    <string name="lock_screen_title">Locked</string>
+    <string name="lock_screen_subtitle">Unlock to see your thought records and journal.</string>
+    <string name="lock_screen_unlock_button">Unlock</string>
 
     <!-- About screen -->
     <string name="about_technique_heading">The Three-Column Technique</string>

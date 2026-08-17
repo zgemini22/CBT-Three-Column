@@ -63,7 +63,12 @@ private val topLevelDestinations = listOf(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CbtNavHost(application: CbtApplication) {
+fun CbtNavHost(
+    application: CbtApplication,
+    appLockEnabled: Boolean,
+    biometricAvailable: Boolean,
+    onToggleAppLock: (Boolean) -> Unit
+) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination
@@ -136,6 +141,9 @@ fun CbtNavHost(application: CbtApplication) {
                 AboutScreen(
                     thoughtRecordRepository = application.thoughtRecordRepository,
                     journalEntryRepository = application.journalEntryRepository,
+                    appLockEnabled = appLockEnabled,
+                    biometricAvailable = biometricAvailable,
+                    onToggleAppLock = onToggleAppLock,
                     onBack = { navController.popBackStack() }
                 )
             }
