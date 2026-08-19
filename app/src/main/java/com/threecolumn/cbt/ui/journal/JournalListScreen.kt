@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.JournalEntry
+import com.threecolumn.cbt.ui.components.SearchField
 import com.threecolumn.cbt.ui.theme.NotebookColors
 import com.threecolumn.cbt.ui.theme.NotebookFont
 import com.threecolumn.cbt.ui.theme.notebookMargin
@@ -64,8 +65,14 @@ fun JournalListScreen(
     var localOrder by remember { mutableStateOf(entries) }
     var draggingId by remember { mutableStateOf<Long?>(null) }
     var dragOffsetY by remember { mutableStateOf(0f) }
+    var query by remember { mutableStateOf("") }
     val stepPx = with(LocalDensity.current) { (ReorderStep + ItemSpacing).toPx() }
     val reorderDesc = stringResource(R.string.journal_reorder_desc)
+    val isSearching = query.isNotBlank()
+    val filteredEntries = remember(localOrder, query) {
+        val trimmed = query.trim()
+        if (trimmed.isEmpty()) localOrder else localOrder.filter { it.body.contains(trimmed, ignoreCase = true) }
+    }
 
     LaunchedEffect(entries) {
         if (draggingId == null) localOrder = entries
@@ -84,60 +91,82 @@ fun JournalListScreen(
                 .padding(padding)
         ) {
             TopicHeader()
-            if (localOrder.isEmpty()) {
+            if (entries.isEmpty()) {
                 EmptyState()
             } else {
-                LazyColumn(
-                    contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 96.dp),
-                    verticalArrangement = Arrangement.spacedBy(ItemSpacing),
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(localOrder, key = { it.id }) { entry ->
-                        val isDragging = entry.id == draggingId
-                        val cardModifier = Modifier
-                            .zIndex(if (isDragging) 1f else 0f)
-                            .graphicsLayer(translationY = if (isDragging) dragOffsetY else 0f)
-                            .let { if (isDragging) it else it.animateItem() }
-                        val dragHandleModifier = Modifier.pointerInput(entry.id) {
-                            detectDragGestures(
-                                onDragStart = {
-                                    draggingId = entry.id
-                                    dragOffsetY = 0f
-                                },
-                                onDragEnd = {
-                                    draggingId = null
-                                    dragOffsetY = 0f
-                                    viewModel.persistOrder(localOrder)
-                                },
-                                onDragCancel = {
-                                    draggingId = null
-                                    dragOffsetY = 0f
-                                },
-                                onDrag = { change, dragAmount ->
-                                    change.consume()
-                                    dragOffsetY += dragAmount.y
-                                    val currentIndex = localOrder.indexOfFirst { it.id == entry.id }
-                                    if (dragOffsetY > stepPx / 2 && currentIndex < localOrder.lastIndex) {
-                                        localOrder = localOrder.toMutableList().apply {
-                                            add(currentIndex + 1, removeAt(currentIndex))
-                                        }
-                                        dragOffsetY -= stepPx
-                                    } else if (dragOffsetY < -stepPx / 2 && currentIndex > 0) {
-                                        localOrder = localOrder.toMutableList().apply {
-                                            add(currentIndex - 1, removeAt(currentIndex))
-                                        }
-                                        dragOffsetY += stepPx
-                                    }
-                                }
+                SearchField(query = query, onQueryChange = { query = it })
+                if (filteredEntries.isEmpty()) {
+                    NoResultsState()
+                } else if (isSearching) {
+                    // Reordering a filtered subset has no well-defined meaning, so search results
+                    // are shown as a plain, non-draggable list instead of the reorderable one below.
+                    LazyColumn(
+                        contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 96.dp),
+                        verticalArrangement = Arrangement.spacedBy(ItemSpacing),
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        items(filteredEntries, key = { it.id }) { entry ->
+                            JournalEntryCard(
+                                entry = entry,
+                                onClick = { onOpenEntry(entry.id) },
+                                reorderDesc = reorderDesc,
+                                showDragHandle = false
                             )
                         }
-                        JournalEntryCard(
-                            entry = entry,
-                            onClick = { if (draggingId == null) onOpenEntry(entry.id) },
-                            reorderDesc = reorderDesc,
-                            modifier = cardModifier,
-                            dragHandleModifier = dragHandleModifier
-                        )
+                    }
+                } else {
+                    LazyColumn(
+                        contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 96.dp),
+                        verticalArrangement = Arrangement.spacedBy(ItemSpacing),
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        items(localOrder, key = { it.id }) { entry ->
+                            val isDragging = entry.id == draggingId
+                            val cardModifier = Modifier
+                                .zIndex(if (isDragging) 1f else 0f)
+                                .graphicsLayer(translationY = if (isDragging) dragOffsetY else 0f)
+                                .let { if (isDragging) it else it.animateItem() }
+                            val dragHandleModifier = Modifier.pointerInput(entry.id) {
+                                detectDragGestures(
+                                    onDragStart = {
+                                        draggingId = entry.id
+                                        dragOffsetY = 0f
+                                    },
+                                    onDragEnd = {
+                                        draggingId = null
+                                        dragOffsetY = 0f
+                                        viewModel.persistOrder(localOrder)
+                                    },
+                                    onDragCancel = {
+                                        draggingId = null
+                                        dragOffsetY = 0f
+                                    },
+                                    onDrag = { change, dragAmount ->
+                                        change.consume()
+                                        dragOffsetY += dragAmount.y
+                                        val currentIndex = localOrder.indexOfFirst { it.id == entry.id }
+                                        if (dragOffsetY > stepPx / 2 && currentIndex < localOrder.lastIndex) {
+                                            localOrder = localOrder.toMutableList().apply {
+                                                add(currentIndex + 1, removeAt(currentIndex))
+                                            }
+                                            dragOffsetY -= stepPx
+                                        } else if (dragOffsetY < -stepPx / 2 && currentIndex > 0) {
+                                            localOrder = localOrder.toMutableList().apply {
+                                                add(currentIndex - 1, removeAt(currentIndex))
+                                            }
+                                            dragOffsetY += stepPx
+                                        }
+                                    }
+                                )
+                            }
+                            JournalEntryCard(
+                                entry = entry,
+                                onClick = { if (draggingId == null) onOpenEntry(entry.id) },
+                                reorderDesc = reorderDesc,
+                                modifier = cardModifier,
+                                dragHandleModifier = dragHandleModifier
+                            )
+                        }
                     }
                 }
             }
@@ -187,12 +216,35 @@ private fun EmptyState() {
 }
 
 @Composable
+private fun NoResultsState() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = stringResource(R.string.search_no_results_title),
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = stringResource(R.string.search_no_results_body),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@Composable
 private fun JournalEntryCard(
     entry: JournalEntry,
     onClick: () -> Unit,
     reorderDesc: String,
     modifier: Modifier = Modifier,
-    dragHandleModifier: Modifier = Modifier
+    dragHandleModifier: Modifier = Modifier,
+    showDragHandle: Boolean = true
 ) {
     Card(
         onClick = onClick,
@@ -214,19 +266,21 @@ private fun JournalEntryCard(
                     color = NotebookColors.inkFaded,
                     modifier = Modifier.weight(1f)
                 )
-                // A generous 44dp touch target around a smaller glyph, so the handle is easy to grab.
-                Box(
-                    modifier = Modifier
-                        .size(44.dp)
-                        .then(dragHandleModifier),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.DragHandle,
-                        contentDescription = reorderDesc,
-                        tint = NotebookColors.inkFaded,
-                        modifier = Modifier.size(22.dp)
-                    )
+                if (showDragHandle) {
+                    // A generous 44dp touch target around a smaller glyph, so the handle is easy to grab.
+                    Box(
+                        modifier = Modifier
+                            .size(44.dp)
+                            .then(dragHandleModifier),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.DragHandle,
+                            contentDescription = reorderDesc,
+                            tint = NotebookColors.inkFaded,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
                 }
             }
             Text(

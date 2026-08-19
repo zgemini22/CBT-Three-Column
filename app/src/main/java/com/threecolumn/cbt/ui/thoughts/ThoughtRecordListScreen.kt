@@ -21,7 +21,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -31,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.CognitiveDistortion
 import com.threecolumn.cbt.data.ThoughtRecord
+import com.threecolumn.cbt.ui.components.SearchField
 import com.threecolumn.cbt.ui.theme.notebookMargin
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -47,7 +50,12 @@ fun ThoughtRecordListScreen(
 ) {
     val records by viewModel.records.collectAsState()
     val context = LocalContext.current
-    val groupedRecords = remember(records) { groupByRecency(records, context) }
+    var query by remember { mutableStateOf("") }
+    val distortionLabelByEntry = CognitiveDistortion.entries.associateWith { stringResource(it.labelRes) }
+    val filteredRecords = remember(records, query, distortionLabelByEntry) {
+        filterRecords(records, query, distortionLabelByEntry)
+    }
+    val groupedRecords = remember(filteredRecords) { groupByRecency(filteredRecords, context) }
 
     Scaffold(
         floatingActionButton = {
@@ -59,24 +67,53 @@ fun ThoughtRecordListScreen(
         if (records.isEmpty()) {
             EmptyState(padding)
         } else {
-            LazyColumn(
-                contentPadding = PaddingValues(16.dp, 16.dp, 16.dp, 96.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .notebookMargin()
             ) {
-                groupedRecords.forEach { (label, recordsInGroup) ->
-                    item(key = "header::$label") {
-                        GroupHeader(label)
-                    }
-                    items(recordsInGroup, key = { it.id }) { record ->
-                        ThoughtRecordCard(record = record, onClick = { onOpenRecord(record.id) })
+                SearchField(query = query, onQueryChange = { query = it })
+                if (filteredRecords.isEmpty()) {
+                    NoResultsState()
+                } else {
+                    LazyColumn(
+                        contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 96.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .notebookMargin()
+                    ) {
+                        groupedRecords.forEach { (label, recordsInGroup) ->
+                            item(key = "header::$label") {
+                                GroupHeader(label)
+                            }
+                            items(recordsInGroup, key = { it.id }) { record ->
+                                ThoughtRecordCard(record = record, onClick = { onOpenRecord(record.id) })
+                            }
+                        }
                     }
                 }
             }
         }
+    }
+}
+
+private fun filterRecords(
+    records: List<ThoughtRecord>,
+    query: String,
+    distortionLabelByEntry: Map<CognitiveDistortion, String>
+): List<ThoughtRecord> {
+    val trimmed = query.trim()
+    if (trimmed.isEmpty()) return records
+    return records.filter { record ->
+        record.situation.contains(trimmed, ignoreCase = true) ||
+            record.automaticThought.contains(trimmed, ignoreCase = true) ||
+            record.rationalResponse.contains(trimmed, ignoreCase = true) ||
+            record.distortionKeys.any { key ->
+                CognitiveDistortion.fromStorageKey(key)
+                    ?.let { distortionLabelByEntry[it] }
+                    ?.contains(trimmed, ignoreCase = true) == true
+            }
     }
 }
 
@@ -166,6 +203,28 @@ private fun EmptyState(padding: PaddingValues) {
             )
             Text(
                 text = stringResource(R.string.thought_records_empty_body),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@Composable
+private fun NoResultsState() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = stringResource(R.string.search_no_results_title),
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = stringResource(R.string.search_no_results_body),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

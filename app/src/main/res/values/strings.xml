@@ -21,6 +21,10 @@
     <string name="group_yesterday">Yesterday</string>
     <string name="group_this_week">This Week</string>
     <string name="group_this_month">This Month</string>
+    <string name="search_hint">Search</string>
+    <string name="search_clear_desc">Clear search</string>
+    <string name="search_no_results_title">No matches</string>
+    <string name="search_no_results_body">Try a different search.</string>
 
     <!-- Thought record detail (read-only) -->
     <string name="situation_display_label">Situation</string>

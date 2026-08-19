@@ -21,6 +21,10 @@
     <string name="group_yesterday">昨天</string>
     <string name="group_this_week">本周</string>
     <string name="group_this_month">本月</string>
+    <string name="search_hint">搜索</string>
+    <string name="search_clear_desc">清除搜索</string>
+    <string name="search_no_results_title">没有匹配结果</string>
+    <string name="search_no_results_body">换个关键词试试。</string>
 
     <!-- 思维记录详情（只读） -->
     <string name="situation_display_label">情境</string>
