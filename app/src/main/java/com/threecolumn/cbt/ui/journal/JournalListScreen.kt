@@ -32,7 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.graphicsLayer
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -125,7 +125,7 @@ fun JournalListScreen(
                             val cardModifier = Modifier
                                 .zIndex(if (isDragging) 1f else 0f)
                                 .graphicsLayer(translationY = if (isDragging) dragOffsetY else 0f)
-                                .let { if (isDragging) it else it.animateItem() }
+
                             val dragHandleModifier = Modifier.pointerInput(entry.id) {
                                 detectDragGestures(
                                     onDragStart = {
