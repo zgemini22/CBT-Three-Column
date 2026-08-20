@@ -71,7 +71,7 @@
     <string name="distortion_personalization_desc">你把某些并非主要由你造成的负面事件，都归咎到自己身上。</string>
 
     <!-- 笔记本 -->
-    <string name="journal_topic">为什么害怕反对和批评是非理性且没有必要的</string>
+    <string name="journal_topic">为什么害怕反对和批评是非理性且没有必要的？</string>
     <string name="journal_topic_header">本笔记本的主题</string>
     <string name="journal_new_page_desc">新建一页</string>
     <string name="journal_empty_title">还没有任何一页</string>
@@ -116,7 +116,7 @@
     <string name="lock_screen_unlock_button">解锁</string>
 
     <!-- 关于页面 -->
-    <string name="about_technique_heading">三栏法</string>
+    <string name="about_technique_heading">三栏认知技术</string>
     <string name="about_technique_body">这个方法由精神科医生大卫·伯恩斯（David Burns）在《伯恩斯新情绪疗法》一书中推广，是一种回应让人难受的想法的简单方式。把自动化思维原样写下来，找出其中扭曲了你思考方式的认知歪曲，再写一个更公正、更有依据的合理回应。分别给这个想法在回应前后打一个相信程度的分数，可以帮你直观地看到这个转变。</string>
     <string name="about_journal_heading">你的笔记本</string>
     <string name="about_journal_body">\"笔记本\"标签页是一本围绕单一主题展开的笔记：\"%1$s\" 以后每当你对这个主题有了新的想法，随时新建一页，页数没有限制。</string>

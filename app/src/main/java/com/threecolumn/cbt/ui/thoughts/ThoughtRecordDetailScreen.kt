@@ -136,8 +136,7 @@ fun ThoughtRecordDetailScreen(
                     )
                     HorizontalDivider(
                         modifier = Modifier.padding(top = 12.dp),
-                        thickness = 1.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant
+                        color = MaterialTheme.colorScheme.outline
                     )
                 }
             }
@@ -152,11 +151,7 @@ fun ThoughtRecordDetailScreen(
                 )
             }
 
-            HorizontalDivider(
-                modifier = Modifier.padding(vertical = 4.dp),
-                thickness = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant
-            )
+            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
 
             DetailSection(number = "2", title = stringResource(R.string.section_distortions)) {
                 val distortionLabels = current.distortionKeys
@@ -173,11 +168,7 @@ fun ThoughtRecordDetailScreen(
                 )
             }
 
-            HorizontalDivider(
-                modifier = Modifier.padding(vertical = 4.dp),
-                thickness = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant
-            )
+            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
 
             DetailSection(number = "3", title = stringResource(R.string.section_rational_response)) {
                 Text(text = current.rationalResponse, style = MaterialTheme.typography.bodyLarge)

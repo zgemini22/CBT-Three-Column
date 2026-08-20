@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">The Three Column Method</string>
+    <string name="app_name">Three Column Method</string>
 
     <!-- Navigation -->
     <string name="nav_thought_records">Thought Records</string>
@@ -71,7 +71,7 @@
     <string name="distortion_personalization_desc">You see yourself as the cause of some negative external event that you weren\'t primarily responsible for.</string>
 
     <!-- Journal -->
-    <string name="journal_topic">Why Fear of Opposition and Criticism Is Irrational and Unnecessary</string>
+    <string name="journal_topic">Why is living in fear of opposition and criticism irrational and unnecessary?</string>
     <string name="journal_topic_header">This journal\'s topic</string>
     <string name="journal_new_page_desc">New journal page</string>
     <string name="journal_empty_title">No pages yet</string>
@@ -118,7 +118,7 @@
     <string name="lock_screen_unlock_button">Unlock</string>
 
     <!-- About screen -->
-    <string name="about_technique_heading">The Three Column Method</string>
+    <string name="about_technique_heading">The Three-Column Technique</string>
     <string name="about_technique_body">This method, popularized by psychiatrist David Burns in \"Feeling Good: The New Mood Therapy,\" is a simple way to talk back to upsetting thoughts. Write down the automatic thought as it occurred to you, identify which distortion(s) are twisting your thinking, then write a rational response that answers the thought fairly. Rating how much you believe the thought before and after helps you see the shift.</string>
     <string name="about_journal_heading">Your journal</string>
     <string name="about_journal_body">The Journal tab is a single-topic notebook dedicated to: “%1$s” Add a new dated page any time a fresh thought about it occurs to you — there\'s no limit to how many pages you keep.</string>

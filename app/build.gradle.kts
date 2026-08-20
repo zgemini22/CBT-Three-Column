@@ -6,14 +6,14 @@ plugins {
 
 android {
     namespace = "com.threecolumn.cbt"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.threecolumn.cbt"
         minSdk = 26
         targetSdk = 34
-        versionCode = 15
-        versionName = "2.0.2"
+        versionCode = 1
+        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

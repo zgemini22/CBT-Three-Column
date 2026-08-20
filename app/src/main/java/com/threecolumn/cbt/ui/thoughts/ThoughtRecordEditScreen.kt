@@ -14,7 +14,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -132,11 +131,6 @@ fun ThoughtRecordEditScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            HorizontalDivider(
-                thickness = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant
-            )
-
             SectionHeader(number = "1", title = stringResource(R.string.section_automatic_thought))
             OutlinedTextField(
                 value = automaticThought,
@@ -149,11 +143,6 @@ fun ThoughtRecordEditScreen(
                 label = stringResource(R.string.belief_before_label),
                 value = beliefBefore,
                 onValueChange = { beliefBefore = it }
-            )
-
-            HorizontalDivider(
-                thickness = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant
             )
 
             SectionHeader(number = "2", title = stringResource(R.string.section_distortions))
@@ -189,11 +178,6 @@ fun ThoughtRecordEditScreen(
                         .padding(top = 2.dp)
                 )
             }
-
-            HorizontalDivider(
-                thickness = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant
-            )
 
             SectionHeader(number = "3", title = stringResource(R.string.section_rational_response))
             OutlinedTextField(
