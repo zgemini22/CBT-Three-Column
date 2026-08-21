@@ -197,7 +197,7 @@ private fun DetailSection(number: String, title: String, content: @Composable ()
     Column {
         Text(
             text = "$number. $title",
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(bottom = 4.dp)
         )

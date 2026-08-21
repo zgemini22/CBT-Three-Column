@@ -216,7 +216,7 @@ fun ThoughtRecordEditScreen(
 private fun SectionHeader(number: String, title: String) {
     Text(
         text = "$number. $title",
-        style = MaterialTheme.typography.titleMedium,
+        style = MaterialTheme.typography.titleSmall,
         color = MaterialTheme.colorScheme.primary
     )
 }
