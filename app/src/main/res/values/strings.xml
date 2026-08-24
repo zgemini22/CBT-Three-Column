@@ -53,10 +53,8 @@
     <string name="distortion_mental_filter_desc">You dwell on a single negative detail so much that your view of reality becomes darkened, like a drop of ink coloring a glass of water.</string>
     <string name="distortion_discounting_positive_label">Discounting the Positive</string>
     <string name="distortion_discounting_positive_desc">You reject positive experiences by insisting they \"don\'t count\" for some reason.</string>
-    <string name="distortion_mind_reading_label">Jumping to Conclusions — Mind Reading</string>
-    <string name="distortion_mind_reading_desc">You assume you know what someone else is thinking, without real evidence for it — and usually assume the worst.</string>
-    <string name="distortion_fortune_telling_label">Jumping to Conclusions — Fortune Telling</string>
-    <string name="distortion_fortune_telling_desc">You predict that things will turn out badly, and treat that prediction as if it were already an established fact.</string>
+    <string name="distortion_mind_reading_label">Jumping to Conclusions</string>
+    <string name="distortion_mind_reading_desc">You jump to a negative conclusion without solid evidence for it — assuming you know what someone else is thinking (mind reading), or predicting that things will turn out badly and treating that prediction as if it were already a fact (fortune telling).</string>
     <string name="distortion_magnification_minimization_label">Magnification or Minimization</string>
     <string name="distortion_magnification_minimization_desc">You exaggerate the importance of problems and shortcomings, or shrink the importance of your good qualities.</string>
     <string name="distortion_emotional_reasoning_label">Emotional Reasoning</string>

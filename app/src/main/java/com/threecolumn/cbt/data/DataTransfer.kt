@@ -67,7 +67,7 @@ object DataTransfer {
                 val distortions = obj.optJSONArray("distortions")?.let { codes ->
                     (0 until codes.length()).mapNotNull { index ->
                         CognitiveDistortion.fromStorageKey(codes.optString(index))
-                    }
+                    }.distinct()
                 }.orEmpty()
                 records += ThoughtRecord(
                     createdAt = if (obj.has("createdAt")) obj.optLong("createdAt") else System.currentTimeMillis(),
