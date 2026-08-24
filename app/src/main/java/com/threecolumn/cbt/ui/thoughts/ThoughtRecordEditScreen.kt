@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.CognitiveDistortion
 import com.threecolumn.cbt.data.ThoughtRecord
+import com.threecolumn.cbt.ui.components.numberedLabel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -173,14 +174,14 @@ fun ThoughtRecordEditScreen(
                                 selectedDistortions + distortion
                             }
                         },
-                        label = { Text(stringResource(distortion.labelRes)) },
+                        label = { Text(distortion.numberedLabel()) },
                         modifier = Modifier.padding(bottom = 4.dp)
                     )
                 }
             }
             selectedDistortions.forEach { distortion ->
                 Text(
-                    text = "${stringResource(distortion.labelRes)}: ${stringResource(distortion.descriptionRes)}",
+                    text = "${distortion.numberedLabel()}: ${stringResource(distortion.descriptionRes)}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
@@ -214,8 +215,8 @@ fun ThoughtRecordEditScreen(
 private fun SectionHeader(number: String, title: String) {
     Text(
         text = "$number. $title",
-        style = MaterialTheme.typography.titleSmall,
-        color = MaterialTheme.colorScheme.primary
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
     )
 }
 

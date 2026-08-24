@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.CognitiveDistortion
+import com.threecolumn.cbt.ui.components.numberedLabel
 import com.threecolumn.cbt.util.shareText
 import java.text.DateFormat
 import java.util.Date
@@ -55,7 +56,7 @@ fun ThoughtRecordDetailScreen(
     val rationalResponseLabel = stringResource(R.string.section_rational_response)
     val beliefAfterPattern = stringResource(R.string.belief_after_display)
     val shareChooserTitle = stringResource(R.string.share_desc)
-    val distortionLabelByEntry = CognitiveDistortion.entries.associateWith { stringResource(it.labelRes) }
+    val distortionLabelByEntry = CognitiveDistortion.entries.associateWith { it.numberedLabel() }
 
     Scaffold(
         topBar = {
@@ -161,7 +162,7 @@ fun ThoughtRecordDetailScreen(
             DetailSection(number = "2", title = stringResource(R.string.section_distortions)) {
                 val distortionLabels = current.distortionKeys
                     .mapNotNull { CognitiveDistortion.fromStorageKey(it) }
-                    .map { stringResource(it.labelRes) }
+                    .map { it.numberedLabel() }
                 Text(
                     text = if (distortionLabels.isEmpty()) {
                         stringResource(R.string.distortions_none_selected)
@@ -197,8 +198,8 @@ private fun DetailSection(number: String, title: String, content: @Composable ()
     Column {
         Text(
             text = "$number. $title",
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(bottom = 4.dp)
         )
         content()
