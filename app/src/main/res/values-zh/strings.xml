@@ -38,12 +38,10 @@
     <string name="situation_label">情境（选填）</string>
     <string name="situation_placeholder">这个想法出现时，你正在经历什么？</string>
     <string name="section_automatic_thought">自动化思维</string>
-    <string name="automatic_thought_placeholder">脑海中突然冒出来的、让你难受的想法</string>
     <string name="belief_before_label">你当时有多相信这个想法？</string>
     <string name="section_distortions">认知歪曲</string>
     <string name="distortions_hint">点击选中所有符合的类型，选中后下方会显示说明。</string>
     <string name="section_rational_response">合理回应</string>
-    <string name="rational_response_placeholder">用更公正、有依据的想法回应这个歪曲的念头</string>
     <string name="belief_after_label">现在你还有多相信这个自动化思维？</string>
 
     <!-- 认知歪曲（原创释义，非书中原文） -->

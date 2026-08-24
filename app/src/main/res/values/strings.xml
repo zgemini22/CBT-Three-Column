@@ -38,12 +38,10 @@
     <string name="situation_label">Situation (optional)</string>
     <string name="situation_placeholder">What was happening when the thought showed up?</string>
     <string name="section_automatic_thought">Automatic Thought</string>
-    <string name="automatic_thought_placeholder">The upsetting thought that popped into your mind</string>
     <string name="belief_before_label">How much did you believe it?</string>
     <string name="section_distortions">Cognitive Distortion(s)</string>
     <string name="distortions_hint">Tap any that apply — descriptions appear below once selected.</string>
     <string name="section_rational_response">Rational Response</string>
-    <string name="rational_response_placeholder">Talk back to the distorted thought with a fairer, evidence-based response</string>
     <string name="belief_after_label">How much do you believe the automatic thought now?</string>
 
     <!-- Cognitive distortions -->

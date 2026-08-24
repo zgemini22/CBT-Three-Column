@@ -141,7 +141,6 @@ fun ThoughtRecordEditScreen(
             OutlinedTextField(
                 value = automaticThought,
                 onValueChange = { automaticThought = it },
-                placeholder = { Text(stringResource(R.string.automatic_thought_placeholder)) },
                 minLines = 2,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -199,7 +198,6 @@ fun ThoughtRecordEditScreen(
             OutlinedTextField(
                 value = rationalResponse,
                 onValueChange = { rationalResponse = it },
-                placeholder = { Text(stringResource(R.string.rational_response_placeholder)) },
                 minLines = 2,
                 modifier = Modifier.fillMaxWidth()
             )
