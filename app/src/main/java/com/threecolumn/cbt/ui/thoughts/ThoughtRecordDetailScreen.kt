@@ -78,7 +78,6 @@ fun ThoughtRecordDetailScreen(
                         record?.let { rec ->
                             val distortionLabels = rec.distortionKeys
                                 .mapNotNull { CognitiveDistortion.fromStorageKey(it) }
-                                .distinct()
                                 .mapNotNull { distortionLabelByEntry[it] }
                             val text = buildString {
                                 if (rec.situation.isNotBlank()) {
@@ -163,7 +162,6 @@ fun ThoughtRecordDetailScreen(
             DetailSection(number = "2", title = stringResource(R.string.section_distortions)) {
                 val distortionLabels = current.distortionKeys
                     .mapNotNull { CognitiveDistortion.fromStorageKey(it) }
-                    .distinct()
                     .map { it.numberedLabel() }
                 Text(
                     text = if (distortionLabels.isEmpty()) {

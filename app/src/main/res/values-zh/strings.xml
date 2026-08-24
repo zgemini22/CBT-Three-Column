@@ -53,8 +53,10 @@
     <string name="distortion_mental_filter_desc">你只盯着一个负面细节不放，就像一滴墨水染黑了一整杯水，让你对整件事的看法都变得灰暗。</string>
     <string name="distortion_discounting_positive_label">否定正面评价</string>
     <string name="distortion_discounting_positive_desc">你把好的经历或成绩都说成\"不算数\"，找各种理由把它们排除在外。</string>
-    <string name="distortion_mind_reading_label">妄下结论</string>
-    <string name="distortion_mind_reading_desc">你在没有确凿依据的情况下就妄下负面结论——可能是认定自己知道别人在想什么（臆测人心），也可能是预测事情将会有糟糕的结局，并把这个预测当成已经发生的事实来对待（未卜先知）。</string>
+    <string name="distortion_mind_reading_label">妄下结论——臆测人心</string>
+    <string name="distortion_mind_reading_desc">你在没有确凿依据的情况下，就认定自己知道别人在想什么，而且通常会往坏处猜测。</string>
+    <string name="distortion_fortune_telling_label">妄下结论——未卜先知</string>
+    <string name="distortion_fortune_telling_desc">你预测事情将会有糟糕的结局，并把这个预测当成已经发生的事实来对待。</string>
     <string name="distortion_magnification_minimization_label">放大或缩小</string>
     <string name="distortion_magnification_minimization_desc">你把问题和缺点看得过分严重，却把自己的优点和长处看得微不足道。</string>
     <string name="distortion_emotional_reasoning_label">情绪化推理</string>

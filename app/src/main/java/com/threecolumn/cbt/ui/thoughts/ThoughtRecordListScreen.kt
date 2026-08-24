@@ -256,7 +256,6 @@ private fun ThoughtRecordCard(record: ThoughtRecord, onClick: () -> Unit) {
             )
             val distortionLabels = record.distortionKeys
                 .mapNotNull { CognitiveDistortion.fromStorageKey(it) }
-                .distinct()
                 .map { it.numberedLabel() }
             if (distortionLabels.isNotEmpty()) {
                 Text(
