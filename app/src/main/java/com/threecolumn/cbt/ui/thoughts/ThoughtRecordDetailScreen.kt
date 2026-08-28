@@ -31,7 +31,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.CognitiveDistortion
-import com.threecolumn.cbt.ui.components.numberedLabel
 import com.threecolumn.cbt.util.shareText
 import java.text.DateFormat
 import java.util.Date
@@ -56,7 +55,7 @@ fun ThoughtRecordDetailScreen(
     val rationalResponseLabel = stringResource(R.string.section_rational_response)
     val beliefAfterPattern = stringResource(R.string.belief_after_display)
     val shareChooserTitle = stringResource(R.string.share_desc)
-    val distortionLabelByEntry = CognitiveDistortion.entries.associateWith { it.numberedLabel() }
+    val distortionLabelByEntry = CognitiveDistortion.entries.associateWith { stringResource(it.labelRes) }
 
     Scaffold(
         topBar = {
@@ -162,7 +161,7 @@ fun ThoughtRecordDetailScreen(
             DetailSection(number = "2", title = stringResource(R.string.section_distortions)) {
                 val distortionLabels = current.distortionKeys
                     .mapNotNull { CognitiveDistortion.fromStorageKey(it) }
-                    .map { it.numberedLabel() }
+                    .map { stringResource(it.labelRes) }
                 Text(
                     text = if (distortionLabels.isEmpty()) {
                         stringResource(R.string.distortions_none_selected)

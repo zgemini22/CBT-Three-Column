@@ -23,24 +23,6 @@ enum class CognitiveDistortion(@StringRes val labelRes: Int, @StringRes val desc
     LABELING(R.string.distortion_labeling_label, R.string.distortion_labeling_desc),
     PERSONALIZATION(R.string.distortion_personalization_label, R.string.distortion_personalization_desc);
 
-    /**
-     * Fixed display number (1-10). Mind Reading and Fortune Telling share #5, since they're both
-     * forms of "Jumping to Conclusions"; everything after them renumbers down to fill the gap.
-     */
-    val number: Int
-        get() = when (this) {
-            ALL_OR_NOTHING -> 1
-            OVERGENERALIZATION -> 2
-            MENTAL_FILTER -> 3
-            DISCOUNTING_POSITIVE -> 4
-            MIND_READING, FORTUNE_TELLING -> 5
-            MAGNIFICATION_MINIMIZATION -> 6
-            EMOTIONAL_REASONING -> 7
-            SHOULD_STATEMENTS -> 8
-            LABELING -> 9
-            PERSONALIZATION -> 10
-        }
-
     companion object {
         fun fromStorageKey(key: String): CognitiveDistortion? = entries.find { it.name == key }
     }

@@ -34,7 +34,6 @@ import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.CognitiveDistortion
 import com.threecolumn.cbt.data.ThoughtRecord
 import com.threecolumn.cbt.ui.components.SearchField
-import com.threecolumn.cbt.ui.components.numberedLabel
 import com.threecolumn.cbt.ui.theme.notebookMargin
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -52,7 +51,7 @@ fun ThoughtRecordListScreen(
     val records by viewModel.records.collectAsState()
     val context = LocalContext.current
     var query by remember { mutableStateOf("") }
-    val distortionLabelByEntry = CognitiveDistortion.entries.associateWith { it.numberedLabel() }
+    val distortionLabelByEntry = CognitiveDistortion.entries.associateWith { stringResource(it.labelRes) }
     val filteredRecords = remember(records, query, distortionLabelByEntry) {
         filterRecords(records, query, distortionLabelByEntry)
     }
@@ -256,7 +255,7 @@ private fun ThoughtRecordCard(record: ThoughtRecord, onClick: () -> Unit) {
             )
             val distortionLabels = record.distortionKeys
                 .mapNotNull { CognitiveDistortion.fromStorageKey(it) }
-                .map { it.numberedLabel() }
+                .map { stringResource(it.labelRes) }
             if (distortionLabels.isNotEmpty()) {
                 Text(
                     text = distortionLabels.joinToString(" · "),
