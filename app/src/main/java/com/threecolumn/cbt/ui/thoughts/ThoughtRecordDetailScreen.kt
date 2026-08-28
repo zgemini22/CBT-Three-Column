@@ -144,6 +144,12 @@ fun ThoughtRecordDetailScreen(
 
             DetailSection(number = "1", title = stringResource(R.string.section_automatic_thought)) {
                 Text(text = current.automaticThought, style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    text = stringResource(R.string.belief_before_after, current.beliefBefore, current.beliefAfter),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
             }
 
             HorizontalDivider(
@@ -175,12 +181,6 @@ fun ThoughtRecordDetailScreen(
 
             DetailSection(number = "3", title = stringResource(R.string.section_rational_response)) {
                 Text(text = current.rationalResponse, style = MaterialTheme.typography.bodyLarge)
-                Text(
-                    text = stringResource(R.string.belief_before_after, current.beliefBefore, current.beliefAfter),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
             }
         }
     }
