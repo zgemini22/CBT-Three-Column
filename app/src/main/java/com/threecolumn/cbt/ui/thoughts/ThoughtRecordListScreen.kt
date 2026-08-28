@@ -266,7 +266,7 @@ private fun ThoughtRecordCard(record: ThoughtRecord, onClick: () -> Unit) {
             Text(
                 text = stringResource(R.string.belief_before_after, record.beliefBefore, record.beliefAfter),
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 4.dp)
             )
         }
