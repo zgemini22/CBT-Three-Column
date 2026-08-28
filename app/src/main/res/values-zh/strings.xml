@@ -16,7 +16,6 @@
     <string name="new_thought_record_desc">新建思维记录</string>
     <string name="thought_records_empty_title">还没有任何记录</string>
     <string name="thought_records_empty_body">点击右下角的 + ，写下让你难受的自动化思维，找出其中的认知歪曲，再写下一个更合理的回应。</string>
-    <string name="belief_before_after">%1$d%% → %2$d%%</string>
     <string name="group_today">今天</string>
     <string name="group_yesterday">昨天</string>
     <string name="group_this_week">本周</string>

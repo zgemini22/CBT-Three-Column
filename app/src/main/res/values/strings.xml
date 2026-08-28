@@ -16,7 +16,6 @@
     <string name="new_thought_record_desc">New thought record</string>
     <string name="thought_records_empty_title">No thought records yet</string>
     <string name="thought_records_empty_body">Tap + to write down an upsetting automatic thought, spot the distortion in it, and talk back with a rational response.</string>
-    <string name="belief_before_after">%1$d%% → %2$d%%</string>
     <string name="group_today">Today</string>
     <string name="group_yesterday">Yesterday</string>
     <string name="group_this_week">This Week</string>
