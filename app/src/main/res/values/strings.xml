@@ -29,8 +29,8 @@
     <!-- Thought record detail (read-only) -->
     <string name="situation_display_label">Situation</string>
     <string name="distortions_none_selected">No distortions selected</string>
-    <string name="belief_before_display">You believed this: %1$d%%</string>
-    <string name="belief_after_display">You believe it now: %1$d%%</string>
+    <string name="belief_before_display">Before %1$d%%</string>
+    <string name="belief_after_display">After %1$d%%</string>
 
     <!-- Thought record edit -->
     <string name="new_thought_record_title">New thought record</string>
