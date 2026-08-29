@@ -4,15 +4,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.threecolumn.cbt.R
@@ -266,31 +264,15 @@ private fun ThoughtRecordCard(record: ThoughtRecord, onClick: () -> Unit) {
                     color = MaterialTheme.colorScheme.primary
                 )
             }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
+            Text(
+                text = stringResource(R.string.belief_before_after, record.beliefBefore, record.beliefAfter),
+                // The notebook theme's serif font doesn't include a well-centered arrow glyph
+                // (it renders bottom-heavy from a fallback font), so this line opts out of it
+                // and uses the plain system default font instead, like the arrow renders here in chat.
+                style = MaterialTheme.typography.labelMedium.copy(fontFamily = FontFamily.Default),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 4.dp)
-            ) {
-                Text(
-                    text = "${record.beliefBefore}%",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                // A drawn icon, not a text arrow glyph, so it's always centered on this row
-                // regardless of the font's own (often bottom-heavy) arrow glyph metrics.
-                Icon(
-                    imageVector = Icons.Filled.ArrowForward,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier
-                        .padding(horizontal = 4.dp)
-                        .size(14.dp)
-                )
-                Text(
-                    text = "${record.beliefAfter}%",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+            )
         }
     }
 }
