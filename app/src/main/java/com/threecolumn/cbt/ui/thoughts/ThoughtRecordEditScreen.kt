@@ -1,12 +1,17 @@
 package com.threecolumn.cbt.ui.thoughts
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -30,11 +35,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.CognitiveDistortion
 import com.threecolumn.cbt.data.ThoughtRecord
+
+/** Below this width, three side-by-side columns get too narrow to read; stack instead. */
+private const val WideScreenMinWidthDp = 600
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -115,6 +124,7 @@ fun ThoughtRecordEditScreen(
         }
     ) { padding ->
         if (!loaded) return@Scaffold
+        val isWideScreen = LocalConfiguration.current.screenWidthDp >= WideScreenMinWidthDp
 
         Column(
             modifier = Modifier
@@ -137,77 +147,170 @@ fun ThoughtRecordEditScreen(
                 color = MaterialTheme.colorScheme.outlineVariant
             )
 
-            SectionHeader(number = "1", title = stringResource(R.string.section_automatic_thought))
-            OutlinedTextField(
-                value = automaticThought,
-                onValueChange = { automaticThought = it },
-                minLines = 2,
-                modifier = Modifier.fillMaxWidth()
-            )
-            BeliefSlider(
-                label = stringResource(R.string.belief_before_label),
-                value = beliefBefore,
-                onValueChange = { beliefBefore = it }
-            )
-
-            HorizontalDivider(
-                thickness = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant
-            )
-
-            SectionHeader(number = "2", title = stringResource(R.string.section_distortions))
-            Text(
-                text = stringResource(R.string.distortions_hint),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                CognitiveDistortion.entries.forEach { distortion ->
-                    val selected = distortion in selectedDistortions
-                    FilterChip(
-                        selected = selected,
-                        onClick = {
+            if (isWideScreen) {
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.fillMaxWidth()) {
+                    AutomaticThoughtColumn(
+                        automaticThought = automaticThought,
+                        onAutomaticThoughtChange = { automaticThought = it },
+                        beliefBefore = beliefBefore,
+                        onBeliefBeforeChange = { beliefBefore = it },
+                        modifier = Modifier.weight(1f)
+                    )
+                    ColumnDivider()
+                    DistortionsColumn(
+                        selectedDistortions = selectedDistortions,
+                        onToggle = { distortion, selected ->
                             selectedDistortions = if (selected) {
                                 selectedDistortions - distortion
                             } else {
                                 selectedDistortions + distortion
                             }
                         },
-                        label = { Text(stringResource(distortion.labelRes)) },
-                        modifier = Modifier.padding(bottom = 4.dp)
+                        modifier = Modifier.weight(1f)
+                    )
+                    ColumnDivider()
+                    RationalResponseColumn(
+                        rationalResponse = rationalResponse,
+                        onRationalResponseChange = { rationalResponse = it },
+                        beliefAfter = beliefAfter,
+                        onBeliefAfterChange = { beliefAfter = it },
+                        modifier = Modifier.weight(1f)
                     )
                 }
-            }
-            selectedDistortions.forEach { distortion ->
-                Text(
-                    text = "${stringResource(distortion.labelRes)}: ${stringResource(distortion.descriptionRes)}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 2.dp)
+            } else {
+                AutomaticThoughtColumn(
+                    automaticThought = automaticThought,
+                    onAutomaticThoughtChange = { automaticThought = it },
+                    beliefBefore = beliefBefore,
+                    onBeliefBeforeChange = { beliefBefore = it }
+                )
+
+                HorizontalDivider(
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant
+                )
+
+                DistortionsColumn(
+                    selectedDistortions = selectedDistortions,
+                    onToggle = { distortion, selected ->
+                        selectedDistortions = if (selected) {
+                            selectedDistortions - distortion
+                        } else {
+                            selectedDistortions + distortion
+                        }
+                    }
+                )
+
+                HorizontalDivider(
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant
+                )
+
+                RationalResponseColumn(
+                    rationalResponse = rationalResponse,
+                    onRationalResponseChange = { rationalResponse = it },
+                    beliefAfter = beliefAfter,
+                    onBeliefAfterChange = { beliefAfter = it }
                 )
             }
+        }
+    }
+}
 
-            HorizontalDivider(
-                thickness = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant
-            )
+@Composable
+private fun AutomaticThoughtColumn(
+    automaticThought: String,
+    onAutomaticThoughtChange: (String) -> Unit,
+    beliefBefore: Float,
+    onBeliefBeforeChange: (Float) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        SectionHeader(number = "1", title = stringResource(R.string.section_automatic_thought))
+        OutlinedTextField(
+            value = automaticThought,
+            onValueChange = onAutomaticThoughtChange,
+            minLines = 2,
+            modifier = Modifier.fillMaxWidth()
+        )
+        BeliefSlider(
+            label = stringResource(R.string.belief_before_label),
+            value = beliefBefore,
+            onValueChange = onBeliefBeforeChange
+        )
+    }
+}
 
-            SectionHeader(number = "3", title = stringResource(R.string.section_rational_response))
-            OutlinedTextField(
-                value = rationalResponse,
-                onValueChange = { rationalResponse = it },
-                minLines = 2,
-                modifier = Modifier.fillMaxWidth()
-            )
-            BeliefSlider(
-                label = stringResource(R.string.belief_after_label),
-                value = beliefAfter,
-                onValueChange = { beliefAfter = it }
+@Composable
+private fun DistortionsColumn(
+    selectedDistortions: Set<CognitiveDistortion>,
+    onToggle: (CognitiveDistortion, Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        SectionHeader(number = "2", title = stringResource(R.string.section_distortions))
+        Text(
+            text = stringResource(R.string.distortions_hint),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            CognitiveDistortion.entries.forEach { distortion ->
+                val selected = distortion in selectedDistortions
+                FilterChip(
+                    selected = selected,
+                    onClick = { onToggle(distortion, selected) },
+                    label = { Text(stringResource(distortion.labelRes)) },
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+            }
+        }
+        selectedDistortions.forEach { distortion ->
+            Text(
+                text = "${stringResource(distortion.labelRes)}: ${stringResource(distortion.descriptionRes)}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 2.dp)
             )
         }
     }
+}
+
+@Composable
+private fun RationalResponseColumn(
+    rationalResponse: String,
+    onRationalResponseChange: (String) -> Unit,
+    beliefAfter: Float,
+    onBeliefAfterChange: (Float) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        SectionHeader(number = "3", title = stringResource(R.string.section_rational_response))
+        OutlinedTextField(
+            value = rationalResponse,
+            onValueChange = onRationalResponseChange,
+            minLines = 2,
+            modifier = Modifier.fillMaxWidth()
+        )
+        BeliefSlider(
+            label = stringResource(R.string.belief_after_label),
+            value = beliefAfter,
+            onValueChange = onBeliefAfterChange
+        )
+    }
+}
+
+/** A thin vertical rule between side-by-side columns. */
+@Composable
+private fun ColumnDivider() {
+    Box(
+        modifier = Modifier
+            .fillMaxHeight()
+            .width(1.dp)
+            .background(MaterialTheme.colorScheme.outlineVariant)
+    )
 }
 
 @Composable

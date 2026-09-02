@@ -1,9 +1,15 @@
 package com.threecolumn.cbt.ui.thoughts
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -25,16 +31,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.CognitiveDistortion
+import com.threecolumn.cbt.data.ThoughtRecord
 import com.threecolumn.cbt.util.shareText
 import java.text.DateFormat
 import java.util.Date
 import java.util.Locale
+
+/** Below this width, three side-by-side columns get too narrow to read; stack instead. */
+private const val WideScreenMinWidthDp = 600
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -113,6 +124,7 @@ fun ThoughtRecordDetailScreen(
         }
     ) { padding ->
         val current = record ?: return@Scaffold
+        val isWideScreen = LocalConfiguration.current.screenWidthDp >= WideScreenMinWidthDp
 
         Column(
             modifier = Modifier
@@ -142,59 +154,109 @@ fun ThoughtRecordDetailScreen(
                 }
             }
 
-            DetailSection(number = "1", title = stringResource(R.string.section_automatic_thought)) {
-                Text(text = current.automaticThought, style = MaterialTheme.typography.bodyLarge)
-                Text(
-                    text = stringResource(R.string.belief_before_display, current.beliefBefore),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 4.dp)
+            if (isWideScreen) {
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.fillMaxWidth()) {
+                    DetailSection(
+                        number = "1",
+                        title = stringResource(R.string.section_automatic_thought),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(text = current.automaticThought, style = MaterialTheme.typography.bodyLarge)
+                        Text(
+                            text = stringResource(R.string.belief_before_display, current.beliefBefore),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+                    ColumnDivider()
+                    DetailSection(
+                        number = "2",
+                        title = stringResource(R.string.section_distortions),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        DistortionsList(current)
+                    }
+                    ColumnDivider()
+                    DetailSection(
+                        number = "3",
+                        title = stringResource(R.string.section_rational_response),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(text = current.rationalResponse, style = MaterialTheme.typography.bodyLarge)
+                        Text(
+                            text = stringResource(R.string.belief_after_display, current.beliefAfter),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+                }
+            } else {
+                DetailSection(number = "1", title = stringResource(R.string.section_automatic_thought)) {
+                    Text(text = current.automaticThought, style = MaterialTheme.typography.bodyLarge)
+                    Text(
+                        text = stringResource(R.string.belief_before_display, current.beliefBefore),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 4.dp),
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant
                 )
-            }
 
-            HorizontalDivider(
-                modifier = Modifier.padding(vertical = 4.dp),
-                thickness = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant
-            )
+                DetailSection(number = "2", title = stringResource(R.string.section_distortions)) {
+                    DistortionsList(current)
+                }
 
-            DetailSection(number = "2", title = stringResource(R.string.section_distortions)) {
-                val distortionLabels = current.distortionKeys
-                    .mapNotNull { CognitiveDistortion.fromStorageKey(it) }
-                    .map { stringResource(it.labelRes) }
-                Text(
-                    text = if (distortionLabels.isEmpty()) {
-                        stringResource(R.string.distortions_none_selected)
-                    } else {
-                        distortionLabels.joinToString(" · ")
-                    },
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = if (distortionLabels.isEmpty()) MaterialTheme.colorScheme.onSurfaceVariant else Color.Unspecified
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 4.dp),
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant
                 )
-            }
 
-            HorizontalDivider(
-                modifier = Modifier.padding(vertical = 4.dp),
-                thickness = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant
-            )
-
-            DetailSection(number = "3", title = stringResource(R.string.section_rational_response)) {
-                Text(text = current.rationalResponse, style = MaterialTheme.typography.bodyLarge)
-                Text(
-                    text = stringResource(R.string.belief_after_display, current.beliefAfter),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
+                DetailSection(number = "3", title = stringResource(R.string.section_rational_response)) {
+                    Text(text = current.rationalResponse, style = MaterialTheme.typography.bodyLarge)
+                    Text(
+                        text = stringResource(R.string.belief_after_display, current.beliefAfter),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-private fun DetailSection(number: String, title: String, content: @Composable () -> Unit) {
-    Column {
+private fun DistortionsList(current: ThoughtRecord) {
+    val distortionLabels = current.distortionKeys
+        .mapNotNull { CognitiveDistortion.fromStorageKey(it) }
+        .map { stringResource(it.labelRes) }
+    Text(
+        text = if (distortionLabels.isEmpty()) {
+            stringResource(R.string.distortions_none_selected)
+        } else {
+            distortionLabels.joinToString(" · ")
+        },
+        style = MaterialTheme.typography.bodyMedium,
+        color = if (distortionLabels.isEmpty()) MaterialTheme.colorScheme.onSurfaceVariant else Color.Unspecified
+    )
+}
+
+@Composable
+private fun DetailSection(
+    number: String,
+    title: String,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    Column(modifier = modifier) {
         Text(
             text = "$number. $title",
             style = MaterialTheme.typography.bodySmall,
@@ -203,4 +265,15 @@ private fun DetailSection(number: String, title: String, content: @Composable ()
         )
         content()
     }
+}
+
+/** A thin vertical rule between side-by-side columns. */
+@Composable
+private fun ColumnDivider() {
+    Box(
+        modifier = Modifier
+            .fillMaxHeight()
+            .width(1.dp)
+            .background(MaterialTheme.colorScheme.outlineVariant)
+    )
 }
