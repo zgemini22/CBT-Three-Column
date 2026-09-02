@@ -1,5 +1,6 @@
 package com.threecolumn.cbt.ui.thoughts
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -29,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
@@ -39,7 +43,9 @@ import androidx.compose.ui.unit.dp
 import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.CognitiveDistortion
 import com.threecolumn.cbt.data.ThoughtRecord
+import com.threecolumn.cbt.ui.components.PageTabRow
 import com.threecolumn.cbt.util.shareText
+import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.util.Date
 import java.util.Locale
@@ -47,7 +53,7 @@ import java.util.Locale
 /** Below this width, three side-by-side columns get too narrow to read; stack instead. */
 private const val WideScreenMinWidthDp = 600
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ThoughtRecordDetailScreen(
     recordId: Long,
@@ -126,35 +132,18 @@ fun ThoughtRecordDetailScreen(
         val current = record ?: return@Scaffold
         val isWideScreen = LocalConfiguration.current.screenWidthDp >= WideScreenMinWidthDp
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            if (current.situation.isNotBlank()) {
-                Column {
-                    Text(
-                        text = stringResource(R.string.situation_display_label),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
-                        text = current.situation,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontStyle = FontStyle.Italic
-                    )
-                    HorizontalDivider(
-                        modifier = Modifier.padding(top = 12.dp),
-                        thickness = 1.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant
-                    )
+        if (isWideScreen) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                if (current.situation.isNotBlank()) {
+                    SituationBlock(current.situation)
                 }
-            }
-
-            if (isWideScreen) {
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.fillMaxWidth()) {
                     DetailSection(
                         number = "1",
@@ -192,44 +181,88 @@ fun ThoughtRecordDetailScreen(
                         )
                     }
                 }
-            } else {
-                DetailSection(number = "1", title = stringResource(R.string.section_automatic_thought)) {
-                    Text(text = current.automaticThought, style = MaterialTheme.typography.bodyLarge)
-                    Text(
-                        text = stringResource(R.string.belief_before_display, current.beliefBefore),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
+            }
+        } else {
+            // Three swipeable/tappable pages instead of side-by-side columns: a phone is too
+            // narrow for three columns of full sentences to stay readable.
+            val pagerState = rememberPagerState(pageCount = { 3 })
+            val scope = rememberCoroutineScope()
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
+                if (current.situation.isNotBlank()) {
+                    SituationBlock(current.situation, modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp))
                 }
-
-                HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 4.dp),
-                    thickness = 1.dp,
-                    color = MaterialTheme.colorScheme.outlineVariant
+                PageTabRow(
+                    pageCount = 3,
+                    currentPage = pagerState.currentPage,
+                    onPageSelected = { page -> scope.launch { pagerState.animateScrollToPage(page) } },
+                    modifier = Modifier.padding(horizontal = 8.dp)
                 )
-
-                DetailSection(number = "2", title = stringResource(R.string.section_distortions)) {
-                    DistortionsList(current)
-                }
-
-                HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 4.dp),
-                    thickness = 1.dp,
-                    color = MaterialTheme.colorScheme.outlineVariant
-                )
-
-                DetailSection(number = "3", title = stringResource(R.string.section_rational_response)) {
-                    Text(text = current.rationalResponse, style = MaterialTheme.typography.bodyLarge)
-                    Text(
-                        text = stringResource(R.string.belief_after_display, current.beliefAfter),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) { page ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(16.dp)
+                    ) {
+                        when (page) {
+                            0 -> DetailSection(number = "1", title = stringResource(R.string.section_automatic_thought)) {
+                                Text(text = current.automaticThought, style = MaterialTheme.typography.bodyLarge)
+                                Text(
+                                    text = stringResource(R.string.belief_before_display, current.beliefBefore),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.padding(top = 4.dp)
+                                )
+                            }
+                            1 -> DetailSection(number = "2", title = stringResource(R.string.section_distortions)) {
+                                DistortionsList(current)
+                            }
+                            else -> DetailSection(number = "3", title = stringResource(R.string.section_rational_response)) {
+                                Text(text = current.rationalResponse, style = MaterialTheme.typography.bodyLarge)
+                                Text(
+                                    text = stringResource(R.string.belief_after_display, current.beliefAfter),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.padding(top = 4.dp)
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun SituationBlock(situation: String, modifier: Modifier = Modifier) {
+    Column(modifier = modifier) {
+        Text(
+            text = stringResource(R.string.situation_display_label),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
+        Text(
+            text = situation,
+            style = MaterialTheme.typography.bodyMedium,
+            fontStyle = FontStyle.Italic
+        )
+        HorizontalDivider(
+            modifier = Modifier.padding(top = 12.dp),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.outlineVariant
+        )
     }
 }
 

@@ -1,5 +1,6 @@
 package com.threecolumn.cbt.ui.thoughts
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -33,6 +36,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -41,11 +45,13 @@ import androidx.compose.ui.unit.dp
 import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.CognitiveDistortion
 import com.threecolumn.cbt.data.ThoughtRecord
+import com.threecolumn.cbt.ui.components.PageTabRow
+import kotlinx.coroutines.launch
 
 /** Below this width, three side-by-side columns get too narrow to read; stack instead. */
 private const val WideScreenMinWidthDp = 600
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun ThoughtRecordEditScreen(
     recordId: Long?,
@@ -126,28 +132,28 @@ fun ThoughtRecordEditScreen(
         if (!loaded) return@Scaffold
         val isWideScreen = LocalConfiguration.current.screenWidthDp >= WideScreenMinWidthDp
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            OutlinedTextField(
-                value = situation,
-                onValueChange = { situation = it },
-                label = { Text(stringResource(R.string.situation_label)) },
-                placeholder = { Text(stringResource(R.string.situation_placeholder)) },
-                modifier = Modifier.fillMaxWidth()
-            )
+        if (isWideScreen) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                OutlinedTextField(
+                    value = situation,
+                    onValueChange = { situation = it },
+                    label = { Text(stringResource(R.string.situation_label)) },
+                    placeholder = { Text(stringResource(R.string.situation_placeholder)) },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-            HorizontalDivider(
-                thickness = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant
-            )
+                HorizontalDivider(
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant
+                )
 
-            if (isWideScreen) {
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.fillMaxWidth()) {
                     AutomaticThoughtColumn(
                         automaticThought = automaticThought,
@@ -177,41 +183,72 @@ fun ThoughtRecordEditScreen(
                         modifier = Modifier.weight(1f)
                     )
                 }
-            } else {
-                AutomaticThoughtColumn(
-                    automaticThought = automaticThought,
-                    onAutomaticThoughtChange = { automaticThought = it },
-                    beliefBefore = beliefBefore,
-                    onBeliefBeforeChange = { beliefBefore = it }
-                )
+            }
+        } else {
+            // Three swipeable/tappable pages instead of side-by-side columns: a phone is too
+            // narrow for three columns of full sentences to stay usable for editing.
+            val pagerState = rememberPagerState(pageCount = { 3 })
+            val scope = rememberCoroutineScope()
 
-                HorizontalDivider(
-                    thickness = 1.dp,
-                    color = MaterialTheme.colorScheme.outlineVariant
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
+                Column(modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp)) {
+                    OutlinedTextField(
+                        value = situation,
+                        onValueChange = { situation = it },
+                        label = { Text(stringResource(R.string.situation_label)) },
+                        placeholder = { Text(stringResource(R.string.situation_placeholder)) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                PageTabRow(
+                    pageCount = 3,
+                    currentPage = pagerState.currentPage,
+                    onPageSelected = { page -> scope.launch { pagerState.animateScrollToPage(page) } },
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                 )
-
-                DistortionsColumn(
-                    selectedDistortions = selectedDistortions,
-                    onToggle = { distortion, selected ->
-                        selectedDistortions = if (selected) {
-                            selectedDistortions - distortion
-                        } else {
-                            selectedDistortions + distortion
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) { page ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(16.dp)
+                    ) {
+                        when (page) {
+                            0 -> AutomaticThoughtColumn(
+                                automaticThought = automaticThought,
+                                onAutomaticThoughtChange = { automaticThought = it },
+                                beliefBefore = beliefBefore,
+                                onBeliefBeforeChange = { beliefBefore = it }
+                            )
+                            1 -> DistortionsColumn(
+                                selectedDistortions = selectedDistortions,
+                                onToggle = { distortion, selected ->
+                                    selectedDistortions = if (selected) {
+                                        selectedDistortions - distortion
+                                    } else {
+                                        selectedDistortions + distortion
+                                    }
+                                }
+                            )
+                            else -> RationalResponseColumn(
+                                rationalResponse = rationalResponse,
+                                onRationalResponseChange = { rationalResponse = it },
+                                beliefAfter = beliefAfter,
+                                onBeliefAfterChange = { beliefAfter = it }
+                            )
                         }
                     }
-                )
-
-                HorizontalDivider(
-                    thickness = 1.dp,
-                    color = MaterialTheme.colorScheme.outlineVariant
-                )
-
-                RationalResponseColumn(
-                    rationalResponse = rationalResponse,
-                    onRationalResponseChange = { rationalResponse = it },
-                    beliefAfter = beliefAfter,
-                    onBeliefAfterChange = { beliefAfter = it }
-                )
+                }
             }
         }
     }
