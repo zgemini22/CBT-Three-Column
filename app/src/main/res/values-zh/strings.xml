@@ -31,6 +31,8 @@
     <string name="distortions_none_selected">未选择任何认知歪曲</string>
     <string name="belief_before_display">之前 %1$d%%</string>
     <string name="belief_after_display">之后 %1$d%%</string>
+    <string name="summary_show">显示详情</string>
+    <string name="summary_hide">隐藏详情</string>
 
     <!-- 思维记录编辑 -->
     <string name="new_thought_record_title">新建思维记录</string>
