@@ -267,6 +267,7 @@ private fun AutomaticThoughtColumn(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun DistortionsColumn(
     selectedDistortions: Set<CognitiveDistortion>,
