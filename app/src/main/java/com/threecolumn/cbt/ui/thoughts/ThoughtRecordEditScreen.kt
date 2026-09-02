@@ -2,7 +2,6 @@ package com.threecolumn.cbt.ui.thoughts
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,8 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -47,9 +45,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -344,10 +340,10 @@ private fun SummaryCard(
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     if (!expanded) {
-        // Collapsed: a quiet inline link, no card behind it.
+        // Collapsed: just a small info icon in the top-right, no card behind it.
         SummaryToggle(
-            textRes = R.string.summary_show,
-            icon = Icons.Filled.ExpandMore,
+            descRes = R.string.summary_show,
+            icon = Icons.Outlined.Info,
             onClick = { expanded = true },
             modifier = modifier
         )
@@ -359,10 +355,10 @@ private fun SummaryCard(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         SummaryToggle(
-            textRes = R.string.summary_hide,
-            icon = Icons.Filled.ExpandLess,
+            descRes = R.string.summary_hide,
+            icon = Icons.Outlined.Info,
             onClick = { expanded = false },
-            modifier = Modifier.padding(start = 16.dp, top = 12.dp)
+            modifier = Modifier.padding(top = 4.dp, end = 4.dp)
         )
         Column(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
@@ -405,32 +401,26 @@ private fun SummaryCard(
     }
 }
 
-/** A deliberately quiet expand/collapse affordance: small, muted, and only as wide as its text. */
+/** A deliberately quiet expand/collapse affordance: a small info icon in the top-right. */
 @Composable
 private fun SummaryToggle(
-    textRes: Int,
+    descRes: Int,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier
-            .clip(MaterialTheme.shapes.small)
-            .clickable(onClick = onClick)
-            .padding(vertical = 4.dp, horizontal = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.End
     ) {
-        Text(
-            text = stringResource(textRes),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(16.dp)
-        )
+        IconButton(onClick = onClick, modifier = Modifier.size(32.dp)) {
+            Icon(
+                imageVector = icon,
+                contentDescription = stringResource(descRes),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(18.dp)
+            )
+        }
     }
 }
 
