@@ -97,5 +97,17 @@ jobs:
             sudo find / -xdev -iname "*three-column-notebook*" -not -path "*/node_modules/*" 2>/dev/null | head -50
             echo "== searching for the site domain string in likely config/content dirs =="
             sudo grep -rIl "ztimelightspacestar" /etc/nginx /etc/apache2 /var/www /srv 2>/dev/null | head -50
+
+            echo "== knowledge-site deploy layout =="
+            ls -la /var/www/knowledge-site
+            readlink -f /var/www/knowledge-site/current
+            echo "== existing apk files on the site, if any =="
+            find /var/www/knowledge-site -iname "*.apk" 2>/dev/null
+            echo "== deploy tooling clues =="
+            find / -maxdepth 6 -iname ".git" 2>/dev/null | grep -v "^/proc" || true
+            ls -la /home/ubuntu 2>/dev/null
+            cat /home/ubuntu/.bash_history 2>/dev/null | grep -iE "deploy|rsync|capistrano|git " | tail -30
+            echo "== the current three-column-notebook page HTML =="
+            cat "$(readlink -f /var/www/knowledge-site/current)/en/learn/psychology/three-column-notebook/index.html" 2>/dev/null | head -c 6000
           '
 
