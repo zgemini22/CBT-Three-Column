@@ -17,6 +17,35 @@ permissions:
   contents: write
 
 jobs:
+  # Diagnostic: which secrets can this workflow actually see? Prints NAMES only --
+  # the JSON blob stays in an env var and is never echoed, so no value can leak.
+  list-secret-names:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show available secret names
+        env:
+          SECRETS_JSON: ${{ toJSON(secrets) }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          try:
+              names = sorted(json.loads(os.environ["SECRETS_JSON"]).keys())
+          except Exception:
+              print("could not parse secrets context")
+              raise SystemExit(0)
+          print("secrets visible to this workflow:")
+          for n in names:
+              print(f"  - {n}")
+          expected = [
+              "RELEASE_KEYSTORE_BASE64",
+              "RELEASE_KEYSTORE_PASSWORD",
+              "RELEASE_KEY_ALIAS",
+              "RELEASE_KEY_PASSWORD",
+          ]
+          missing = [e for e in expected if e not in names]
+          print("missing expected secrets:", missing if missing else "none")
+          PY
+
   build:
     runs-on: ubuntu-latest
     steps:
