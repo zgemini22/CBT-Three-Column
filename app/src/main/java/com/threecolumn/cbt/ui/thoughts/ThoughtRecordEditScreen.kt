@@ -7,10 +7,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
@@ -20,6 +22,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
@@ -141,25 +145,24 @@ fun ThoughtRecordEditScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                OutlinedTextField(
-                    value = situation,
-                    onValueChange = { situation = it },
-                    label = { Text(stringResource(R.string.situation_label)) },
-                    placeholder = { Text(stringResource(R.string.situation_placeholder)) },
-                    modifier = Modifier.fillMaxWidth()
+                SummaryCard(
+                    situation = situation,
+                    onSituationChange = { situation = it },
+                    beliefBefore = beliefBefore,
+                    onBeliefBeforeChange = { beliefBefore = it },
+                    beliefAfter = beliefAfter,
+                    onBeliefAfterChange = { beliefAfter = it }
                 )
 
-                HorizontalDivider(
-                    thickness = 1.dp,
-                    color = MaterialTheme.colorScheme.outlineVariant
-                )
-
-                Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Min)
+                ) {
                     AutomaticThoughtColumn(
                         automaticThought = automaticThought,
                         onAutomaticThoughtChange = { automaticThought = it },
-                        beliefBefore = beliefBefore,
-                        onBeliefBeforeChange = { beliefBefore = it },
                         modifier = Modifier.weight(1f)
                     )
                     ColumnDivider()
@@ -178,8 +181,6 @@ fun ThoughtRecordEditScreen(
                     RationalResponseColumn(
                         rationalResponse = rationalResponse,
                         onRationalResponseChange = { rationalResponse = it },
-                        beliefAfter = beliefAfter,
-                        onBeliefAfterChange = { beliefAfter = it },
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -195,15 +196,15 @@ fun ThoughtRecordEditScreen(
                     .fillMaxSize()
                     .padding(padding)
             ) {
-                Column(modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp)) {
-                    OutlinedTextField(
-                        value = situation,
-                        onValueChange = { situation = it },
-                        label = { Text(stringResource(R.string.situation_label)) },
-                        placeholder = { Text(stringResource(R.string.situation_placeholder)) },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
+                SummaryCard(
+                    situation = situation,
+                    onSituationChange = { situation = it },
+                    beliefBefore = beliefBefore,
+                    onBeliefBeforeChange = { beliefBefore = it },
+                    beliefAfter = beliefAfter,
+                    onBeliefAfterChange = { beliefAfter = it },
+                    modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp)
+                )
                 PageTabRow(
                     pageCount = 3,
                     currentPage = pagerState.currentPage,
@@ -226,9 +227,7 @@ fun ThoughtRecordEditScreen(
                         when (page) {
                             0 -> AutomaticThoughtColumn(
                                 automaticThought = automaticThought,
-                                onAutomaticThoughtChange = { automaticThought = it },
-                                beliefBefore = beliefBefore,
-                                onBeliefBeforeChange = { beliefBefore = it }
+                                onAutomaticThoughtChange = { automaticThought = it }
                             )
                             1 -> DistortionsColumn(
                                 selectedDistortions = selectedDistortions,
@@ -242,9 +241,7 @@ fun ThoughtRecordEditScreen(
                             )
                             else -> RationalResponseColumn(
                                 rationalResponse = rationalResponse,
-                                onRationalResponseChange = { rationalResponse = it },
-                                beliefAfter = beliefAfter,
-                                onBeliefAfterChange = { beliefAfter = it }
+                                onRationalResponseChange = { rationalResponse = it }
                             )
                         }
                     }
@@ -258,22 +255,14 @@ fun ThoughtRecordEditScreen(
 private fun AutomaticThoughtColumn(
     automaticThought: String,
     onAutomaticThoughtChange: (String) -> Unit,
-    beliefBefore: Float,
-    onBeliefBeforeChange: (Float) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SectionHeader(number = "1", title = stringResource(R.string.section_automatic_thought))
         OutlinedTextField(
             value = automaticThought,
             onValueChange = onAutomaticThoughtChange,
             minLines = 2,
             modifier = Modifier.fillMaxWidth()
-        )
-        BeliefSlider(
-            label = stringResource(R.string.belief_before_label),
-            value = beliefBefore,
-            onValueChange = onBeliefBeforeChange
         )
     }
 }
@@ -285,7 +274,6 @@ private fun DistortionsColumn(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SectionHeader(number = "2", title = stringResource(R.string.section_distortions))
         Text(
             text = stringResource(R.string.distortions_hint),
             style = MaterialTheme.typography.bodySmall,
@@ -319,23 +307,71 @@ private fun DistortionsColumn(
 private fun RationalResponseColumn(
     rationalResponse: String,
     onRationalResponseChange: (String) -> Unit,
-    beliefAfter: Float,
-    onBeliefAfterChange: (Float) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SectionHeader(number = "3", title = stringResource(R.string.section_rational_response))
         OutlinedTextField(
             value = rationalResponse,
             onValueChange = onRationalResponseChange,
             minLines = 2,
             modifier = Modifier.fillMaxWidth()
         )
-        BeliefSlider(
-            label = stringResource(R.string.belief_after_label),
-            value = beliefAfter,
-            onValueChange = onBeliefAfterChange
-        )
+    }
+}
+
+/** Situation, the three section titles, and the before/after belief sliders once, in one place. */
+@Composable
+private fun SummaryCard(
+    situation: String,
+    onSituationChange: (String) -> Unit,
+    beliefBefore: Float,
+    onBeliefBeforeChange: (Float) -> Unit,
+    beliefAfter: Float,
+    onBeliefAfterChange: (Float) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            OutlinedTextField(
+                value = situation,
+                onValueChange = onSituationChange,
+                label = { Text(stringResource(R.string.situation_label)) },
+                placeholder = { Text(stringResource(R.string.situation_placeholder)) },
+                modifier = Modifier.fillMaxWidth()
+            )
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            Text(
+                text = "1. ${stringResource(R.string.section_automatic_thought)}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "2. ${stringResource(R.string.section_distortions)}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "3. ${stringResource(R.string.section_rational_response)}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            BeliefSlider(
+                label = stringResource(R.string.belief_before_label),
+                value = beliefBefore,
+                onValueChange = onBeliefBeforeChange
+            )
+            BeliefSlider(
+                label = stringResource(R.string.belief_after_label),
+                value = beliefAfter,
+                onValueChange = onBeliefAfterChange
+            )
+        }
     }
 }
 
@@ -347,15 +383,6 @@ private fun ColumnDivider() {
             .fillMaxHeight()
             .width(1.dp)
             .background(MaterialTheme.colorScheme.outlineVariant)
-    )
-}
-
-@Composable
-private fun SectionHeader(number: String, title: String) {
-    Text(
-        text = "$number. $title",
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
     )
 }
 

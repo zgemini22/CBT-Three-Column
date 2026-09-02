@@ -5,10 +5,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
@@ -20,6 +22,8 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -141,44 +145,23 @@ fun ThoughtRecordDetailScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                if (current.situation.isNotBlank()) {
-                    SituationBlock(current.situation)
-                }
-                Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.fillMaxWidth()) {
-                    DetailSection(
-                        number = "1",
-                        title = stringResource(R.string.section_automatic_thought),
-                        modifier = Modifier.weight(1f)
-                    ) {
+                SummaryCard(current)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Min)
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
                         Text(text = current.automaticThought, style = MaterialTheme.typography.bodyLarge)
-                        Text(
-                            text = stringResource(R.string.belief_before_display, current.beliefBefore),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(top = 4.dp)
-                        )
                     }
                     ColumnDivider()
-                    DetailSection(
-                        number = "2",
-                        title = stringResource(R.string.section_distortions),
-                        modifier = Modifier.weight(1f)
-                    ) {
+                    Column(modifier = Modifier.weight(1f)) {
                         DistortionsList(current)
                     }
                     ColumnDivider()
-                    DetailSection(
-                        number = "3",
-                        title = stringResource(R.string.section_rational_response),
-                        modifier = Modifier.weight(1f)
-                    ) {
+                    Column(modifier = Modifier.weight(1f)) {
                         Text(text = current.rationalResponse, style = MaterialTheme.typography.bodyLarge)
-                        Text(
-                            text = stringResource(R.string.belief_after_display, current.beliefAfter),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(top = 4.dp)
-                        )
                     }
                 }
             }
@@ -193,9 +176,7 @@ fun ThoughtRecordDetailScreen(
                     .fillMaxSize()
                     .padding(padding)
             ) {
-                if (current.situation.isNotBlank()) {
-                    SituationBlock(current.situation, modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp))
-                }
+                SummaryCard(current, modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp))
                 PageTabRow(
                     pageCount = 3,
                     currentPage = pagerState.currentPage,
@@ -216,27 +197,9 @@ fun ThoughtRecordDetailScreen(
                             .padding(16.dp)
                     ) {
                         when (page) {
-                            0 -> DetailSection(number = "1", title = stringResource(R.string.section_automatic_thought)) {
-                                Text(text = current.automaticThought, style = MaterialTheme.typography.bodyLarge)
-                                Text(
-                                    text = stringResource(R.string.belief_before_display, current.beliefBefore),
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.padding(top = 4.dp)
-                                )
-                            }
-                            1 -> DetailSection(number = "2", title = stringResource(R.string.section_distortions)) {
-                                DistortionsList(current)
-                            }
-                            else -> DetailSection(number = "3", title = stringResource(R.string.section_rational_response)) {
-                                Text(text = current.rationalResponse, style = MaterialTheme.typography.bodyLarge)
-                                Text(
-                                    text = stringResource(R.string.belief_after_display, current.beliefAfter),
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.padding(top = 4.dp)
-                                )
-                            }
+                            0 -> Text(text = current.automaticThought, style = MaterialTheme.typography.bodyLarge)
+                            1 -> DistortionsList(current)
+                            else -> Text(text = current.rationalResponse, style = MaterialTheme.typography.bodyLarge)
                         }
                     }
                 }
@@ -245,24 +208,58 @@ fun ThoughtRecordDetailScreen(
     }
 }
 
+/** Situation, the three section titles, and the before/after belief once, in one place. */
 @Composable
-private fun SituationBlock(situation: String, modifier: Modifier = Modifier) {
-    Column(modifier = modifier) {
-        Text(
-            text = stringResource(R.string.situation_display_label),
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Text(
-            text = situation,
-            style = MaterialTheme.typography.bodyMedium,
-            fontStyle = FontStyle.Italic
-        )
-        HorizontalDivider(
-            modifier = Modifier.padding(top = 12.dp),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant
-        )
+private fun SummaryCard(current: ThoughtRecord, modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            if (current.situation.isNotBlank()) {
+                Text(
+                    text = stringResource(R.string.situation_display_label),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = current.situation,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontStyle = FontStyle.Italic
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            }
+            Text(
+                text = "1. ${stringResource(R.string.section_automatic_thought)}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "2. ${stringResource(R.string.section_distortions)}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "3. ${stringResource(R.string.section_rational_response)}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                Text(
+                    text = stringResource(R.string.belief_before_display, current.beliefBefore),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = stringResource(R.string.belief_after_display, current.beliefAfter),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
     }
 }
 
@@ -280,24 +277,6 @@ private fun DistortionsList(current: ThoughtRecord) {
         style = MaterialTheme.typography.bodyMedium,
         color = if (distortionLabels.isEmpty()) MaterialTheme.colorScheme.onSurfaceVariant else Color.Unspecified
     )
-}
-
-@Composable
-private fun DetailSection(
-    number: String,
-    title: String,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
-) {
-    Column(modifier = modifier) {
-        Text(
-            text = "$number. $title",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(bottom = 4.dp)
-        )
-        content()
-    }
 }
 
 /** A thin vertical rule between side-by-side columns. */
