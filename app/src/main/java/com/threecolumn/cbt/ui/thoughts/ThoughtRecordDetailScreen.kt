@@ -47,7 +47,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.CognitiveDistortion
@@ -93,8 +92,7 @@ fun ThoughtRecordDetailScreen(
                         record?.let {
                             DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(Date(it.createdAt))
                         }.orEmpty(),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
+                        style = MaterialTheme.typography.titleLarge,
                     )
                 },
                 navigationIcon = {
@@ -292,15 +290,23 @@ private fun DistortionsList(current: ThoughtRecord) {
     val distortionLabels = current.distortionKeys
         .mapNotNull { CognitiveDistortion.fromStorageKey(it) }
         .map { stringResource(it.labelRes) }
-    Text(
-        text = if (distortionLabels.isEmpty()) {
-            stringResource(R.string.distortions_none_selected)
-        } else {
-            distortionLabels.joinToString(" · ")
-        },
-        style = MaterialTheme.typography.bodyMedium,
-        color = if (distortionLabels.isEmpty()) MaterialTheme.colorScheme.onSurfaceVariant else Color.Unspecified
-    )
+    if (distortionLabels.isEmpty()) {
+        Text(
+            text = stringResource(R.string.distortions_none_selected),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    } else {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            distortionLabels.forEach { label ->
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Unspecified
+                )
+            }
+        }
+    }
 }
 
 /** A thin vertical rule between side-by-side columns. */
