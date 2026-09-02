@@ -1,6 +1,16 @@
 name: Build APK
 
 on:
+  push:
+    branches:
+      - claude/mood-therapy-android-app-y0awhz
+    paths:
+      - '.github/workflows/build-apk.yml'
+      - 'app/**'
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
+      - 'gradle.properties'
+      - 'gradle/**'
   workflow_dispatch: {}
 
 jobs:
