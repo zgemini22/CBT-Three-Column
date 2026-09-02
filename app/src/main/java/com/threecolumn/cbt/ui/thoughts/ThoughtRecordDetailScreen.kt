@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -82,6 +81,7 @@ fun ThoughtRecordDetailScreen(
     val beliefAfterPattern = stringResource(R.string.belief_after_display)
     val shareChooserTitle = stringResource(R.string.share_desc)
     val distortionLabelByEntry = CognitiveDistortion.entries.associateWith { stringResource(it.labelRes) }
+    var summaryExpanded by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -99,6 +99,14 @@ fun ThoughtRecordDetailScreen(
                     }
                 },
                 actions = {
+                    IconButton(onClick = { summaryExpanded = !summaryExpanded }) {
+                        Icon(
+                            Icons.Outlined.Info,
+                            contentDescription = stringResource(
+                                if (summaryExpanded) R.string.summary_hide else R.string.summary_show
+                            )
+                        )
+                    }
                     IconButton(onClick = {
                         record?.let { rec ->
                             val distortionLabels = rec.distortionKeys
@@ -150,7 +158,9 @@ fun ThoughtRecordDetailScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                SummaryCard(current)
+                if (summaryExpanded) {
+                    SummaryCard(current)
+                }
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier
@@ -181,7 +191,9 @@ fun ThoughtRecordDetailScreen(
                     .fillMaxSize()
                     .padding(padding)
             ) {
-                SummaryCard(current, modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp))
+                if (summaryExpanded) {
+                    SummaryCard(current, modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp))
+                }
                 PageTabRow(
                     pageCount = 3,
                     currentPage = pagerState.currentPage,
@@ -215,35 +227,16 @@ fun ThoughtRecordDetailScreen(
 
 /**
  * Situation, the three section titles, and the before/after belief once, in one place.
- * Collapsed by default so it doesn't push the record's actual content down the screen.
+ * Shown only when toggled on via the info icon in the top bar.
  */
 @Composable
 private fun SummaryCard(current: ThoughtRecord, modifier: Modifier = Modifier) {
-    var expanded by rememberSaveable { mutableStateOf(false) }
-
-    if (!expanded) {
-        // Collapsed: just a small info icon in the top-right, no card behind it.
-        SummaryToggle(
-            descRes = R.string.summary_show,
-            icon = Icons.Outlined.Info,
-            onClick = { expanded = true },
-            modifier = modifier
-        )
-        return
-    }
-
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
-        SummaryToggle(
-            descRes = R.string.summary_hide,
-            icon = Icons.Outlined.Info,
-            onClick = { expanded = false },
-            modifier = Modifier.padding(top = 4.dp, end = 4.dp)
-        )
         Column(
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+            modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             if (current.situation.isNotBlank()) {
@@ -286,29 +279,6 @@ private fun SummaryCard(current: ThoughtRecord, modifier: Modifier = Modifier) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-        }
-    }
-}
-
-/** A deliberately quiet expand/collapse affordance: a small info icon in the top-right. */
-@Composable
-private fun SummaryToggle(
-    descRes: Int,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End
-    ) {
-        IconButton(onClick = onClick, modifier = Modifier.size(32.dp)) {
-            Icon(
-                imageVector = icon,
-                contentDescription = stringResource(descRes),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(18.dp)
-            )
         }
     }
 }
