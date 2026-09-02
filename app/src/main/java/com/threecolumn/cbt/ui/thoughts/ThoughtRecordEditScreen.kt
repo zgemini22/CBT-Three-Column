@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -48,6 +49,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -341,69 +343,94 @@ private fun SummaryCard(
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
 
+    if (!expanded) {
+        // Collapsed: a quiet inline link, no card behind it.
+        SummaryToggle(
+            textRes = R.string.summary_show,
+            icon = Icons.Filled.ExpandMore,
+            onClick = { expanded = true },
+            modifier = modifier
+        )
+        return
+    }
+
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { expanded = !expanded }
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+        SummaryToggle(
+            textRes = R.string.summary_hide,
+            icon = Icons.Filled.ExpandLess,
+            onClick = { expanded = false },
+            modifier = Modifier.padding(start = 16.dp, top = 12.dp)
+        )
+        Column(
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            OutlinedTextField(
+                value = situation,
+                onValueChange = onSituationChange,
+                label = { Text(stringResource(R.string.situation_label)) },
+                placeholder = { Text(stringResource(R.string.situation_placeholder)) },
+                modifier = Modifier.fillMaxWidth()
+            )
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             Text(
-                text = stringResource(if (expanded) R.string.summary_hide else R.string.summary_show),
-                style = MaterialTheme.typography.labelLarge,
+                text = "1. ${stringResource(R.string.section_automatic_thought)}",
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            Icon(
-                imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            Text(
+                text = "2. ${stringResource(R.string.section_distortions)}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "3. ${stringResource(R.string.section_rational_response)}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            BeliefSlider(
+                label = stringResource(R.string.belief_before_label),
+                value = beliefBefore,
+                onValueChange = onBeliefBeforeChange
+            )
+            BeliefSlider(
+                label = stringResource(R.string.belief_after_label),
+                value = beliefAfter,
+                onValueChange = onBeliefAfterChange
             )
         }
-        if (expanded) {
-            Column(
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                OutlinedTextField(
-                    value = situation,
-                    onValueChange = onSituationChange,
-                    label = { Text(stringResource(R.string.situation_label)) },
-                    placeholder = { Text(stringResource(R.string.situation_placeholder)) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                Text(
-                    text = "1. ${stringResource(R.string.section_automatic_thought)}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = "2. ${stringResource(R.string.section_distortions)}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = "3. ${stringResource(R.string.section_rational_response)}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                BeliefSlider(
-                    label = stringResource(R.string.belief_before_label),
-                    value = beliefBefore,
-                    onValueChange = onBeliefBeforeChange
-                )
-                BeliefSlider(
-                    label = stringResource(R.string.belief_after_label),
-                    value = beliefAfter,
-                    onValueChange = onBeliefAfterChange
-                )
-            }
-        }
+    }
+}
+
+/** A deliberately quiet expand/collapse affordance: small, muted, and only as wide as its text. */
+@Composable
+private fun SummaryToggle(
+    textRes: Int,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .clip(MaterialTheme.shapes.small)
+            .clickable(onClick = onClick)
+            .padding(vertical = 4.dp, horizontal = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = stringResource(textRes),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(16.dp)
+        )
     }
 }
 
