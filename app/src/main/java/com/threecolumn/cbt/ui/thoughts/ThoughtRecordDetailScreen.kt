@@ -90,7 +90,8 @@ fun ThoughtRecordDetailScreen(
                     Text(
                         record?.let {
                             DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(Date(it.createdAt))
-                        }.orEmpty()
+                        }.orEmpty(),
+                        style = MaterialTheme.typography.titleMedium
                     )
                 },
                 navigationIcon = {
