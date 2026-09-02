@@ -5,10 +5,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
@@ -141,15 +143,20 @@ fun ThoughtRecordDetailScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                if (current.situation.isNotBlank()) {
-                    SituationBlock(current.situation)
-                }
-                Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Min)
+                ) {
                     DetailSection(
                         number = "1",
                         title = stringResource(R.string.section_automatic_thought),
                         modifier = Modifier.weight(1f)
                     ) {
+                        if (current.situation.isNotBlank()) {
+                            SituationBlock(current.situation, modifier = Modifier.padding(bottom = 12.dp))
+                        }
                         Text(text = current.automaticThought, style = MaterialTheme.typography.bodyLarge)
                         Text(
                             text = stringResource(R.string.belief_before_display, current.beliefBefore),
@@ -193,11 +200,12 @@ fun ThoughtRecordDetailScreen(
                     .fillMaxSize()
                     .padding(padding)
             ) {
-                if (current.situation.isNotBlank()) {
-                    SituationBlock(current.situation, modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp))
-                }
                 PageTabRow(
-                    pageCount = 3,
+                    titles = listOf(
+                        "1. $automaticThoughtLabel",
+                        "2. $distortionsLabel",
+                        "3. $rationalResponseLabel"
+                    ),
                     currentPage = pagerState.currentPage,
                     onPageSelected = { page -> scope.launch { pagerState.animateScrollToPage(page) } },
                     modifier = Modifier.padding(horizontal = 8.dp)
@@ -216,7 +224,14 @@ fun ThoughtRecordDetailScreen(
                             .padding(16.dp)
                     ) {
                         when (page) {
-                            0 -> DetailSection(number = "1", title = stringResource(R.string.section_automatic_thought)) {
+                            0 -> DetailSection(
+                                number = "1",
+                                title = stringResource(R.string.section_automatic_thought),
+                                showHeader = false
+                            ) {
+                                if (current.situation.isNotBlank()) {
+                                    SituationBlock(current.situation, modifier = Modifier.padding(bottom = 12.dp))
+                                }
                                 Text(text = current.automaticThought, style = MaterialTheme.typography.bodyLarge)
                                 Text(
                                     text = stringResource(R.string.belief_before_display, current.beliefBefore),
@@ -225,10 +240,18 @@ fun ThoughtRecordDetailScreen(
                                     modifier = Modifier.padding(top = 4.dp)
                                 )
                             }
-                            1 -> DetailSection(number = "2", title = stringResource(R.string.section_distortions)) {
+                            1 -> DetailSection(
+                                number = "2",
+                                title = stringResource(R.string.section_distortions),
+                                showHeader = false
+                            ) {
                                 DistortionsList(current)
                             }
-                            else -> DetailSection(number = "3", title = stringResource(R.string.section_rational_response)) {
+                            else -> DetailSection(
+                                number = "3",
+                                title = stringResource(R.string.section_rational_response),
+                                showHeader = false
+                            ) {
                                 Text(text = current.rationalResponse, style = MaterialTheme.typography.bodyLarge)
                                 Text(
                                     text = stringResource(R.string.belief_after_display, current.beliefAfter),
@@ -287,15 +310,18 @@ private fun DetailSection(
     number: String,
     title: String,
     modifier: Modifier = Modifier,
+    showHeader: Boolean = true,
     content: @Composable () -> Unit
 ) {
     Column(modifier = modifier) {
-        Text(
-            text = "$number. $title",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(bottom = 4.dp)
-        )
+        if (showHeader) {
+            Text(
+                text = "$number. $title",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+        }
         content()
     }
 }
