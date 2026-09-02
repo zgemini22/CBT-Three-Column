@@ -28,13 +28,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.CognitiveDistortion
 import com.threecolumn.cbt.data.ThoughtRecord
 import com.threecolumn.cbt.ui.components.SearchField
-import com.threecolumn.cbt.ui.components.numberedLabel
 import com.threecolumn.cbt.ui.theme.notebookMargin
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -52,7 +52,7 @@ fun ThoughtRecordListScreen(
     val records by viewModel.records.collectAsState()
     val context = LocalContext.current
     var query by remember { mutableStateOf("") }
-    val distortionLabelByEntry = CognitiveDistortion.entries.associateWith { it.numberedLabel() }
+    val distortionLabelByEntry = CognitiveDistortion.entries.associateWith { stringResource(it.labelRes) }
     val filteredRecords = remember(records, query, distortionLabelByEntry) {
         filterRecords(records, query, distortionLabelByEntry)
     }
@@ -256,7 +256,7 @@ private fun ThoughtRecordCard(record: ThoughtRecord, onClick: () -> Unit) {
             )
             val distortionLabels = record.distortionKeys
                 .mapNotNull { CognitiveDistortion.fromStorageKey(it) }
-                .map { it.numberedLabel() }
+                .map { stringResource(it.labelRes) }
             if (distortionLabels.isNotEmpty()) {
                 Text(
                     text = distortionLabels.joinToString(" · "),
@@ -266,7 +266,10 @@ private fun ThoughtRecordCard(record: ThoughtRecord, onClick: () -> Unit) {
             }
             Text(
                 text = stringResource(R.string.belief_before_after, record.beliefBefore, record.beliefAfter),
-                style = MaterialTheme.typography.labelMedium,
+                // The notebook theme's serif font doesn't include a well-centered arrow glyph
+                // (it renders bottom-heavy from a fallback font), so this line opts out of it
+                // and uses the plain system default font instead, like the arrow renders here in chat.
+                style = MaterialTheme.typography.labelMedium.copy(fontFamily = FontFamily.Default),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 4.dp)
             )

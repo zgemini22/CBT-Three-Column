@@ -90,7 +90,7 @@ fun AboutScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "${stringResource(R.string.about_license_label)}: $licenseUrl",
+                    text = stringResource(R.string.about_license_label),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary,
                     textDecoration = TextDecoration.Underline,

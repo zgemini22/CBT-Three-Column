@@ -16,7 +16,7 @@
     <string name="new_thought_record_desc">New thought record</string>
     <string name="thought_records_empty_title">No thought records yet</string>
     <string name="thought_records_empty_body">Tap + to write down an upsetting automatic thought, spot the distortion in it, and talk back with a rational response.</string>
-    <string name="belief_before_after">Belief %1$d%% → %2$d%%</string>
+    <string name="belief_before_after">%1$d%% → %2$d%%</string>
     <string name="group_today">Today</string>
     <string name="group_yesterday">Yesterday</string>
     <string name="group_this_week">This Week</string>
@@ -29,8 +29,10 @@
     <!-- Thought record detail (read-only) -->
     <string name="situation_display_label">Situation</string>
     <string name="distortions_none_selected">No distortions selected</string>
-    <string name="belief_before_display">You believed this: %1$d%%</string>
-    <string name="belief_after_display">You believe it now: %1$d%%</string>
+    <string name="belief_before_display">Before %1$d%%</string>
+    <string name="belief_after_display">After %1$d%%</string>
+    <string name="summary_show">Show details</string>
+    <string name="summary_hide">Hide details</string>
 
     <!-- Thought record edit -->
     <string name="new_thought_record_title">New thought record</string>
@@ -38,11 +40,11 @@
     <string name="situation_label">Situation (optional)</string>
     <string name="situation_placeholder">What was happening when the thought showed up?</string>
     <string name="section_automatic_thought">Automatic Thought</string>
-    <string name="belief_before_label">How much did you believe it?</string>
+    <string name="belief_before_label">Before</string>
     <string name="section_distortions">Cognitive Distortion(s)</string>
     <string name="distortions_hint">Tap any that apply — descriptions appear below once selected.</string>
     <string name="section_rational_response">Rational Response</string>
-    <string name="belief_after_label">How much do you believe the automatic thought now?</string>
+    <string name="belief_after_label">After</string>
 
     <!-- Cognitive distortions -->
     <string name="distortion_all_or_nothing_label">All-or-Nothing Thinking</string>
@@ -126,5 +128,5 @@
 
     <!-- Proper names / fixed data, intentionally identical in every locale file -->
     <string name="author_name">Shengxing Zhang</string>
-    <string name="license_url">https://52.77.216.225/psychology/cbt/three-column-notebook/license/</string>
+    <string name="license_url">https://ztimelightspacestar.com/apps/three-column-method/</string>
 </resources>

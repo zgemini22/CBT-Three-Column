@@ -16,7 +16,7 @@
     <string name="new_thought_record_desc">新建思维记录</string>
     <string name="thought_records_empty_title">还没有任何记录</string>
     <string name="thought_records_empty_body">点击右下角的 + ，写下让你难受的自动化思维，找出其中的认知歪曲，再写下一个更合理的回应。</string>
-    <string name="belief_before_after">相信程度 %1$d%% → %2$d%%</string>
+    <string name="belief_before_after">%1$d%% → %2$d%%</string>
     <string name="group_today">今天</string>
     <string name="group_yesterday">昨天</string>
     <string name="group_this_week">本周</string>
@@ -29,8 +29,10 @@
     <!-- 思维记录详情（只读） -->
     <string name="situation_display_label">情境</string>
     <string name="distortions_none_selected">未选择任何认知歪曲</string>
-    <string name="belief_before_display">当时的相信程度：%1$d%%</string>
-    <string name="belief_after_display">现在的相信程度：%1$d%%</string>
+    <string name="belief_before_display">之前 %1$d%%</string>
+    <string name="belief_after_display">之后 %1$d%%</string>
+    <string name="summary_show">显示详情</string>
+    <string name="summary_hide">隐藏详情</string>
 
     <!-- 思维记录编辑 -->
     <string name="new_thought_record_title">新建思维记录</string>
@@ -38,11 +40,11 @@
     <string name="situation_label">情境（选填）</string>
     <string name="situation_placeholder">这个想法出现时，你正在经历什么？</string>
     <string name="section_automatic_thought">自动化思维</string>
-    <string name="belief_before_label">你当时有多相信这个想法？</string>
+    <string name="belief_before_label">之前</string>
     <string name="section_distortions">认知歪曲</string>
     <string name="distortions_hint">点击选中所有符合的类型，选中后下方会显示说明。</string>
     <string name="section_rational_response">合理回应</string>
-    <string name="belief_after_label">现在你还有多相信这个自动化思维？</string>
+    <string name="belief_after_label">之后</string>
 
     <!-- 认知歪曲（原创释义，非书中原文） -->
     <string name="distortion_all_or_nothing_label">非黑即白思维</string>

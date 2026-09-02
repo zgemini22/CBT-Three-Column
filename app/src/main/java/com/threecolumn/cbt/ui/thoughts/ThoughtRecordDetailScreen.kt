@@ -1,9 +1,20 @@
 package com.threecolumn.cbt.ui.thoughts
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -11,6 +22,9 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -22,22 +36,32 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.CognitiveDistortion
-import com.threecolumn.cbt.ui.components.numberedLabel
+import com.threecolumn.cbt.data.ThoughtRecord
+import com.threecolumn.cbt.ui.components.PageTabRow
 import com.threecolumn.cbt.util.shareText
+import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.util.Date
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
+/** Below this width, three side-by-side columns get too narrow to read; stack instead. */
+private const val WideScreenMinWidthDp = 600
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ThoughtRecordDetailScreen(
     recordId: Long,
@@ -56,7 +80,8 @@ fun ThoughtRecordDetailScreen(
     val rationalResponseLabel = stringResource(R.string.section_rational_response)
     val beliefAfterPattern = stringResource(R.string.belief_after_display)
     val shareChooserTitle = stringResource(R.string.share_desc)
-    val distortionLabelByEntry = CognitiveDistortion.entries.associateWith { it.numberedLabel() }
+    val distortionLabelByEntry = CognitiveDistortion.entries.associateWith { stringResource(it.labelRes) }
+    var summaryExpanded by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -74,6 +99,14 @@ fun ThoughtRecordDetailScreen(
                     }
                 },
                 actions = {
+                    IconButton(onClick = { summaryExpanded = !summaryExpanded }) {
+                        Icon(
+                            Icons.Outlined.Info,
+                            contentDescription = stringResource(
+                                if (summaryExpanded) R.string.summary_hide else R.string.summary_show
+                            )
+                        )
+                    }
                     IconButton(onClick = {
                         record?.let { rec ->
                             val distortionLabels = rec.distortionKeys
@@ -114,79 +147,136 @@ fun ThoughtRecordDetailScreen(
         }
     ) { padding ->
         val current = record ?: return@Scaffold
+        val isWideScreen = LocalConfiguration.current.screenWidthDp >= WideScreenMinWidthDp
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            if (current.situation.isNotBlank()) {
-                Column {
-                    Text(
-                        text = stringResource(R.string.situation_display_label),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
-                        text = current.situation,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontStyle = FontStyle.Italic
-                    )
-                    HorizontalDivider(
-                        modifier = Modifier.padding(top = 12.dp),
-                        thickness = 1.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant
-                    )
+        if (isWideScreen) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                if (summaryExpanded) {
+                    SummaryCard(current)
+                }
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Min)
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(text = current.automaticThought, style = MaterialTheme.typography.bodyLarge)
+                    }
+                    ColumnDivider()
+                    Column(modifier = Modifier.weight(1f)) {
+                        DistortionsList(current)
+                    }
+                    ColumnDivider()
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(text = current.rationalResponse, style = MaterialTheme.typography.bodyLarge)
+                    }
                 }
             }
+        } else {
+            // Three swipeable/tappable pages instead of side-by-side columns: a phone is too
+            // narrow for three columns of full sentences to stay readable.
+            val pagerState = rememberPagerState(pageCount = { 3 })
+            val scope = rememberCoroutineScope()
 
-            DetailSection(number = "1", title = stringResource(R.string.section_automatic_thought)) {
-                Text(text = current.automaticThought, style = MaterialTheme.typography.bodyLarge)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
+                if (summaryExpanded) {
+                    SummaryCard(current, modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp))
+                }
+                PageTabRow(
+                    pageCount = 3,
+                    currentPage = pagerState.currentPage,
+                    onPageSelected = { page -> scope.launch { pagerState.animateScrollToPage(page) } },
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) { page ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(16.dp)
+                    ) {
+                        when (page) {
+                            0 -> Text(text = current.automaticThought, style = MaterialTheme.typography.bodyLarge)
+                            1 -> DistortionsList(current)
+                            else -> Text(text = current.rationalResponse, style = MaterialTheme.typography.bodyLarge)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Situation, the three section titles, and the before/after belief once, in one place.
+ * Shown only when toggled on via the info icon in the top bar.
+ */
+@Composable
+private fun SummaryCard(current: ThoughtRecord, modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            if (current.situation.isNotBlank()) {
+                Text(
+                    text = stringResource(R.string.situation_display_label),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = current.situation,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontStyle = FontStyle.Italic
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            }
+            Text(
+                text = "1. ${stringResource(R.string.section_automatic_thought)}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "2. ${stringResource(R.string.section_distortions)}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "3. ${stringResource(R.string.section_rational_response)}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text(
                     text = stringResource(R.string.belief_before_display, current.beliefBefore),
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 4.dp)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-            }
-
-            HorizontalDivider(
-                modifier = Modifier.padding(vertical = 4.dp),
-                thickness = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant
-            )
-
-            DetailSection(number = "2", title = stringResource(R.string.section_distortions)) {
-                val distortionLabels = current.distortionKeys
-                    .mapNotNull { CognitiveDistortion.fromStorageKey(it) }
-                    .map { it.numberedLabel() }
-                Text(
-                    text = if (distortionLabels.isEmpty()) {
-                        stringResource(R.string.distortions_none_selected)
-                    } else {
-                        distortionLabels.joinToString(" · ")
-                    },
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = if (distortionLabels.isEmpty()) MaterialTheme.colorScheme.onSurfaceVariant else Color.Unspecified
-                )
-            }
-
-            HorizontalDivider(
-                modifier = Modifier.padding(vertical = 4.dp),
-                thickness = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant
-            )
-
-            DetailSection(number = "3", title = stringResource(R.string.section_rational_response)) {
-                Text(text = current.rationalResponse, style = MaterialTheme.typography.bodyLarge)
                 Text(
                     text = stringResource(R.string.belief_after_display, current.beliefAfter),
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 4.dp)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -194,14 +284,28 @@ fun ThoughtRecordDetailScreen(
 }
 
 @Composable
-private fun DetailSection(number: String, title: String, content: @Composable () -> Unit) {
-    Column {
-        Text(
-            text = "$number. $title",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(bottom = 4.dp)
-        )
-        content()
-    }
+private fun DistortionsList(current: ThoughtRecord) {
+    val distortionLabels = current.distortionKeys
+        .mapNotNull { CognitiveDistortion.fromStorageKey(it) }
+        .map { stringResource(it.labelRes) }
+    Text(
+        text = if (distortionLabels.isEmpty()) {
+            stringResource(R.string.distortions_none_selected)
+        } else {
+            distortionLabels.joinToString(" · ")
+        },
+        style = MaterialTheme.typography.bodyMedium,
+        color = if (distortionLabels.isEmpty()) MaterialTheme.colorScheme.onSurfaceVariant else Color.Unspecified
+    )
+}
+
+/** A thin vertical rule between side-by-side columns. */
+@Composable
+private fun ColumnDivider() {
+    Box(
+        modifier = Modifier
+            .fillMaxHeight()
+            .width(1.dp)
+            .background(MaterialTheme.colorScheme.outlineVariant)
+    )
 }
