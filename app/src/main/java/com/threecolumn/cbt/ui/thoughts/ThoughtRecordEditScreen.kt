@@ -62,7 +62,8 @@ private const val WideScreenMinWidthDp = 600
 fun ThoughtRecordEditScreen(
     recordId: Long?,
     viewModel: ThoughtRecordViewModel,
-    onDone: () -> Unit
+    onDone: () -> Unit,
+    initialPage: Int = 0
 ) {
     var existing by remember { mutableStateOf<ThoughtRecord?>(null) }
     var loaded by remember { mutableStateOf(recordId == null) }
@@ -201,7 +202,10 @@ fun ThoughtRecordEditScreen(
         } else {
             // Three swipeable/tappable pages instead of side-by-side columns: a phone is too
             // narrow for three columns of full sentences to stay usable for editing.
-            val pagerState = rememberPagerState(pageCount = { 3 })
+            val pagerState = rememberPagerState(
+                initialPage = initialPage.coerceIn(0, 2),
+                pageCount = { 3 }
+            )
             val scope = rememberCoroutineScope()
 
             Column(

@@ -43,11 +43,11 @@ private object Routes {
     const val ABOUT = "about"
     const val NEW_RECORD = "record/new"
     const val RECORD_DETAIL = "record/{id}"
-    const val EDIT_RECORD = "record/{id}/edit"
+    const val EDIT_RECORD = "record/{id}/edit?focusPage={focusPage}"
     const val NEW_JOURNAL_ENTRY = "journal_entry/new"
     const val EDIT_JOURNAL_ENTRY = "journal_entry/{id}"
     fun recordDetail(id: Long) = "record/$id"
-    fun editRecord(id: Long) = "record/$id/edit"
+    fun editRecord(id: Long, focusPage: Int) = "record/$id/edit?focusPage=$focusPage"
     fun editJournalEntry(id: Long) = "journal_entry/$id"
 }
 
@@ -152,7 +152,8 @@ fun CbtNavHost(
                 ThoughtRecordEditScreen(
                     recordId = null,
                     viewModel = thoughtViewModel,
-                    onDone = { navController.popBackStack() }
+                    onDone = { navController.popBackStack() },
+                    initialPage = 0
                 )
             }
             composable(
@@ -164,18 +165,28 @@ fun CbtNavHost(
                     recordId = id,
                     viewModel = thoughtViewModel,
                     onBack = { navController.popBackStack() },
-                    onEdit = { editId -> navController.navigate(Routes.editRecord(editId)) }
+                    onEdit = { editId, focusPage ->
+                        navController.navigate(Routes.editRecord(editId, focusPage))
+                    }
                 )
             }
             composable(
                 route = Routes.EDIT_RECORD,
-                arguments = listOf(navArgument("id") { type = NavType.LongType })
+                arguments = listOf(
+                    navArgument("id") { type = NavType.LongType },
+                    navArgument("focusPage") {
+                        type = NavType.IntType
+                        defaultValue = 0
+                    }
+                )
             ) { backStackEntry ->
                 val id = backStackEntry.arguments?.getLong("id") ?: return@composable
+                val focusPage = backStackEntry.arguments?.getInt("focusPage") ?: 0
                 ThoughtRecordEditScreen(
                     recordId = id,
                     viewModel = thoughtViewModel,
-                    onDone = { navController.popBackStack() }
+                    onDone = { navController.popBackStack() },
+                    initialPage = focusPage
                 )
             }
             composable(Routes.NEW_JOURNAL_ENTRY) {

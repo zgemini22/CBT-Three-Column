@@ -1,5 +1,6 @@
 package com.threecolumn.cbt.ui.thoughts
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -89,6 +90,10 @@ fun ThoughtRecordListScreen(
         } else {
             selectedRecordIds + id
         }
+    }
+
+    BackHandler(enabled = selectionMode) {
+        selectedRecordIds = emptyList()
     }
 
     Scaffold(

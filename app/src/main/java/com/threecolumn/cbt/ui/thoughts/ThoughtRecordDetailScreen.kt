@@ -33,6 +33,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -67,7 +68,7 @@ fun ThoughtRecordDetailScreen(
     recordId: Long,
     viewModel: ThoughtRecordViewModel,
     onBack: () -> Unit,
-    onEdit: (Long) -> Unit
+    onEdit: (Long, Int) -> Unit
 ) {
     val record by remember(recordId) { viewModel.observeById(recordId) }.collectAsState(initial = null)
     val context = LocalContext.current
@@ -82,6 +83,7 @@ fun ThoughtRecordDetailScreen(
     val shareChooserTitle = stringResource(R.string.share_desc)
     val distortionLabelByEntry = CognitiveDistortion.entries.associateWith { stringResource(it.labelRes) }
     var summaryExpanded by rememberSaveable { mutableStateOf(false) }
+    var currentPage by rememberSaveable(recordId) { mutableStateOf(0) }
 
     Scaffold(
         topBar = {
@@ -91,7 +93,7 @@ fun ThoughtRecordDetailScreen(
                         record?.let {
                             DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(Date(it.createdAt))
                         }.orEmpty(),
-                        style = MaterialTheme.typography.titleSmall,
+                        style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold
                     )
                 },
@@ -135,7 +137,7 @@ fun ThoughtRecordDetailScreen(
                     }) {
                         Icon(Icons.Filled.Share, contentDescription = shareChooserTitle)
                     }
-                    IconButton(onClick = { onEdit(recordId) }) {
+                    IconButton(onClick = { onEdit(recordId, currentPage) }) {
                         Icon(Icons.Filled.Edit, contentDescription = stringResource(R.string.edit_desc))
                     }
                 }
@@ -179,8 +181,14 @@ fun ThoughtRecordDetailScreen(
         } else {
             // Three swipeable/tappable pages instead of side-by-side columns: a phone is too
             // narrow for three columns of full sentences to stay readable.
-            val pagerState = rememberPagerState(pageCount = { 3 })
+            val pagerState = rememberPagerState(
+                initialPage = currentPage.coerceIn(0, 2),
+                pageCount = { 3 }
+            )
             val scope = rememberCoroutineScope()
+            LaunchedEffect(pagerState.currentPage) {
+                currentPage = pagerState.currentPage
+            }
 
             Column(
                 modifier = Modifier
