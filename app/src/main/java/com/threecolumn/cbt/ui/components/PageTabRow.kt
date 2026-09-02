@@ -15,41 +15,35 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
 /**
- * A row of tappable page titles (e.g. "1. Automatic Thought"), with the current page bolded and
- * underlined. Pairs with a [androidx.compose.foundation.pager.HorizontalPager] on narrow screens
- * where a three-column layout doesn't fit: each numbered section becomes its own swipeable page,
- * and this tab row is where its title now lives instead of repeating atop the page's own content.
+ * A row of tappable page numbers (1, 2, 3, ...), with the current page bolded and underlined.
+ * Pairs with a [androidx.compose.foundation.pager.HorizontalPager] on narrow screens where a
+ * three-column layout doesn't fit: each numbered section becomes its own swipeable page instead.
  */
 @Composable
 fun PageTabRow(
-    titles: List<String>,
+    pageCount: Int,
     currentPage: Int,
     onPageSelected: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(modifier = modifier.fillMaxWidth()) {
-        titles.forEachIndexed { index, title ->
+        repeat(pageCount) { index ->
             val selected = index == currentPage
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .weight(1f)
                     .clickable { onPageSelected(index) }
-                    .padding(horizontal = 4.dp, vertical = 10.dp)
+                    .padding(vertical = 10.dp)
             ) {
                 Text(
-                    text = title,
-                    style = MaterialTheme.typography.labelMedium,
+                    text = "${index + 1}",
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-                    color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Box(
                     modifier = Modifier

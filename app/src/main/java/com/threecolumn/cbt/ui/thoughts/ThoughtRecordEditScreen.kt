@@ -7,12 +7,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
@@ -143,15 +141,21 @@ fun ThoughtRecordEditScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(IntrinsicSize.Min)
-                ) {
+                OutlinedTextField(
+                    value = situation,
+                    onValueChange = { situation = it },
+                    label = { Text(stringResource(R.string.situation_label)) },
+                    placeholder = { Text(stringResource(R.string.situation_placeholder)) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                HorizontalDivider(
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant
+                )
+
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.fillMaxWidth()) {
                     AutomaticThoughtColumn(
-                        situation = situation,
-                        onSituationChange = { situation = it },
                         automaticThought = automaticThought,
                         onAutomaticThoughtChange = { automaticThought = it },
                         beliefBefore = beliefBefore,
@@ -191,12 +195,17 @@ fun ThoughtRecordEditScreen(
                     .fillMaxSize()
                     .padding(padding)
             ) {
+                Column(modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp)) {
+                    OutlinedTextField(
+                        value = situation,
+                        onValueChange = { situation = it },
+                        label = { Text(stringResource(R.string.situation_label)) },
+                        placeholder = { Text(stringResource(R.string.situation_placeholder)) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
                 PageTabRow(
-                    titles = listOf(
-                        "1. " + stringResource(R.string.section_automatic_thought),
-                        "2. " + stringResource(R.string.section_distortions),
-                        "3. " + stringResource(R.string.section_rational_response)
-                    ),
+                    pageCount = 3,
                     currentPage = pagerState.currentPage,
                     onPageSelected = { page -> scope.launch { pagerState.animateScrollToPage(page) } },
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
@@ -216,13 +225,10 @@ fun ThoughtRecordEditScreen(
                     ) {
                         when (page) {
                             0 -> AutomaticThoughtColumn(
-                                situation = situation,
-                                onSituationChange = { situation = it },
                                 automaticThought = automaticThought,
                                 onAutomaticThoughtChange = { automaticThought = it },
                                 beliefBefore = beliefBefore,
-                                onBeliefBeforeChange = { beliefBefore = it },
-                                showHeader = false
+                                onBeliefBeforeChange = { beliefBefore = it }
                             )
                             1 -> DistortionsColumn(
                                 selectedDistortions = selectedDistortions,
@@ -232,15 +238,13 @@ fun ThoughtRecordEditScreen(
                                     } else {
                                         selectedDistortions + distortion
                                     }
-                                },
-                                showHeader = false
+                                }
                             )
                             else -> RationalResponseColumn(
                                 rationalResponse = rationalResponse,
                                 onRationalResponseChange = { rationalResponse = it },
                                 beliefAfter = beliefAfter,
-                                onBeliefAfterChange = { beliefAfter = it },
-                                showHeader = false
+                                onBeliefAfterChange = { beliefAfter = it }
                             )
                         }
                     }
@@ -252,30 +256,14 @@ fun ThoughtRecordEditScreen(
 
 @Composable
 private fun AutomaticThoughtColumn(
-    situation: String,
-    onSituationChange: (String) -> Unit,
     automaticThought: String,
     onAutomaticThoughtChange: (String) -> Unit,
     beliefBefore: Float,
     onBeliefBeforeChange: (Float) -> Unit,
-    modifier: Modifier = Modifier,
-    showHeader: Boolean = true
+    modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        if (showHeader) {
-            SectionHeader(number = "1", title = stringResource(R.string.section_automatic_thought))
-        }
-        OutlinedTextField(
-            value = situation,
-            onValueChange = onSituationChange,
-            label = { Text(stringResource(R.string.situation_label)) },
-            placeholder = { Text(stringResource(R.string.situation_placeholder)) },
-            modifier = Modifier.fillMaxWidth()
-        )
-        HorizontalDivider(
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant
-        )
+        SectionHeader(number = "1", title = stringResource(R.string.section_automatic_thought))
         OutlinedTextField(
             value = automaticThought,
             onValueChange = onAutomaticThoughtChange,
@@ -294,13 +282,10 @@ private fun AutomaticThoughtColumn(
 private fun DistortionsColumn(
     selectedDistortions: Set<CognitiveDistortion>,
     onToggle: (CognitiveDistortion, Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-    showHeader: Boolean = true
+    modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        if (showHeader) {
-            SectionHeader(number = "2", title = stringResource(R.string.section_distortions))
-        }
+        SectionHeader(number = "2", title = stringResource(R.string.section_distortions))
         Text(
             text = stringResource(R.string.distortions_hint),
             style = MaterialTheme.typography.bodySmall,
@@ -336,13 +321,10 @@ private fun RationalResponseColumn(
     onRationalResponseChange: (String) -> Unit,
     beliefAfter: Float,
     onBeliefAfterChange: (Float) -> Unit,
-    modifier: Modifier = Modifier,
-    showHeader: Boolean = true
+    modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        if (showHeader) {
-            SectionHeader(number = "3", title = stringResource(R.string.section_rational_response))
-        }
+        SectionHeader(number = "3", title = stringResource(R.string.section_rational_response))
         OutlinedTextField(
             value = rationalResponse,
             onValueChange = onRationalResponseChange,
