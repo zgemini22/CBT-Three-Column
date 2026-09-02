@@ -13,6 +13,9 @@ on:
       - 'gradle/**'
   workflow_dispatch: {}
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -38,3 +41,61 @@ jobs:
           path: |
             app/build/outputs/apk/debug/*.apk
             app/build/outputs/apk/release/*.apk
+
+      - name: Publish APKs as a GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-build-${{ github.run_number }}
+          name: "APK build ${{ github.run_number }}"
+          files: |
+            app/build/outputs/apk/debug/*.apk
+            app/build/outputs/apk/release/*.apk
+
+  explore-deploy-target:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect web server layout
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_HOST: 13.213.15.169
+          DEPLOY_USER: ubuntu
+        run: |
+          set -x
+          mkdir -p ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15 "$DEPLOY_USER@$DEPLOY_HOST" '
+            echo "== whoami/sudo =="
+            whoami
+            sudo -n true 2>/dev/null && echo "HAS_PASSWORDLESS_SUDO" || echo "NO_PASSWORDLESS_SUDO"
+
+            echo "== web server processes =="
+            (sudo ss -ltnp 2>/dev/null || ss -ltnp) | grep -E ":(80|443)\b" || true
+
+            echo "== nginx sites =="
+            for f in /etc/nginx/sites-enabled/* /etc/nginx/conf.d/*.conf; do
+              [ -f "$f" ] || continue
+              echo "--- $f ---"
+              sudo cat "$f" 2>/dev/null || cat "$f" 2>/dev/null
+            done
+
+            echo "== apache sites =="
+            for f in /etc/apache2/sites-enabled/*; do
+              [ -f "$f" ] || continue
+              echo "--- $f ---"
+              sudo cat "$f" 2>/dev/null || cat "$f" 2>/dev/null
+            done
+
+            echo "== common web roots =="
+            for d in /var/www /var/www/html /srv/www /home/*/public_html /home/*/www; do
+              [ -d "$d" ] || continue
+              echo "--- $d ---"
+              ls -la "$d" 2>/dev/null
+            done
+
+            echo "== searching for the page path on disk =="
+            sudo find / -xdev -iname "*three-column-notebook*" -not -path "*/node_modules/*" 2>/dev/null | head -50
+            echo "== searching for the site domain string in likely config/content dirs =="
+            sudo grep -rIl "ztimelightspacestar" /etc/nginx /etc/apache2 /var/www /srv 2>/dev/null | head -50
+          '
+
