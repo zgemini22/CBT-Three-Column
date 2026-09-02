@@ -8,6 +8,10 @@
     <string name="about_title">About this app</string>
     <string name="back_desc">Back</string>
     <string name="delete_desc">Delete</string>
+    <string name="clear_selection_desc">Clear selection</string>
+    <string name="selected_count">%1$d selected</string>
+    <string name="delete_selected_title">Delete selected records?</string>
+    <string name="delete_selected_message">This will permanently delete %1$d selected records.</string>
     <string name="save_desc">Save</string>
     <string name="edit_desc">Edit</string>
     <string name="share_desc">Share</string>

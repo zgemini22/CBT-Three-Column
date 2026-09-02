@@ -1,28 +1,41 @@
 package com.threecolumn.cbt.ui.thoughts
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,7 +55,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ThoughtRecordListScreen(
     viewModel: ThoughtRecordViewModel,
@@ -57,8 +70,51 @@ fun ThoughtRecordListScreen(
         filterRecords(records, query, distortionLabelByEntry)
     }
     val groupedRecords = remember(filteredRecords) { groupByRecency(filteredRecords, context) }
+    var selectedRecordIds by rememberSaveable { mutableStateOf(emptyList<Long>()) }
+    var showDeleteConfirmation by remember { mutableStateOf(false) }
+    val selectedIds = selectedRecordIds.toSet()
+    val selectionMode = selectedRecordIds.isNotEmpty()
+
+    LaunchedEffect(records) {
+        val validIds = records.map { it.id }.toSet()
+        val retainedIds = selectedRecordIds.filter(validIds::contains)
+        if (retainedIds.size != selectedRecordIds.size) {
+            selectedRecordIds = retainedIds
+        }
+    }
+
+    fun toggleSelection(id: Long) {
+        selectedRecordIds = if (id in selectedIds) {
+            selectedRecordIds.filterNot { it == id }
+        } else {
+            selectedRecordIds + id
+        }
+    }
 
     Scaffold(
+        topBar = {
+            if (selectionMode) {
+                TopAppBar(
+                    title = { Text(stringResource(R.string.selected_count, selectedRecordIds.size)) },
+                    navigationIcon = {
+                        IconButton(onClick = { selectedRecordIds = emptyList() }) {
+                            Icon(
+                                Icons.Filled.Close,
+                                contentDescription = stringResource(R.string.clear_selection_desc)
+                            )
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = { showDeleteConfirmation = true }) {
+                            Icon(
+                                Icons.Filled.Delete,
+                                contentDescription = stringResource(R.string.delete_desc)
+                            )
+                        }
+                    }
+                )
+            }
+        },
         floatingActionButton = {
             FloatingActionButton(onClick = onNewRecord) {
                 Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.new_thought_record_desc))
@@ -89,13 +145,46 @@ fun ThoughtRecordListScreen(
                                 GroupHeader(label)
                             }
                             items(recordsInGroup, key = { it.id }) { record ->
-                                ThoughtRecordCard(record = record, onClick = { onOpenRecord(record.id) })
+                                ThoughtRecordCard(
+                                    record = record,
+                                    isSelectionMode = selectionMode,
+                                    isSelected = record.id in selectedIds,
+                                    onClick = {
+                                        if (selectionMode) toggleSelection(record.id) else onOpenRecord(record.id)
+                                    },
+                                    onLongClick = { toggleSelection(record.id) },
+                                    onSelectionToggle = { toggleSelection(record.id) }
+                                )
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    if (showDeleteConfirmation) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirmation = false },
+            title = { Text(stringResource(R.string.delete_selected_title)) },
+            text = {
+                Text(stringResource(R.string.delete_selected_message, selectedRecordIds.size))
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.delete(records.filter { it.id in selectedIds })
+                    selectedRecordIds = emptyList()
+                    showDeleteConfirmation = false
+                }) {
+                    Text(stringResource(R.string.delete_desc))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteConfirmation = false }) {
+                    Text(stringResource(R.string.cancel_desc))
+                }
+            }
+        )
     }
 }
 
@@ -233,19 +322,47 @@ private fun NoResultsState() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun ThoughtRecordCard(record: ThoughtRecord, onClick: () -> Unit) {
+private fun ThoughtRecordCard(
+    record: ThoughtRecord,
+    isSelectionMode: Boolean,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit,
+    onSelectionToggle: () -> Unit
+) {
     Card(
-        onClick = onClick,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+        modifier = Modifier.combinedClickable(onClick = onClick, onLongClick = onLongClick),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isSelected) {
+                MaterialTheme.colorScheme.primaryContainer
+            } else {
+                MaterialTheme.colorScheme.surfaceVariant
+            }
+        )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
-                    .format(Date(record.createdAt)),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
+                        .format(Date(record.createdAt)),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.weight(1f)
+                )
+                if (isSelectionMode) {
+                    Checkbox(
+                        checked = isSelected,
+                        onCheckedChange = { onSelectionToggle() },
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+            }
             Text(
                 text = record.automaticThought,
                 style = MaterialTheme.typography.bodyLarge,

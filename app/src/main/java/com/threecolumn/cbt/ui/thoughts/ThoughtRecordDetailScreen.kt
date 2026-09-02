@@ -19,7 +19,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.Info
@@ -47,6 +46,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.CognitiveDistortion
@@ -91,7 +91,8 @@ fun ThoughtRecordDetailScreen(
                         record?.let {
                             DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(Date(it.createdAt))
                         }.orEmpty(),
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.SemiBold
                     )
                 },
                 navigationIcon = {
@@ -133,12 +134,6 @@ fun ThoughtRecordDetailScreen(
                         }
                     }) {
                         Icon(Icons.Filled.Share, contentDescription = shareChooserTitle)
-                    }
-                    IconButton(onClick = {
-                        record?.let { viewModel.delete(it) }
-                        onBack()
-                    }) {
-                        Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.delete_desc))
                     }
                     IconButton(onClick = { onEdit(recordId) }) {
                         Icon(Icons.Filled.Edit, contentDescription = stringResource(R.string.edit_desc))

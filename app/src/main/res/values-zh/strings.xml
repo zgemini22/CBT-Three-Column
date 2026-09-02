@@ -8,6 +8,10 @@
     <string name="about_title">关于本应用</string>
     <string name="back_desc">返回</string>
     <string name="delete_desc">删除</string>
+    <string name="clear_selection_desc">清除选择</string>
+    <string name="selected_count">已选择 %1$d 条</string>
+    <string name="delete_selected_title">删除所选记录？</string>
+    <string name="delete_selected_message">将永久删除所选的 %1$d 条记录。</string>
     <string name="save_desc">保存</string>
     <string name="edit_desc">编辑</string>
     <string name="share_desc">分享</string>
