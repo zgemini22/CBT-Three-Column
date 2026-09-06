@@ -1,0 +1,28 @@
+Three Column Method is a small, private, offline notebook for practicing David Burns' three-column technique from "Feeling Good: The New Mood Therapy" — write down an automatic thought, name the cognitive distortion(s) in it, and answer it with a rational response.
+
+THOUGHT RECORDS
+• Three-column entries: automatic thought → distortion → rational response
+• Before/after belief-strength sliders (0–100%) so you can see the shift
+• Burns' cognitive distortions as tappable chips, each with a short description — "Jumping to Conclusions" is split into Mind Reading and Fortune Telling so they can be chosen separately
+• An optional situation note for context
+• A read-only detail view first, with a share icon to send a formatted copy of any record to another app
+
+DESIGNED FOR YOUR SCREEN
+On a tablet, or a phone in landscape, the three columns sit side by side. On a narrower phone the same three sections become their own pages — swipe between them, or tap a title to jump straight there.
+
+FIND WHAT YOU WROTE
+A search field filters your thought records and journal entries live as you type. The thought record list is grouped by recency — Today, Yesterday, This Week, This Month, and older by month — so recent entries are always easy to find.
+
+PRIVATE BY DESIGN
+Everything stays on your device — nothing is sent anywhere unless you choose to export or share it yourself. Turn on an optional app lock (fingerprint, face, or your device PIN/pattern) from Settings, and the app will hide its content from the recent-apps screen and block screenshots while locked.
+
+A JOURNAL, TOO
+A single-topic notebook for one recurring question: "Why is living in fear of opposition and criticism irrational and unnecessary?" Add a new dated page whenever a fresh thought about it occurs to you, and reorder pages by dragging.
+
+MADE TO FEEL LIKE A NOTEBOOK
+Cream paper, a margin rule, and serif type run through every screen — light or dark, and in English or 简体中文, with an in-app switch for either that's independent of your device settings.
+
+YOUR DATA, YOUR CHOICE
+Export everything to a single file to back it up, or import a file to restore your data or add many records at once — the app shows you the exact format before you pick a file.
+
+This is an independent, unofficial tool. It is not affiliated with or endorsed by the author or publisher of "Feeling Good," and it is not a substitute for professional mental health care.
