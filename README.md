@@ -11,7 +11,7 @@ endorsed by the book's author or publisher, and it is not a substitute for
 professional care.
 
 **Author:** Shengxing Zhang
-**License:** https://52.77.216.225/psychology/cbt/three-column-notebook/license/
+**License:** https://ztimelightspacestar.com/psychology/cbt/three-column-notebook/license/
 
 ## Features
 
@@ -24,6 +24,25 @@ professional care.
   first (distortions shown by name only, no descriptions); an edit icon
   there opens the editable form. A share icon sends a formatted text version
   of the record to any app via the system share sheet.
+- **Responsive layout** — on a tablet or a landscape phone wide enough for
+  it, the detail and edit screens show all three sections as real
+  side-by-side columns. On a narrower phone the same three sections become
+  independent pages you swipe between, or jump to directly by tapping their
+  title in the tab row above them. Situation, the section titles, and the
+  before/after belief numbers are tucked behind a small ⓘ icon in the top
+  bar (next to share/delete/edit, or save) instead of taking up space by
+  default.
+- **Search** — a search field above each list filters live as you type:
+  thought records match on situation, automatic thought, rational response,
+  or distortion name; journal entries match on their text. Both are
+  case-insensitive substring matches.
+- **Grouped by recency** — the thought record list is bucketed into Today /
+  Yesterday / This Week / This Month / older-by-month, newest first within
+  each group.
+- **Optional app lock** — turn on biometric/device-credential unlock
+  (fingerprint, face, or PIN/pattern via `BiometricPrompt`) from About →
+  Privacy. While locked, the app also hides its content from the
+  recents/app-switcher thumbnail and blocks screenshots.
 - **Journal** — a single-topic notebook dedicated to *"Why is living in fear
   of opposition and criticism irrational and unnecessary?"* Add a new dated
   page any time a fresh thought about it occurs to you; pages list like a
@@ -55,19 +74,27 @@ professional care.
 - MVVM: one `ViewModel` per feature, backed by a small repository over a Room DAO
 - AndroidX per-app language + day/night APIs (`AppCompatDelegate`) for the
   in-app language/theme switchers
+- AndroidX Biometric (`BiometricPrompt`) for the optional app lock
 
 ## Project layout
 
 ```
 app/src/main/java/com/threecolumn/cbt/
-  data/                  Room entities, DAOs, database, repositories, JSON import/export
-  ui/thoughts/           Thought record list, read-only detail, and edit screens, ViewModel
-  ui/journal/            Single-topic journal list + entry screens, ViewModel
+  data/                  Room entities, DAOs, database, repositories, JSON import/export,
+                          PrivacyPreferences (app-lock setting)
+  ui/thoughts/           Thought record list (search + recency grouping), responsive
+                          detail/edit screens (columns on wide screens, swipeable pages
+                          on phones), ViewModel
+  ui/journal/            Single-topic journal list (search) + entry screens, ViewModel
   ui/about/              About page: technique/journal blurbs, theme + language pickers,
                           data export/import, author/license
+  ui/privacy/            Biometric app-lock toggle (About page section) and the lock screen
+                          shown before content when it's enabled
+  ui/components/         Shared widgets: SearchField, PageTabRow (the tappable page-title
+                          tab row used by the phone layout)
   ui/theme/              App-wide notebook palette (light + dark), typography, margin-rule modifier
   ui/CbtNavHost.kt       Bottom-nav navigation graph
-  MainActivity.kt
+  MainActivity.kt        Also gates all content behind the lock screen when app lock is on
   CbtApplication.kt      Wires repositories to the Room database
 ```
 
@@ -101,7 +128,7 @@ defaults to the import time if omitted.
 ## Building
 
 Requires Android Studio (Koala or newer) or the command line with an Android
-SDK installed (`compileSdk 34`, `minSdk 26`).
+SDK installed (`compileSdk 35`, `minSdk 26`, `targetSdk 34`).
 
 ```
 ./gradlew assembleDebug
@@ -111,7 +138,27 @@ The debug APK is written to `app/build/outputs/apk/debug/`. Install it on a
 connected device/emulator with `./gradlew installDebug`, or open the project
 in Android Studio and click Run.
 
-> Note: this project was scaffolded in an environment without the Android
-> SDK installed, so the Gradle build itself could not be executed here.
-> Open it in Android Studio (which will prompt to install any missing SDK
-> components) to build and run it.
+### Release builds / signing
+
+`./gradlew assembleRelease` produces an **unsigned** APK unless four
+environment variables are set, in which case it's signed automatically:
+
+```
+RELEASE_KEYSTORE_PATH=/path/to/your.keystore
+RELEASE_KEYSTORE_PASSWORD=...
+RELEASE_KEY_ALIAS=...
+RELEASE_KEY_PASSWORD=...
+./gradlew assembleRelease
+```
+
+Without them, `assembleRelease` still succeeds and just skips the signing
+config — nothing else about the build changes.
+
+### CI
+
+`.github/workflows/build-apk.yml` builds both the debug and release APKs on
+every push to this branch and attaches them to a GitHub Release (tagged
+`apk-build-N`), since GitHub Actions artifacts aren't reachable from every
+environment. It signs the release build the same way, from repo secrets
+named `RELEASE_KEYSTORE_BASE64` (the keystore file, base64-encoded),
+`RELEASE_KEYSTORE_PASSWORD`, `RELEASE_KEY_ALIAS`, and `RELEASE_KEY_PASSWORD`.
