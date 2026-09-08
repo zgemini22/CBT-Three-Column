@@ -27,6 +27,12 @@ class ThoughtRecordViewModel(private val repository: ThoughtRecordRepository) : 
         viewModelScope.launch { repository.delete(record) }
     }
 
+    fun delete(records: List<ThoughtRecord>) {
+        viewModelScope.launch {
+            records.forEach { repository.delete(it) }
+        }
+    }
+
     class Factory(private val repository: ThoughtRecordRepository) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T =

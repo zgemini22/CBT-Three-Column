@@ -19,7 +19,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.Info
@@ -34,6 +33,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -67,7 +67,7 @@ fun ThoughtRecordDetailScreen(
     recordId: Long,
     viewModel: ThoughtRecordViewModel,
     onBack: () -> Unit,
-    onEdit: (Long) -> Unit
+    onEdit: (Long, Int) -> Unit
 ) {
     val record by remember(recordId) { viewModel.observeById(recordId) }.collectAsState(initial = null)
     val context = LocalContext.current
@@ -82,6 +82,7 @@ fun ThoughtRecordDetailScreen(
     val shareChooserTitle = stringResource(R.string.share_desc)
     val distortionLabelByEntry = CognitiveDistortion.entries.associateWith { stringResource(it.labelRes) }
     var summaryExpanded by rememberSaveable { mutableStateOf(false) }
+    var currentPage by rememberSaveable(recordId) { mutableStateOf(0) }
 
     Scaffold(
         topBar = {
@@ -90,7 +91,8 @@ fun ThoughtRecordDetailScreen(
                     Text(
                         record?.let {
                             DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(Date(it.createdAt))
-                        }.orEmpty()
+                        }.orEmpty(),
+                        style = MaterialTheme.typography.titleLarge,
                     )
                 },
                 navigationIcon = {
@@ -133,13 +135,7 @@ fun ThoughtRecordDetailScreen(
                     }) {
                         Icon(Icons.Filled.Share, contentDescription = shareChooserTitle)
                     }
-                    IconButton(onClick = {
-                        record?.let { viewModel.delete(it) }
-                        onBack()
-                    }) {
-                        Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.delete_desc))
-                    }
-                    IconButton(onClick = { onEdit(recordId) }) {
+                    IconButton(onClick = { onEdit(recordId, currentPage) }) {
                         Icon(Icons.Filled.Edit, contentDescription = stringResource(R.string.edit_desc))
                     }
                 }
@@ -183,8 +179,14 @@ fun ThoughtRecordDetailScreen(
         } else {
             // Three swipeable/tappable pages instead of side-by-side columns: a phone is too
             // narrow for three columns of full sentences to stay readable.
-            val pagerState = rememberPagerState(pageCount = { 3 })
+            val pagerState = rememberPagerState(
+                initialPage = currentPage.coerceIn(0, 2),
+                pageCount = { 3 }
+            )
             val scope = rememberCoroutineScope()
+            LaunchedEffect(pagerState.currentPage) {
+                currentPage = pagerState.currentPage
+            }
 
             Column(
                 modifier = Modifier
@@ -288,15 +290,23 @@ private fun DistortionsList(current: ThoughtRecord) {
     val distortionLabels = current.distortionKeys
         .mapNotNull { CognitiveDistortion.fromStorageKey(it) }
         .map { stringResource(it.labelRes) }
-    Text(
-        text = if (distortionLabels.isEmpty()) {
-            stringResource(R.string.distortions_none_selected)
-        } else {
-            distortionLabels.joinToString(" · ")
-        },
-        style = MaterialTheme.typography.bodyMedium,
-        color = if (distortionLabels.isEmpty()) MaterialTheme.colorScheme.onSurfaceVariant else Color.Unspecified
-    )
+    if (distortionLabels.isEmpty()) {
+        Text(
+            text = stringResource(R.string.distortions_none_selected),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    } else {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            distortionLabels.forEach { label ->
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Unspecified
+                )
+            }
+        }
+    }
 }
 
 /** A thin vertical rule between side-by-side columns. */
