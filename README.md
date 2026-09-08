@@ -65,7 +65,9 @@ professional care.
   sitting under them).
 - **Fully offline** — everything is stored locally on-device with Room
   (SQLite); nothing is sent anywhere except when you explicitly export/import
-  a file yourself.
+  a file yourself. Android's automatic cloud backup is disabled
+  (`allowBackup="false"`), so your data is never copied to Google's backup
+  service either.
 
 ## Tech stack
 
