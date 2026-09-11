@@ -198,6 +198,11 @@ fun ThoughtRecordDetailScreen(
                 }
                 PageTabRow(
                     pageCount = 3,
+                    labels = listOf(
+                        stringResource(R.string.tab_automatic_thought),
+                        stringResource(R.string.tab_distortions),
+                        stringResource(R.string.tab_rational_response)
+                    ),
                     currentPage = pagerState.currentPage,
                     onPageSelected = { page -> scope.launch { pagerState.animateScrollToPage(page) } },
                     modifier = Modifier.padding(horizontal = 8.dp)
@@ -245,7 +250,7 @@ private fun SummaryCard(current: ThoughtRecord, modifier: Modifier = Modifier) {
                 Text(
                     text = stringResource(R.string.situation_display_label),
                     style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     text = current.situation,

@@ -15,19 +15,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.threecolumn.cbt.ui.theme.NotebookColors
 
 /**
- * A row of tappable page numbers (1, 2, 3, ...), with the current page bolded and underlined.
+ * A row of tappable page tabs. Each tab shows its entry in [labels] when given, otherwise its
+ * number (1, 2, 3, ...). The current page is set in ink and underlined in the accent colour.
  * Pairs with a [androidx.compose.foundation.pager.HorizontalPager] on narrow screens where a
- * three-column layout doesn't fit: each numbered section becomes its own swipeable page instead.
+ * three-column layout doesn't fit: each section becomes its own swipeable page instead.
  */
 @Composable
 fun PageTabRow(
     pageCount: Int,
     currentPage: Int,
     onPageSelected: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    labels: List<String>? = null
 ) {
     Row(modifier = modifier.fillMaxWidth()) {
         repeat(pageCount) { index ->
@@ -40,15 +44,17 @@ fun PageTabRow(
                     .padding(vertical = 10.dp)
             ) {
                 Text(
-                    text = "${index + 1}",
-                    style = MaterialTheme.typography.titleMedium,
+                    text = labels?.getOrNull(index) ?: "${index + 1}",
+                    style = MaterialTheme.typography.labelLarge,
                     fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-                    color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                    color = if (selected) NotebookColors.ink else NotebookColors.inkFaded,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Box(
                     modifier = Modifier
-                        .padding(top = 4.dp)
-                        .fillMaxWidth(0.5f)
+                        .padding(top = 6.dp)
+                        .fillMaxWidth(0.6f)
                         .height(2.dp)
                         .background(if (selected) MaterialTheme.colorScheme.primary else Color.Transparent)
                 )

@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -80,7 +81,12 @@ fun JournalListScreen(
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = onNewEntry) {
+            FloatingActionButton(
+                onClick = onNewEntry,
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp)
+            ) {
                 Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.journal_new_page_desc))
             }
         }

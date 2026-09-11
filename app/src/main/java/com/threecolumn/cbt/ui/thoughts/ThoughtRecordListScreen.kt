@@ -1,6 +1,8 @@
 package com.threecolumn.cbt.ui.thoughts
 
 import androidx.activity.compose.BackHandler
+import android.text.format.DateUtils
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +25,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -42,6 +45,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -49,12 +55,9 @@ import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.CognitiveDistortion
 import com.threecolumn.cbt.data.ThoughtRecord
 import com.threecolumn.cbt.ui.components.SearchField
+import com.threecolumn.cbt.ui.theme.NotebookColors
 import com.threecolumn.cbt.ui.theme.notebookMargin
-import java.text.DateFormat
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
-import java.util.Locale
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -121,7 +124,12 @@ fun ThoughtRecordListScreen(
             }
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = onNewRecord) {
+            FloatingActionButton(
+                onClick = onNewRecord,
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp)
+            ) {
                 Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.new_thought_record_desc))
             }
         }
@@ -228,7 +236,6 @@ private fun groupByRecency(
     val startOfYesterday = startOfToday - DAY_MILLIS
     val startOfThisWeek = startOfWeek(now)
     val startOfThisMonth = startOfMonth(now)
-    val monthYearFormat = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
 
     val groups = LinkedHashMap<String, MutableList<ThoughtRecord>>()
     for (record in records) {
@@ -237,7 +244,11 @@ private fun groupByRecency(
             record.createdAt >= startOfYesterday -> context.getString(R.string.group_yesterday)
             record.createdAt >= startOfThisWeek -> context.getString(R.string.group_this_week)
             record.createdAt >= startOfThisMonth -> context.getString(R.string.group_this_month)
-            else -> monthYearFormat.format(Date(record.createdAt))
+            else -> DateUtils.formatDateTime(
+                context,
+                record.createdAt,
+                DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_MONTH_DAY or DateUtils.FORMAT_SHOW_YEAR
+            )
         }
         groups.getOrPut(label) { mutableListOf() }.add(record)
     }
@@ -278,7 +289,7 @@ private fun GroupHeader(label: String) {
         text = label,
         style = MaterialTheme.typography.labelLarge,
         fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.primary
+        color = NotebookColors.ink
     )
 }
 
@@ -339,6 +350,7 @@ private fun ThoughtRecordCard(
 ) {
     Card(
         modifier = Modifier.combinedClickable(onClick = onClick, onLongClick = onLongClick),
+        border = BorderStroke(1.dp, NotebookColors.line),
         colors = CardDefaults.cardColors(
             containerColor = if (isSelected) {
                 MaterialTheme.colorScheme.primaryContainer
@@ -354,8 +366,12 @@ private fun ThoughtRecordCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
-                        .format(Date(record.createdAt)),
+                    text = DateUtils.formatDateTime(
+                        LocalContext.current,
+                        record.createdAt,
+                        DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_WEEKDAY or
+                            DateUtils.FORMAT_ABBREV_ALL or DateUtils.FORMAT_NO_YEAR
+                    ),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.weight(1f)
@@ -383,17 +399,20 @@ private fun ThoughtRecordCard(
                 Text(
                     text = distortionLabels.joinToString(" · "),
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
+            // The belief drop is the point of the method, so the "after" value carries the accent.
+            val faded = MaterialTheme.colorScheme.onSurfaceVariant
+            val accent = MaterialTheme.colorScheme.primary
             Text(
-                text = stringResource(R.string.belief_before_after, record.beliefBefore, record.beliefAfter),
-                // The notebook theme's serif font doesn't include a well-centered arrow glyph
-                // (it renders bottom-heavy from a fallback font), so this line opts out of it
-                // and uses the plain system default font instead, like the arrow renders here in chat.
-                style = MaterialTheme.typography.labelMedium.copy(fontFamily = FontFamily.Default),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = 4.dp)
+                text = buildAnnotatedString {
+                    withStyle(SpanStyle(color = faded)) { append("${record.beliefBefore}%  \u2192  ") }
+                    withStyle(SpanStyle(color = accent, fontWeight = FontWeight.Bold)) { append("${record.beliefAfter}%") }
+                },
+                // The serif font has no well-centered arrow glyph, so this line uses the system default.
+                style = MaterialTheme.typography.bodyMedium.copy(fontFamily = FontFamily.Default),
+                modifier = Modifier.padding(top = 6.dp)
             )
         }
     }

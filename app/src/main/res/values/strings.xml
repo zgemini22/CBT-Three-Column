@@ -48,6 +48,9 @@
     <string name="section_distortions">Cognitive Distortion(s)</string>
     <string name="distortions_hint">Tap any that apply — descriptions appear below once selected.</string>
     <string name="section_rational_response">Rational Response</string>
+    <string name="tab_automatic_thought">Thought</string>
+    <string name="tab_distortions">Distortions</string>
+    <string name="tab_rational_response">Response</string>
     <string name="belief_after_label">After</string>
 
     <!-- Cognitive distortions -->

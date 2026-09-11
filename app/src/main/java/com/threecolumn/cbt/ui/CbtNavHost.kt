@@ -1,7 +1,7 @@
 package com.threecolumn.cbt.ui
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.SelfImprovement
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -9,12 +9,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -36,6 +41,7 @@ import com.threecolumn.cbt.ui.thoughts.ThoughtRecordDetailScreen
 import com.threecolumn.cbt.ui.thoughts.ThoughtRecordEditScreen
 import com.threecolumn.cbt.ui.thoughts.ThoughtRecordListScreen
 import com.threecolumn.cbt.ui.thoughts.ThoughtRecordViewModel
+import com.threecolumn.cbt.ui.theme.NotebookColors
 
 private object Routes {
     const val THOUGHTS = "thoughts"
@@ -90,7 +96,7 @@ fun CbtNavHost(
                     title = { Text(stringResource(R.string.app_name)) },
                     actions = {
                         IconButton(onClick = { navController.navigate(Routes.ABOUT) }) {
-                            Icon(Icons.Filled.Info, contentDescription = stringResource(R.string.about_desc))
+                            Icon(Icons.Outlined.Info, contentDescription = stringResource(R.string.about_desc), tint = NotebookColors.inkFaded)
                         }
                     }
                 )
@@ -98,22 +104,32 @@ fun CbtNavHost(
         },
         bottomBar = {
             if (showChrome) {
-                NavigationBar {
-                    topLevelDestinations.forEach { destination ->
-                        val selected = currentRoute?.hierarchy?.any { it.route == destination.route } == true
-                        val label = stringResource(destination.labelRes)
-                        NavigationBarItem(
-                            selected = selected,
-                            onClick = {
-                                navController.navigate(destination.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            },
-                            icon = { Icon(destination.icon, contentDescription = label) },
-                            label = { Text(label) }
-                        )
+                Column {
+                    HorizontalDivider(color = NotebookColors.line)
+                    NavigationBar(containerColor = NotebookColors.paper, tonalElevation = 0.dp) {
+                        topLevelDestinations.forEach { destination ->
+                            val selected = currentRoute?.hierarchy?.any { it.route == destination.route } == true
+                            val label = stringResource(destination.labelRes)
+                            NavigationBarItem(
+                                selected = selected,
+                                onClick = {
+                                    navController.navigate(destination.route) {
+                                        popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                },
+                                icon = { Icon(destination.icon, contentDescription = label) },
+                                label = { Text(label) },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                                    selectedTextColor = NotebookColors.ink,
+                                    indicatorColor = NotebookColors.paperAlt,
+                                    unselectedIconColor = NotebookColors.inkFaded,
+                                    unselectedTextColor = NotebookColors.inkFaded
+                                )
+                            )
+                        }
                     }
                 }
             }

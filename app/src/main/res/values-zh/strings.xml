@@ -48,6 +48,9 @@
     <string name="section_distortions">认知歪曲</string>
     <string name="distortions_hint">点击选中所有符合的类型，选中后下方会显示说明。</string>
     <string name="section_rational_response">合理回应</string>
+    <string name="tab_automatic_thought">自动化思维</string>
+    <string name="tab_distortions">认知歪曲</string>
+    <string name="tab_rational_response">合理回应</string>
     <string name="belief_after_label">之后</string>
 
     <!-- 认知歪曲（原创释义，非书中原文） -->

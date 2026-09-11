@@ -12,8 +12,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 private fun colorSchemeFor(palette: NotebookPalette, dark: Boolean): ColorScheme =
     if (dark) {
         darkColorScheme(
-            primary = palette.penBlue,
-            onPrimary = palette.onPenBlue,
+            primary = palette.accent,
+            onPrimary = palette.onAccent,
+            tertiary = palette.penBlue,
+            onTertiary = palette.onPenBlue,
             primaryContainer = palette.paperAlt,
             onPrimaryContainer = palette.ink,
             secondary = palette.penBlue,
@@ -26,14 +28,17 @@ private fun colorSchemeFor(palette: NotebookPalette, dark: Boolean): ColorScheme
             onSurface = palette.ink,
             surfaceVariant = palette.paperAlt,
             onSurfaceVariant = palette.inkFaded,
-            outline = palette.inkFaded,
+            outline = palette.line,
+            outlineVariant = palette.line,
             error = palette.errorPen,
             onError = palette.onErrorPen
         )
     } else {
         lightColorScheme(
-            primary = palette.penBlue,
-            onPrimary = palette.onPenBlue,
+            primary = palette.accent,
+            onPrimary = palette.onAccent,
+            tertiary = palette.penBlue,
+            onTertiary = palette.onPenBlue,
             primaryContainer = palette.paperAlt,
             onPrimaryContainer = palette.ink,
             secondary = palette.penBlue,
@@ -46,7 +51,8 @@ private fun colorSchemeFor(palette: NotebookPalette, dark: Boolean): ColorScheme
             onSurface = palette.ink,
             surfaceVariant = palette.paperAlt,
             onSurfaceVariant = palette.inkFaded,
-            outline = palette.inkFaded,
+            outline = palette.line,
+            outlineVariant = palette.line,
             error = palette.errorPen,
             onError = palette.onErrorPen
         )

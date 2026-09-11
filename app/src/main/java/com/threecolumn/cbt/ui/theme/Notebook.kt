@@ -15,6 +15,9 @@ data class NotebookPalette(
     val paper: Color,
     val paperAlt: Color,
     val marginLine: Color,
+    val accent: Color,
+    val onAccent: Color,
+    val line: Color,
     val ink: Color,
     val inkFaded: Color,
     val penBlue: Color,
@@ -29,6 +32,9 @@ val LightNotebookPalette = NotebookPalette(
     paper = Color(0xFFFDF9EF),
     paperAlt = Color(0xFFF5EDD9),
     marginLine = Color(0xFFD3897E),
+    accent = Color(0xFFC4614F),
+    onAccent = Color(0xFFFDF9EF),
+    line = Color(0xFFE3D8C0),
     ink = Color(0xFF221A12),
     inkFaded = Color(0xFF4A4034),
     penBlue = Color(0xFF2C4A78),
@@ -43,6 +49,9 @@ val DarkNotebookPalette = NotebookPalette(
     paper = Color(0xFF231F1A),
     paperAlt = Color(0xFF2E2820),
     marginLine = Color(0xFFA85C52),
+    accent = Color(0xFFE39A8F),
+    onAccent = Color(0xFF3A1512),
+    line = Color(0xFF3F372D),
     ink = Color(0xFFEDE3D0),
     inkFaded = Color(0xFFB0A48D),
     penBlue = Color(0xFF8FB4E3),
@@ -60,6 +69,9 @@ object NotebookColors {
     val paper: Color @Composable get() = LocalNotebookPalette.current.paper
     val paperAlt: Color @Composable get() = LocalNotebookPalette.current.paperAlt
     val marginLine: Color @Composable get() = LocalNotebookPalette.current.marginLine
+    val accent: Color @Composable get() = LocalNotebookPalette.current.accent
+    val onAccent: Color @Composable get() = LocalNotebookPalette.current.onAccent
+    val line: Color @Composable get() = LocalNotebookPalette.current.line
     val ink: Color @Composable get() = LocalNotebookPalette.current.ink
     val inkFaded: Color @Composable get() = LocalNotebookPalette.current.inkFaded
     val penBlue: Color @Composable get() = LocalNotebookPalette.current.penBlue
