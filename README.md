@@ -12,7 +12,7 @@ endorsed by the book's author or publisher, and it is not a substitute for
 professional care.
 
 **Author:** Shengxing Zhang
-**License:** https://ztimelightspacestar.com/psychology/cbt/three-column-notebook/license/
+**License:** [three-column-notebook/license/](https://ztimelightspacestar.com/apps/three-column-method/)
 
 ## Features
 
