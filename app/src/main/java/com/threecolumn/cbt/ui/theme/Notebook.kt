@@ -2,19 +2,13 @@ package com.threecolumn.cbt.ui.theme
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 
-/** A paper/ink color set. Two instances exist (light and dark) so the notebook look can follow the system theme. */
+/** A quiet, private-feeling color set. Two instances exist (light and dark) so it can follow the system theme. */
 data class NotebookPalette(
     val paper: Color,
     val paperAlt: Color,
-    val marginLine: Color,
     val ink: Color,
     val inkFaded: Color,
     val penBlue: Color,
@@ -26,40 +20,37 @@ data class NotebookPalette(
 )
 
 val LightNotebookPalette = NotebookPalette(
-    paper = Color(0xFFFDF9EF),
-    paperAlt = Color(0xFFF5EDD9),
-    marginLine = Color(0xFFD3897E),
-    ink = Color(0xFF221A12),
-    inkFaded = Color(0xFF4A4034),
-    penBlue = Color(0xFF2C4A78),
-    onPenBlue = Color(0xFFFBF3E3),
-    highlighter = Color(0xFFF3D48A),
-    onHighlighter = Color(0xFF4A3B12),
-    errorPen = Color(0xFFB23A32),
-    onErrorPen = Color(0xFFFBF3E3)
+    paper = Color(0xFFF4F6FA),
+    paperAlt = Color(0xFFE7EBF2),
+    ink = Color(0xFF1B2333),
+    inkFaded = Color(0xFF5B6472),
+    penBlue = Color(0xFF2A4E93),
+    onPenBlue = Color(0xFFFFFFFF),
+    highlighter = Color(0xFFE1E7FA),
+    onHighlighter = Color(0xFF23345E),
+    errorPen = Color(0xFFB3261E),
+    onErrorPen = Color(0xFFFFFFFF)
 )
 
 val DarkNotebookPalette = NotebookPalette(
-    paper = Color(0xFF231F1A),
-    paperAlt = Color(0xFF2E2820),
-    marginLine = Color(0xFFA85C52),
-    ink = Color(0xFFEDE3D0),
-    inkFaded = Color(0xFFB0A48D),
-    penBlue = Color(0xFF8FB4E3),
-    onPenBlue = Color(0xFF162335),
-    highlighter = Color(0xFF5B4A20),
-    onHighlighter = Color(0xFFF3D48A),
-    errorPen = Color(0xFFE0897F),
-    onErrorPen = Color(0xFF3A1512)
+    paper = Color(0xFF12151C),
+    paperAlt = Color(0xFF1C212C),
+    ink = Color(0xFFE4E8F0),
+    inkFaded = Color(0xFF97A0B2),
+    penBlue = Color(0xFF7FA6FF),
+    onPenBlue = Color(0xFF0E1B33),
+    highlighter = Color(0xFF26304A),
+    onHighlighter = Color(0xFFC4D2FF),
+    errorPen = Color(0xFFFFB4AB),
+    onErrorPen = Color(0xFF601410)
 )
 
 val LocalNotebookPalette = staticCompositionLocalOf { LightNotebookPalette }
 
-/** Reads the current (light or dark, per the active theme) notebook palette. */
+/** Reads the current (light or dark, per the active theme) palette. */
 object NotebookColors {
     val paper: Color @Composable get() = LocalNotebookPalette.current.paper
     val paperAlt: Color @Composable get() = LocalNotebookPalette.current.paperAlt
-    val marginLine: Color @Composable get() = LocalNotebookPalette.current.marginLine
     val ink: Color @Composable get() = LocalNotebookPalette.current.ink
     val inkFaded: Color @Composable get() = LocalNotebookPalette.current.inkFaded
     val penBlue: Color @Composable get() = LocalNotebookPalette.current.penBlue
@@ -70,24 +61,4 @@ object NotebookColors {
     val onErrorPen: Color @Composable get() = LocalNotebookPalette.current.onErrorPen
 }
 
-val NotebookFont: FontFamily = FontFamily.Serif
-
-/**
- * A single vertical margin rule, like the red line on ruled notebook paper.
- * Horizontal ruling was tried and dropped: with variable-height wrapped text,
- * fixed-interval lines can't stay aligned to real text baselines and end up
- * cutting through the middle of words instead of sitting under them.
- */
-@Composable
-fun Modifier.notebookMargin(marginInset: Dp = 40.dp): Modifier {
-    val color = NotebookColors.marginLine
-    return this.drawBehind {
-        val marginPx = marginInset.toPx()
-        drawLine(
-            color = color,
-            start = Offset(marginPx, 0f),
-            end = Offset(marginPx, size.height),
-            strokeWidth = 1.5.dp.toPx()
-        )
-    }
-}
+val NotebookFont: FontFamily = FontFamily.Default

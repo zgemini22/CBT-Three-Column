@@ -3,8 +3,9 @@
 A small, private, offline Android app for practicing David Burns' three-column
 technique from *Feeling Good: The New Mood Therapy* — write down an automatic
 thought, name the cognitive distortion(s) in it, and answer it with a rational
-response. The whole app is themed to look and feel like a physical notebook:
-cream paper, a margin rule, serif type, everywhere — not just one screen.
+response. The whole app is themed to look quiet and private rather than
+decorative: a cool, low-key palette and plain system type, everywhere — not
+just one screen.
 
 This is an independent, unofficial tool. It is not affiliated with or
 endorsed by the book's author or publisher, and it is not a substitute for
@@ -58,11 +59,11 @@ professional care.
   import one to restore it or add many records at once. The About page
   shows the exact expected format before you pick a file, so you can
   hand-author a batch import yourself.
-- **Notebook-styled throughout** — every screen shares one paper/ink palette
-  and serif typography, with a single vertical margin rule as the notebook
-  accent (no horizontal ruling — at variable text sizes those can't stay
-  aligned to real line baselines and end up cutting through words instead of
-  sitting under them).
+- **A quiet, private feel throughout** — every screen shares one cool,
+  low-key palette (slate/navy ink on a soft blue-gray surface, a muted
+  security-blue accent) and the system's default type, in both light and
+  dark — nothing that draws attention to the screen or hints at its
+  contents from across the room.
 - **Fully offline** — everything is stored locally on-device with Room
   (SQLite); nothing is sent anywhere except when you explicitly export/import
   a file yourself. Android's automatic cloud backup is disabled
@@ -94,7 +95,7 @@ app/src/main/java/com/threecolumn/cbt/
                           shown before content when it's enabled
   ui/components/         Shared widgets: SearchField, PageTabRow (the tappable page-title
                           tab row used by the phone layout)
-  ui/theme/              App-wide notebook palette (light + dark), typography, margin-rule modifier
+  ui/theme/              App-wide color palette (light + dark) and typography
   ui/CbtNavHost.kt       Bottom-nav navigation graph
   MainActivity.kt        Also gates all content behind the lock screen when app lock is on
   CbtApplication.kt      Wires repositories to the Room database

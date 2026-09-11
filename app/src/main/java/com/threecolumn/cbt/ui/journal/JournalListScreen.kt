@@ -44,7 +44,6 @@ import com.threecolumn.cbt.data.JournalEntry
 import com.threecolumn.cbt.ui.components.SearchField
 import com.threecolumn.cbt.ui.theme.NotebookColors
 import com.threecolumn.cbt.ui.theme.NotebookFont
-import com.threecolumn.cbt.ui.theme.notebookMargin
 import java.text.DateFormat
 import java.util.Date
 
@@ -256,8 +255,7 @@ private fun JournalEntryCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .notebookMargin(marginInset = 28.dp)
-                .padding(start = 36.dp, top = 12.dp, end = 8.dp, bottom = 16.dp)
+                .padding(start = 16.dp, top = 12.dp, end = 8.dp, bottom = 16.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                 Text(

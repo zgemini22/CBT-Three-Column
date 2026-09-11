@@ -35,7 +35,6 @@ import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.CognitiveDistortion
 import com.threecolumn.cbt.data.ThoughtRecord
 import com.threecolumn.cbt.ui.components.SearchField
-import com.threecolumn.cbt.ui.theme.notebookMargin
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -80,9 +79,7 @@ fun ThoughtRecordListScreen(
                     LazyColumn(
                         contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 96.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp),
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .notebookMargin()
+                        modifier = Modifier.fillMaxSize()
                     ) {
                         groupedRecords.forEach { (label, recordsInGroup) ->
                             item(key = "header::$label") {
