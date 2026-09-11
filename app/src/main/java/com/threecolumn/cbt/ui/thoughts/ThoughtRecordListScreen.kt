@@ -45,9 +45,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -58,6 +55,13 @@ import com.threecolumn.cbt.ui.components.SearchField
 import com.threecolumn.cbt.ui.theme.NotebookColors
 import com.threecolumn.cbt.ui.theme.notebookMargin
 import java.util.Calendar
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.ui.text.style.TextOverflow
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -384,13 +388,23 @@ private fun ThoughtRecordCard(
                     )
                 }
             }
+            if (record.situation.isNotBlank()) {
+                Text(
+                    text = record.situation,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(top = 6.dp)
+                )
+            }
             Text(
                 text = record.automaticThought,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Medium,
                 maxLines = 3,
-                modifier = Modifier.padding(top = 4.dp, bottom = 6.dp)
+                modifier = Modifier.padding(top = 4.dp)
             )
             val distortionLabels = record.distortionKeys
                 .mapNotNull { CognitiveDistortion.fromStorageKey(it) }
@@ -399,21 +413,41 @@ private fun ThoughtRecordCard(
                 Text(
                     text = distortionLabels.joinToString(" · "),
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 4.dp)
                 )
             }
-            // The belief drop is the point of the method, so the "after" value carries the accent.
-            val faded = MaterialTheme.colorScheme.onSurfaceVariant
-            val accent = MaterialTheme.colorScheme.primary
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(SpanStyle(color = faded)) { append("${record.beliefBefore}%  \u2192  ") }
-                    withStyle(SpanStyle(color = accent, fontWeight = FontWeight.Bold)) { append("${record.beliefAfter}%") }
-                },
-                // The serif font has no well-centered arrow glyph, so this line uses the system default.
-                style = MaterialTheme.typography.bodyMedium.copy(fontFamily = FontFamily.Default),
-                modifier = Modifier.padding(top = 6.dp)
-            )
+            // The rational response is what the exercise produces, so it is the body of the card:
+            // set in ink, with a short accent rule marking it as the answer.
+            if (record.rationalResponse.isNotBlank()) {
+                Row(modifier = Modifier
+                    .padding(top = 10.dp)
+                    .height(IntrinsicSize.Min)) {
+                    Box(
+                        modifier = Modifier
+                            .width(2.dp)
+                            .fillMaxHeight()
+                            .background(MaterialTheme.colorScheme.primary)
+                    )
+                    Spacer(Modifier.width(10.dp))
+                    Text(
+                        text = record.rationalResponse,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 4,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+            if (record.hasBelief) {
+                Text(
+                    text = "${record.beliefBefore}% \u2192 ${record.beliefAfter}%",
+                    // The serif font has no well-centered arrow glyph, so this line uses the system default.
+                    style = MaterialTheme.typography.labelMedium.copy(fontFamily = FontFamily.Default),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
         }
     }
 }

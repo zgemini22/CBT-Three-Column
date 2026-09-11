@@ -2,13 +2,13 @@ Three Column Method is a small, private, offline notebook for practicing David B
 
 THOUGHT RECORDS
 • Three-column entries: automatic thought → distortion → rational response
-• Before/after belief-strength sliders (0–100%) so you can see the shift
+• Optional before/after belief ratings (0–100%), for when you want to see the shift
 • Burns' cognitive distortions as tappable chips, each with a short description — "Jumping to Conclusions" is split into Mind Reading and Fortune Telling so they can be chosen separately
 • An optional situation note for context
 • A read-only detail view first, with a share icon to send a formatted copy of any record to another app
 
 DESIGNED FOR YOUR SCREEN
-On a tablet, or a phone in landscape, the three columns sit side by side. On a narrower phone the same three sections become their own pages — swipe between them, or tap a title to jump straight there.
+On a tablet, or a phone in landscape, the automatic thought sits on the left and the distortion(s) and rational response on the right, the way Burns fills in the table. On a narrower phone those two halves become two pages — swipe between them, or tap a title to jump straight there.
 
 FIND WHAT YOU WROTE
 A search field filters your thought records and journal entries live as you type. The thought record list is grouped by recency — Today, Yesterday, This Week, This Month, and older by month — so recent entries are always easy to find.

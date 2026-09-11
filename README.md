@@ -16,8 +16,8 @@ professional care.
 ## Features
 
 - **Thought Records** — three-column entries (automatic thought → distortion →
-  rational response) with before/after belief-strength sliders (0–100%) and
-  an optional situation note. Burns' cognitive distortions are available as
+  rational response) with an optional situation note and optional
+  before/after belief ratings (0–100%). Burns' cognitive distortions are available as
   tappable chips, each with a short description; "Jumping to Conclusions" is
   split into its two named forms (Mind Reading and Fortune Telling) so they
   can be chosen separately. Tapping a record opens a read-only detail page
@@ -25,13 +25,13 @@ professional care.
   there opens the editable form. A share icon sends a formatted text version
   of the record to any app via the system share sheet.
 - **Responsive layout** — on a tablet or a landscape phone wide enough for
-  it, the detail and edit screens show all three sections as real
-  side-by-side columns. On a narrower phone the same three sections become
-  independent pages you swipe between, or jump to directly by tapping their
-  title in the tab row above them. Situation, the section titles, and the
-  before/after belief numbers are tucked behind a small ⓘ icon in the top
-  bar (next to share/delete/edit, or save) instead of taking up space by
-  default.
+  it, the detail and edit screens show two side-by-side columns, the way
+  Burns fills in the table: the situation and automatic thought on the
+  left, the distortion(s) and the rational response on the right. On a
+  narrower phone the same two halves become pages you swipe between, or
+  jump to directly by tapping their title in the tab row above them. The
+  optional belief ratings are tucked behind a small ⓘ icon in the top bar
+  instead of taking up space by default.
 - **Search** — a search field above each list filters live as you type:
   thought records match on situation, automatic thought, rational response,
   or distortion name; journal entries match on their text. Both are

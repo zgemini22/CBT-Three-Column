@@ -30,8 +30,8 @@ object DataTransfer {
                     put("automaticThought", record.automaticThought)
                     put("distortions", JSONArray(record.distortionKeys))
                     put("rationalResponse", record.rationalResponse)
-                    put("beliefBefore", record.beliefBefore)
-                    put("beliefAfter", record.beliefAfter)
+                    if (record.beliefBefore >= 0) put("beliefBefore", record.beliefBefore)
+                    if (record.beliefAfter >= 0) put("beliefAfter", record.beliefAfter)
                 }
             )
         }
@@ -75,8 +75,8 @@ object DataTransfer {
                     automaticThought = automaticThought,
                     distortionKeys = distortions.map { it.name },
                     rationalResponse = obj.optString("rationalResponse"),
-                    beliefBefore = obj.optInt("beliefBefore", 0),
-                    beliefAfter = obj.optInt("beliefAfter", 0)
+                    beliefBefore = obj.optInt("beliefBefore", ThoughtRecord.BELIEF_UNSET),
+                    beliefAfter = obj.optInt("beliefAfter", ThoughtRecord.BELIEF_UNSET)
                 )
             }
         }

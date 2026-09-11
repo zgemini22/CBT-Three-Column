@@ -15,6 +15,13 @@ data class ThoughtRecord(
     val automaticThought: String,
     val distortionKeys: List<String>,
     val rationalResponse: String,
+    /** 0..100, or [BELIEF_UNSET] when the user did not rate it. */
     val beliefBefore: Int,
     val beliefAfter: Int
-)
+) {
+    val hasBelief: Boolean get() = beliefBefore >= 0 && beliefAfter >= 0
+
+    companion object {
+        const val BELIEF_UNSET = -1
+    }
+}

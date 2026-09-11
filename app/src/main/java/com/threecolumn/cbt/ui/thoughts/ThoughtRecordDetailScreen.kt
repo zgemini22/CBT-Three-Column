@@ -1,5 +1,6 @@
 package com.threecolumn.cbt.ui.thoughts
 
+import android.text.format.DateUtils
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,7 +44,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -54,11 +55,9 @@ import com.threecolumn.cbt.data.ThoughtRecord
 import com.threecolumn.cbt.ui.components.PageTabRow
 import com.threecolumn.cbt.util.shareText
 import kotlinx.coroutines.launch
-import java.text.DateFormat
-import java.util.Date
 import java.util.Locale
 
-/** Below this width, three side-by-side columns get too narrow to read; stack instead. */
+/** Below this width, two side-by-side columns get too narrow to read; use two pages instead. */
 private const val WideScreenMinWidthDp = 600
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -81,7 +80,7 @@ fun ThoughtRecordDetailScreen(
     val beliefAfterPattern = stringResource(R.string.belief_after_display)
     val shareChooserTitle = stringResource(R.string.share_desc)
     val distortionLabelByEntry = CognitiveDistortion.entries.associateWith { stringResource(it.labelRes) }
-    var summaryExpanded by rememberSaveable { mutableStateOf(false) }
+    var beliefExpanded by rememberSaveable { mutableStateOf(false) }
     var currentPage by rememberSaveable(recordId) { mutableStateOf(0) }
 
     Scaffold(
@@ -90,7 +89,11 @@ fun ThoughtRecordDetailScreen(
                 title = {
                     Text(
                         record?.let {
-                            DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(Date(it.createdAt))
+                            DateUtils.formatDateTime(
+                                context, it.createdAt,
+                                DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_YEAR or
+                                    DateUtils.FORMAT_SHOW_WEEKDAY or DateUtils.FORMAT_ABBREV_WEEKDAY
+                            )
                         }.orEmpty(),
                         style = MaterialTheme.typography.titleLarge,
                     )
@@ -101,11 +104,11 @@ fun ThoughtRecordDetailScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { summaryExpanded = !summaryExpanded }) {
+                    IconButton(onClick = { beliefExpanded = !beliefExpanded }) {
                         Icon(
                             Icons.Outlined.Info,
                             contentDescription = stringResource(
-                                if (summaryExpanded) R.string.summary_hide else R.string.summary_show
+                                if (beliefExpanded) R.string.summary_hide else R.string.summary_show
                             )
                         )
                     }
@@ -114,23 +117,23 @@ fun ThoughtRecordDetailScreen(
                             val distortionLabels = rec.distortionKeys
                                 .mapNotNull { CognitiveDistortion.fromStorageKey(it) }
                                 .mapNotNull { distortionLabelByEntry[it] }
-                            val text = buildString {
+                            val lines = buildList {
                                 if (rec.situation.isNotBlank()) {
-                                    appendLine("$situationLabel: ${rec.situation}")
-                                    appendLine()
+                                    add("$situationLabel: ${rec.situation}")
+                                    add("")
                                 }
-                                appendLine("1. $automaticThoughtLabel")
-                                appendLine(rec.automaticThought)
-                                appendLine(String.format(Locale.getDefault(), beliefBeforePattern, rec.beliefBefore))
-                                appendLine()
-                                appendLine("2. $distortionsLabel")
-                                appendLine(if (distortionLabels.isEmpty()) noneSelectedLabel else distortionLabels.joinToString(" · "))
-                                appendLine()
-                                appendLine("3. $rationalResponseLabel")
-                                appendLine(rec.rationalResponse)
-                                append(String.format(Locale.getDefault(), beliefAfterPattern, rec.beliefAfter))
+                                add(automaticThoughtLabel)
+                                add(rec.automaticThought)
+                                if (rec.beliefBefore >= 0) add(String.format(Locale.getDefault(), beliefBeforePattern, rec.beliefBefore))
+                                add("")
+                                add(distortionsLabel)
+                                add(if (distortionLabels.isEmpty()) noneSelectedLabel else distortionLabels.joinToString(" · "))
+                                add("")
+                                add(rationalResponseLabel)
+                                add(rec.rationalResponse)
+                                if (rec.beliefAfter >= 0) add(String.format(Locale.getDefault(), beliefAfterPattern, rec.beliefAfter))
                             }
-                            shareText(context, text, shareChooserTitle)
+                            shareText(context, lines.joinToString("\n"), shareChooserTitle)
                         }
                     }) {
                         Icon(Icons.Filled.Share, contentDescription = shareChooserTitle)
@@ -154,8 +157,8 @@ fun ThoughtRecordDetailScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                if (summaryExpanded) {
-                    SummaryCard(current)
+                if (beliefExpanded) {
+                    BeliefCard(current)
                 }
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -164,24 +167,20 @@ fun ThoughtRecordDetailScreen(
                         .height(IntrinsicSize.Min)
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(text = current.automaticThought, style = MaterialTheme.typography.bodyLarge)
+                        ThoughtPage(current)
                     }
                     ColumnDivider()
                     Column(modifier = Modifier.weight(1f)) {
-                        DistortionsList(current)
-                    }
-                    ColumnDivider()
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(text = current.rationalResponse, style = MaterialTheme.typography.bodyLarge)
+                        ResponsePage(current)
                     }
                 }
             }
         } else {
-            // Three swipeable/tappable pages instead of side-by-side columns: a phone is too
-            // narrow for three columns of full sentences to stay readable.
+            // Two swipeable/tappable pages instead of side-by-side columns: a phone is too
+            // narrow for two columns of full sentences to stay readable.
             val pagerState = rememberPagerState(
-                initialPage = currentPage.coerceIn(0, 2),
-                pageCount = { 3 }
+                initialPage = currentPage.coerceIn(0, 1),
+                pageCount = { 2 }
             )
             val scope = rememberCoroutineScope()
             LaunchedEffect(pagerState.currentPage) {
@@ -193,15 +192,14 @@ fun ThoughtRecordDetailScreen(
                     .fillMaxSize()
                     .padding(padding)
             ) {
-                if (summaryExpanded) {
-                    SummaryCard(current, modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp))
+                if (beliefExpanded) {
+                    BeliefCard(current, modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp))
                 }
                 PageTabRow(
-                    pageCount = 3,
+                    pageCount = 2,
                     labels = listOf(
                         stringResource(R.string.tab_automatic_thought),
-                        stringResource(R.string.tab_distortions),
-                        stringResource(R.string.tab_rational_response)
+                        stringResource(R.string.tab_distortions_response)
                     ),
                     currentPage = pagerState.currentPage,
                     onPageSelected = { page -> scope.launch { pagerState.animateScrollToPage(page) } },
@@ -220,11 +218,7 @@ fun ThoughtRecordDetailScreen(
                             .verticalScroll(rememberScrollState())
                             .padding(16.dp)
                     ) {
-                        when (page) {
-                            0 -> Text(text = current.automaticThought, style = MaterialTheme.typography.bodyLarge)
-                            1 -> DistortionsList(current)
-                            else -> Text(text = current.rationalResponse, style = MaterialTheme.typography.bodyLarge)
-                        }
+                        if (page == 0) ThoughtPage(current) else ResponsePage(current)
                     }
                 }
             }
@@ -232,57 +226,60 @@ fun ThoughtRecordDetailScreen(
     }
 }
 
-/**
- * Situation, the three section titles, and the before/after belief once, in one place.
- * Shown only when toggled on via the info icon in the top bar.
- */
+/** What happened (if noted), then the thought. */
 @Composable
-private fun SummaryCard(current: ThoughtRecord, modifier: Modifier = Modifier) {
+private fun ThoughtPage(current: ThoughtRecord) {
+    if (current.situation.isNotBlank()) {
+        Text(
+            text = current.situation,
+            style = MaterialTheme.typography.bodyMedium,
+            fontStyle = FontStyle.Italic,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(bottom = 10.dp)
+        )
+    }
+    Text(text = current.automaticThought, style = MaterialTheme.typography.bodyLarge)
+}
+
+/** The distortion(s) named, then the answer. */
+@Composable
+private fun ResponsePage(current: ThoughtRecord) {
+    DistortionsList(current)
+    Spacer(Modifier.height(16.dp))
+    Text(text = current.rationalResponse, style = MaterialTheme.typography.bodyLarge)
+}
+
+/** The optional before/after belief ratings, shown only when toggled on via the info icon. */
+@Composable
+private fun BeliefCard(current: ThoughtRecord, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            if (current.situation.isNotBlank()) {
+            Text(
+                text = stringResource(R.string.belief_card_title),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            if (current.hasBelief) {
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Text(
+                        text = stringResource(R.string.belief_before_display, current.beliefBefore),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                        text = stringResource(R.string.belief_after_display, current.beliefAfter),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            } else {
                 Text(
-                    text = stringResource(R.string.situation_display_label),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = current.situation,
+                    text = stringResource(R.string.belief_not_set),
                     style = MaterialTheme.typography.bodyMedium,
-                    fontStyle = FontStyle.Italic
-                )
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            }
-            Text(
-                text = "1. ${stringResource(R.string.section_automatic_thought)}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(
-                text = "2. ${stringResource(R.string.section_distortions)}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(
-                text = "3. ${stringResource(R.string.section_rational_response)}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                Text(
-                    text = stringResource(R.string.belief_before_display, current.beliefBefore),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = stringResource(R.string.belief_after_display, current.beliefAfter),
-                    style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -295,23 +292,12 @@ private fun DistortionsList(current: ThoughtRecord) {
     val distortionLabels = current.distortionKeys
         .mapNotNull { CognitiveDistortion.fromStorageKey(it) }
         .map { stringResource(it.labelRes) }
-    if (distortionLabels.isEmpty()) {
-        Text(
-            text = stringResource(R.string.distortions_none_selected),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    } else {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            distortionLabels.forEach { label ->
-                Text(
-                    text = label,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Unspecified
-                )
-            }
-        }
-    }
+    Text(
+        text = if (distortionLabels.isEmpty()) stringResource(R.string.distortions_none_selected)
+        else distortionLabels.joinToString(" · "),
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
 }
 
 /** A thin vertical rule between side-by-side columns. */
