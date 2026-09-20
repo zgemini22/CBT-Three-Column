@@ -68,11 +68,18 @@ professional care.
   a file yourself. Android's automatic cloud backup is disabled
   (`allowBackup="false"`), so your data is never copied to Google's backup
   service either.
+- **Encrypted on disk** — the database is encrypted with SQLCipher (AES-256).
+  The passphrase is generated on first run and kept in
+  `EncryptedSharedPreferences`, behind a key held in the Android Keystore, so
+  the database file is unreadable if it's pulled off the device. Databases
+  written by older versions are converted in place the first time the new
+  version opens them.
 
 ## Tech stack
 
 - Kotlin, Jetpack Compose (Material 3), Navigation Compose
-- Room for local persistence
+- Room for local persistence, encrypted with SQLCipher; the passphrase lives in
+  `EncryptedSharedPreferences` (AndroidX Security), keyed from the Android Keystore
 - MVVM: one `ViewModel` per feature, backed by a small repository over a Room DAO
 - AndroidX per-app language + day/night APIs (`AppCompatDelegate`) for the
   in-app language/theme switchers
@@ -82,8 +89,9 @@ professional care.
 
 ```
 app/src/main/java/com/threecolumn/cbt/
-  data/                  Room entities, DAOs, database, repositories, JSON import/export,
-                          PrivacyPreferences (app-lock setting)
+  data/                  Room entities, DAOs, database (SQLCipher-encrypted, with the
+                          plaintext-to-encrypted upgrade path), DatabaseKey, repositories,
+                          JSON import/export, PrivacyPreferences (app-lock setting)
   ui/thoughts/           Thought record list (search + recency grouping), responsive
                           detail/edit screens (columns on wide screens, swipeable pages
                           on phones), ViewModel
