@@ -295,8 +295,7 @@ private fun DistortionsList(current: ThoughtRecord) {
     Text(
         text = if (distortionLabels.isEmpty()) stringResource(R.string.distortions_none_selected)
         else distortionLabels.joinToString(" · "),
-        style = MaterialTheme.typography.labelLarge,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
+        style = MaterialTheme.typography.bodyLarge
     )
 }
 
