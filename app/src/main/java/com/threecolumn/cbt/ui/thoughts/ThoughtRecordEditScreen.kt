@@ -2,11 +2,9 @@ package com.threecolumn.cbt.ui.thoughts
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -296,10 +294,7 @@ private fun DistortionsColumn(
     onToggle: (CognitiveDistortion, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    OutlinedFieldContainer(
-        label = stringResource(R.string.section_distortions),
-        modifier = modifier
-    ) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
             text = stringResource(R.string.distortions_hint),
             style = MaterialTheme.typography.bodySmall,
@@ -312,7 +307,6 @@ private fun DistortionsColumn(
                     selected = selected,
                     onClick = { onToggle(distortion, selected) },
                     label = { Text(stringResource(distortion.labelRes)) },
-                    shape = MaterialTheme.shapes.extraSmall,
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
             }
@@ -329,42 +323,6 @@ private fun DistortionsColumn(
         }
     }
 }
-
-/**
- * The outlined box with a label notched into its top edge that OutlinedTextField draws, for
- * content that isn't a text field. It lets the distortions sit in the record as a third field
- * alongside the thought and the response, instead of as a loose list between them.
- */
-@Composable
-private fun OutlinedFieldContainer(
-    label: String,
-    modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    Box(modifier = modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = LabelHeight / 2)
-                .border(1.dp, MaterialTheme.colorScheme.outline, MaterialTheme.shapes.extraSmall)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            content = content
-        )
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier
-                .padding(start = 12.dp)
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(horizontal = 4.dp)
-        )
-    }
-}
-
-/** Roughly the line height of the label, so half of it sits above the border and half below. */
-private val LabelHeight = 16.dp
 
 @Composable
 private fun RationalResponseColumn(
