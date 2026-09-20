@@ -12,8 +12,8 @@ android {
         applicationId = "com.threecolumn.cbt"
         minSdk = 26
         targetSdk = 34
-        versionCode = 20
-        versionName = "1.7.1"
+        versionCode = 21
+        versionName = "1.7.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -70,6 +70,17 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+
+    // Name APKs CBT-ThreeColumns-v<version>-<buildType>.apk instead of app-<buildType>.apk,
+    // keeping the "-unsigned" marker on a release build that had no signing config.
+    applicationVariants.all {
+        val variant = this
+        outputs.all {
+            val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+            val unsigned = if (variant.signingConfig == null) "-unsigned" else ""
+            output.outputFileName = "CBT-ThreeColumns-v${variant.versionName}-${variant.buildType.name}$unsigned.apk"
         }
     }
 }

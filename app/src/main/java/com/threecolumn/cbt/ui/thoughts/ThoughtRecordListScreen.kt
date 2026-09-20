@@ -412,8 +412,8 @@ private fun ThoughtRecordCard(
             if (distortionLabels.isNotEmpty()) {
                 Text(
                     text = distortionLabels.joinToString(" · "),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(top = 4.dp)
                 )
             }
