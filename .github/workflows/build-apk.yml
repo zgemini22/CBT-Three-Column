@@ -14,7 +14,7 @@ on:
   workflow_dispatch: {}
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
@@ -53,14 +53,5 @@ jobs:
         with:
           name: cbt-three-column-apks
           path: |
-            app/build/outputs/apk/debug/*.apk
-            app/build/outputs/apk/release/*.apk
-
-      - name: Publish APKs as a GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: apk-build-${{ github.run_number }}
-          name: "APK build ${{ github.run_number }}"
-          files: |
             app/build/outputs/apk/debug/*.apk
             app/build/outputs/apk/release/*.apk
