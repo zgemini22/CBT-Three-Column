@@ -17,6 +17,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
@@ -24,7 +26,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.JournalEntryRepository
+import com.threecolumn.cbt.data.JournalTitleStore
 import com.threecolumn.cbt.data.ThoughtRecordRepository
+import com.threecolumn.cbt.ui.journal.journalTitle
 import com.threecolumn.cbt.ui.privacy.PrivacySection
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,6 +36,7 @@ import com.threecolumn.cbt.ui.privacy.PrivacySection
 fun AboutScreen(
     thoughtRecordRepository: ThoughtRecordRepository,
     journalEntryRepository: JournalEntryRepository,
+    journalTitleStore: JournalTitleStore,
     appLockEnabled: Boolean,
     biometricAvailable: Boolean,
     onToggleAppLock: (Boolean) -> Unit,
@@ -50,6 +55,7 @@ fun AboutScreen(
         }
     ) { padding ->
         val uriHandler = LocalUriHandler.current
+        val customJournalTitle by journalTitleStore.customTitle.collectAsState()
         val licenseUrl = stringResource(R.string.license_url)
 
         Column(
@@ -67,7 +73,7 @@ fun AboutScreen(
             )
             Text(stringResource(R.string.about_journal_heading), style = MaterialTheme.typography.titleMedium)
             Text(
-                stringResource(R.string.about_journal_body, stringResource(R.string.journal_topic)),
+                stringResource(R.string.about_journal_body, journalTitle(customJournalTitle)),
                 style = MaterialTheme.typography.bodyMedium
             )
 
@@ -80,7 +86,8 @@ fun AboutScreen(
             )
             DataTransferSection(
                 thoughtRecordRepository = thoughtRecordRepository,
-                journalEntryRepository = journalEntryRepository
+                journalEntryRepository = journalEntryRepository,
+                journalTitleStore = journalTitleStore
             )
 
             Column {

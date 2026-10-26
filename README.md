@@ -34,8 +34,14 @@ professional care.
   instead of taking up space by default.
 - **Search** — a search field above each list filters live as you type:
   thought records match on situation, automatic thought, rational response,
-  or distortion name; journal entries match on their text. Both are
-  case-insensitive substring matches.
+  or distortion name; journal entries match on their text. Separate several
+  words with spaces (full-width spaces from a Chinese keyboard count too) to
+  find entries that contain all of them, in any field. Matches are marked
+  like a highlighter, and a match deep in a long passage is shown from just
+  before it, so it's never cut off by the card. A count of matches sits
+  under the field. The search survives opening a result and coming back;
+  the back button clears it; scrolling the results or pressing the
+  keyboard's search key puts the keyboard away.
 - **Grouped by recency** — the thought record list is bucketed into Today /
   Yesterday / This Week / This Month / older-by-month, newest first within
   each group.
@@ -43,8 +49,10 @@ professional care.
   (fingerprint, face, or PIN/pattern via `BiometricPrompt`) from About →
   Privacy. While locked, the app also hides its content from the
   recents/app-switcher thumbnail and blocks screenshots.
-- **Journal** — a single-topic notebook dedicated to *"Why is living in fear
-  of opposition and criticism irrational and unnecessary?"* Add a new dated
+- **Journal** — a single-topic notebook, by default dedicated to *"Why is
+  living in fear of opposition and criticism irrational and unnecessary?"*
+  The pencil next to the title renames it; leaving it blank goes back to the
+  original (which, unlike a custom title, follows the app language). Add a new dated
   page any time a fresh thought about it occurs to you; pages list like a
   running notebook. Long-press-and-drag the handle on any page to manually
   reorder the list. A share icon on each page sends its text to any app via
@@ -54,7 +62,11 @@ professional care.
   independent of the device's system setting.
 - **Theme** — light, dark, or follows the system setting, chosen from the
   About page.
-- **Export / import / batch add** — export all data to a `.json` file, or
+- **Typing stays above the keyboard** — in the journal and the thought
+  record editor, the line being written is kept in view above the keyboard,
+  even at the end of a long page or in a field that grows as you type.
+- **Export / import / batch add** — export all data (including a custom
+  journal title) to a `.json` file, or
   import one to restore it or add many records at once. The About page
   shows the exact expected format before you pick a file, so you can
   hand-author a batch import yourself.
@@ -83,7 +95,8 @@ professional care.
 ```
 app/src/main/java/com/threecolumn/cbt/
   data/                  Room entities, DAOs, database, repositories, JSON import/export,
-                          PrivacyPreferences (app-lock setting)
+                          PrivacyPreferences (app-lock setting), JournalTitleStore (the
+                          journal's custom title)
   ui/thoughts/           Thought record list (search + recency grouping), responsive
                           detail/edit screens (columns on wide screens, swipeable pages
                           on phones), ViewModel
@@ -92,9 +105,13 @@ app/src/main/java/com/threecolumn/cbt/
                           data export/import, author/license
   ui/privacy/            Biometric app-lock toggle (About page section) and the lock screen
                           shown before content when it's enabled
-  ui/components/         Shared widgets: SearchField, PageTabRow (the tappable page-title
-                          tab row used by the phone layout)
+  ui/components/         Shared widgets: SearchField (plus match highlighting and the
+                          result count), PageTabRow (the tappable page-title tab row
+                          used by the phone layout), keepCursorInView (keeps the line
+                          being typed above the keyboard)
   ui/theme/              App-wide notebook palette (light + dark), typography, margin-rule modifier
+  util/                  SearchQuery (multi-word matching, highlight ranges, excerpts),
+                          sharing
   ui/CbtNavHost.kt       Bottom-nav navigation graph
   MainActivity.kt        Also gates all content behind the lock screen when app lock is on
   CbtApplication.kt      Wires repositories to the Room database
@@ -108,6 +125,7 @@ the authoritative, always-current version and the list of valid
 
 ```json
 {
+  "journalTitle": "Optional: a new title for the journal",
   "thoughtRecords": [
     {
       "situation": "Optional context",
@@ -125,7 +143,9 @@ the authoritative, always-current version and the list of valid
 ```
 
 `createdAt` (milliseconds since epoch) is optional on every entry and
-defaults to the import time if omitted.
+defaults to the import time if omitted. `journalTitle` is optional too; when
+present it renames the journal, and when absent the current title is left
+alone.
 
 ## Building
 

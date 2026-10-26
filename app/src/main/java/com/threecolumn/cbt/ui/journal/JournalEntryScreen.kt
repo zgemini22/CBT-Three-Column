@@ -3,8 +3,10 @@ package com.threecolumn.cbt.ui.journal
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
@@ -24,6 +26,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,10 +36,12 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.JournalEntry
+import com.threecolumn.cbt.ui.components.keepCursorInView
 import com.threecolumn.cbt.ui.theme.NotebookColors
 import com.threecolumn.cbt.ui.theme.NotebookFont
 import com.threecolumn.cbt.ui.theme.notebookMargin
@@ -54,10 +59,12 @@ fun JournalEntryScreen(
     var existing by remember { mutableStateOf<JournalEntry?>(null) }
     var loaded by remember { mutableStateOf(entryId == null) }
 
-    var body by remember { mutableStateOf("") }
+    var bodyField by remember { mutableStateOf(TextFieldValue("")) }
+    val body = bodyField.text
     val newEntryCreatedAt = remember { System.currentTimeMillis() }
     val context = LocalContext.current
-    val journalTopicText = stringResource(R.string.journal_topic)
+    val customTitle by viewModel.customTitle.collectAsState()
+    val journalTopicText = journalTitle(customTitle)
     val shareChooserTitle = stringResource(R.string.share_desc)
 
     LaunchedEffect(entryId) {
@@ -65,7 +72,7 @@ fun JournalEntryScreen(
             val entry = viewModel.getById(entryId)
             existing = entry
             if (entry != null) {
-                body = entry.body
+                bodyField = TextFieldValue(entry.body)
             }
             loaded = true
         }
@@ -134,12 +141,15 @@ fun JournalEntryScreen(
                 .fillMaxSize()
                 .background(NotebookColors.paper)
                 .padding(padding)
+                .consumeWindowInsets(padding)
+                // Ends the scroll area at the keyboard, so "in view" below means above the keyboard.
+                .imePadding()
                 .verticalScroll(rememberScrollState())
                 .notebookMargin(marginInset = 32.dp)
                 .padding(start = 40.dp, top = 12.dp, end = 20.dp, bottom = 40.dp)
         ) {
             Text(
-                text = stringResource(R.string.journal_topic),
+                text = journalTopicText,
                 style = MaterialTheme.typography.titleSmall,
                 fontStyle = FontStyle.Italic,
                 color = NotebookColors.inkFaded,
@@ -157,17 +167,20 @@ fun JournalEntryScreen(
                         color = NotebookColors.inkFaded
                     )
                 }
+                val bodyStyle = MaterialTheme.typography.bodyLarge.copy(
+                    fontFamily = NotebookFont,
+                    fontSize = 17.sp,
+                    lineHeight = 32.sp,
+                    color = NotebookColors.ink
+                )
                 BasicTextField(
-                    value = body,
-                    onValueChange = { body = it },
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(
-                        fontFamily = NotebookFont,
-                        fontSize = 17.sp,
-                        lineHeight = 32.sp,
-                        color = NotebookColors.ink
-                    ),
+                    value = bodyField,
+                    onValueChange = { bodyField = it },
+                    textStyle = bodyStyle,
                     cursorBrush = SolidColor(NotebookColors.ink),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .keepCursorInView(bodyField, bodyStyle)
                 )
             }
         }
