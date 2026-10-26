@@ -54,6 +54,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -99,7 +100,7 @@ fun JournalListScreen(
     val stepPx = with(LocalDensity.current) { (ReorderStep + ItemSpacing).toPx() }
     val reorderDesc = stringResource(R.string.journal_reorder_desc)
     val filteredEntries = remember(localOrder, query) {
-        if (query.isEmpty) localOrder else localOrder.filter { query.matches(listOf(it.body)) }
+        if (query.isEmpty) localOrder else localOrder.filter { query.matches(listOf(it.title, it.body)) }
     }
 
     LaunchedEffect(entries) {
@@ -399,17 +400,31 @@ private fun JournalEntryCard(
                     }
                 }
             }
-            Text(
-                text = highlightMatches(
-                    query.excerpt(entry.body, contextBefore = 40),
-                    query,
-                    searchHighlightStyle()
-                ),
-                style = MaterialTheme.typography.bodyLarge,
-                color = NotebookColors.ink,
-                maxLines = 4,
-                modifier = Modifier.padding(top = 6.dp)
-            )
+            if (entry.title.isNotBlank()) {
+                Text(
+                    text = highlightMatches(entry.title, query, searchHighlightStyle()),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontFamily = NotebookFont,
+                    fontWeight = FontWeight.Bold,
+                    color = NotebookColors.ink,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
+            if (entry.body.isNotBlank()) {
+                Text(
+                    text = highlightMatches(
+                        query.excerpt(entry.body, contextBefore = 40),
+                        query,
+                        searchHighlightStyle()
+                    ),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = NotebookColors.ink,
+                    maxLines = 4,
+                    modifier = Modifier.padding(top = 6.dp)
+                )
+            }
         }
     }
 }

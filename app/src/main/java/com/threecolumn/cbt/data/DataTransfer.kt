@@ -51,6 +51,7 @@ object DataTransfer {
             entriesArray.put(
                 JSONObject().apply {
                     put("createdAt", entry.createdAt)
+                    if (entry.title.isNotBlank()) put("title", entry.title)
                     put("body", entry.body)
                 }
             )
@@ -95,9 +96,11 @@ object DataTransfer {
             for (i in 0 until array.length()) {
                 val obj = array.optJSONObject(i) ?: continue
                 val body = obj.optString("body")
-                if (body.isBlank()) continue
+                val title = JournalEntry.cleanTitle(obj.optString("title"))
+                if (body.isBlank() && title.isEmpty()) continue
                 entries += JournalEntry(
                     createdAt = if (obj.has("createdAt")) obj.optLong("createdAt") else System.currentTimeMillis(),
+                    title = title,
                     body = body
                 )
             }

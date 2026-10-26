@@ -34,7 +34,7 @@ professional care.
   instead of taking up space by default.
 - **Search** — a search field above each list filters live as you type:
   thought records match on situation, automatic thought, rational response,
-  or distortion name; journal entries match on their text. Separate several
+  or distortion name; journal entries match on their title and text. Separate several
   words with spaces (full-width spaces from a Chinese keyboard count too) to
   find entries that contain all of them, in any field. Matches are marked
   like a highlighter, and a match deep in a long passage is shown from just
@@ -53,7 +53,8 @@ professional care.
   living in fear of opposition and criticism irrational and unnecessary?"*
   The pencil next to the title renames it; leaving it blank goes back to the
   original (which, unlike a custom title, follows the app language). Add a new dated
-  page any time a fresh thought about it occurs to you; pages list like a
+  page any time a fresh thought about it occurs to you, and give it its own
+  title at the top of the page if you like; pages list like a
   running notebook. Long-press-and-drag the handle on any page to manually
   reorder the list. A share icon on each page sends its text to any app via
   the system share sheet.
@@ -137,7 +138,7 @@ the authoritative, always-current version and the list of valid
     }
   ],
   "journalEntries": [
-    { "body": "Free-form text for a page" }
+    { "title": "Optional title for the page", "body": "Free-form text for a page" }
   ]
 }
 ```

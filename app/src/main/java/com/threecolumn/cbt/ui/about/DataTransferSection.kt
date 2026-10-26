@@ -44,7 +44,7 @@ private const val IMPORT_FORMAT_EXAMPLE = """{
     }
   ],
   "journalEntries": [
-    { "body": "Free-form text for a page" }
+    { "title": "Optional title for the page", "body": "Free-form text for a page" }
   ]
 }"""
 
