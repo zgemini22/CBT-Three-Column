@@ -27,10 +27,12 @@ import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.CognitiveDistortion
 import com.threecolumn.cbt.data.DataTransfer
 import com.threecolumn.cbt.data.JournalEntryRepository
+import com.threecolumn.cbt.data.JournalTitleStore
 import com.threecolumn.cbt.data.ThoughtRecordRepository
 import kotlinx.coroutines.launch
 
 private const val IMPORT_FORMAT_EXAMPLE = """{
+  "journalTitle": "Optional: a new title for the journal",
   "thoughtRecords": [
     {
       "situation": "Optional context",
@@ -49,9 +51,11 @@ private const val IMPORT_FORMAT_EXAMPLE = """{
 @Composable
 fun DataTransferSection(
     thoughtRecordRepository: ThoughtRecordRepository,
-    journalEntryRepository: JournalEntryRepository
+    journalEntryRepository: JournalEntryRepository,
+    journalTitleStore: JournalTitleStore
 ) {
     val context = LocalContext.current
+    val defaultJournalTitle = stringResource(R.string.journal_topic)
     val scope = rememberCoroutineScope()
     var showImportFormatDialog by remember { mutableStateOf(false) }
     var statusMessage by remember { mutableStateOf<String?>(null) }
@@ -63,7 +67,8 @@ fun DataTransferSection(
         scope.launch {
             val json = DataTransfer.export(
                 thoughtRecordRepository.getAllOnce(),
-                journalEntryRepository.getAllOnce()
+                journalEntryRepository.getAllOnce(),
+                journalTitleStore.customTitle.value
             )
             statusMessage = try {
                 context.contentResolver.openOutputStream(uri)?.use { it.write(json.toByteArray()) }
@@ -85,6 +90,7 @@ fun DataTransferSection(
                 val result = DataTransfer.parseImport(text)
                 thoughtRecordRepository.saveAll(result.thoughtRecords)
                 journalEntryRepository.saveAll(result.journalEntries)
+                result.journalTitle?.let { journalTitleStore.setTitle(it, defaultJournalTitle) }
                 context.getString(
                     R.string.data_import_success,
                     result.thoughtRecords.size,

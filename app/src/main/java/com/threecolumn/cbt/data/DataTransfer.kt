@@ -10,16 +10,25 @@ import org.json.JSONObject
 object DataTransfer {
     private const val KEY_THOUGHT_RECORDS = "thoughtRecords"
     private const val KEY_JOURNAL_ENTRIES = "journalEntries"
+    private const val KEY_JOURNAL_TITLE = "journalTitle"
 
     class ImportException(message: String) : Exception(message)
 
     data class ImportResult(
         val thoughtRecords: List<ThoughtRecord>,
-        val journalEntries: List<JournalEntry>
+        val journalEntries: List<JournalEntry>,
+        /** Null when the file doesn't rename the journal. */
+        val journalTitle: String?
     )
 
-    fun export(thoughtRecords: List<ThoughtRecord>, journalEntries: List<JournalEntry>): String {
+    /** [journalTitle] is the user's own title, or null if they never renamed the journal. */
+    fun export(
+        thoughtRecords: List<ThoughtRecord>,
+        journalEntries: List<JournalEntry>,
+        journalTitle: String?
+    ): String {
         val root = JSONObject()
+        if (journalTitle != null) root.put(KEY_JOURNAL_TITLE, journalTitle)
 
         val recordsArray = JSONArray()
         thoughtRecords.forEach { record ->
@@ -94,10 +103,12 @@ object DataTransfer {
             }
         }
 
-        if (records.isEmpty() && entries.isEmpty()) {
+        val journalTitle = root.optString(KEY_JOURNAL_TITLE).trim().takeIf { it.isNotEmpty() }
+
+        if (records.isEmpty() && entries.isEmpty() && journalTitle == null) {
             throw ImportException("No usable records found in this file.")
         }
 
-        return ImportResult(records, entries)
+        return ImportResult(records, entries, journalTitle)
     }
 }

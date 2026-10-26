@@ -18,6 +18,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Modifier
@@ -84,7 +85,7 @@ fun CbtNavHost(
         factory = ThoughtRecordViewModel.Factory(application.thoughtRecordRepository)
     )
     val journalViewModel: JournalViewModel = viewModel(
-        factory = JournalViewModel.Factory(application.journalEntryRepository)
+        factory = JournalViewModel.Factory(application.journalEntryRepository, application.journalTitleStore)
     )
 
     val showChrome = currentRoute?.hierarchy?.any { it.route == Routes.THOUGHTS || it.route == Routes.JOURNAL } == true
@@ -138,7 +139,11 @@ fun CbtNavHost(
         NavHost(
             navController = navController,
             startDestination = Routes.THOUGHTS,
-            modifier = Modifier.padding(padding)
+            // Consumed, not just applied: every screen has its own Scaffold, which would otherwise
+            // add the system bar insets a second time, and their imePadding() would overshoot.
+            modifier = Modifier
+                .padding(padding)
+                .consumeWindowInsets(padding)
         ) {
             composable(Routes.THOUGHTS) {
                 ThoughtRecordListScreen(
@@ -158,6 +163,7 @@ fun CbtNavHost(
                 AboutScreen(
                     thoughtRecordRepository = application.thoughtRecordRepository,
                     journalEntryRepository = application.journalEntryRepository,
+                    journalTitleStore = application.journalTitleStore,
                     appLockEnabled = appLockEnabled,
                     biometricAvailable = biometricAvailable,
                     onToggleAppLock = onToggleAppLock,

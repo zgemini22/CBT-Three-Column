@@ -12,8 +12,8 @@ android {
         applicationId = "com.threecolumn.cbt"
         minSdk = 26
         targetSdk = 34
-        versionCode = 19
-        versionName = "1.7.0"
+        versionCode = 20
+        versionName = "1.8.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -100,6 +100,8 @@ dependencies {
     ksp("androidx.room:room-compiler:$roomVersion")
 
     testImplementation("junit:junit:4.13.2")
+    // android.jar only stubs org.json, so JVM unit tests of DataTransfer need the real thing.
+    testImplementation("org.json:json:20231013")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")

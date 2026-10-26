@@ -3,6 +3,7 @@ package com.threecolumn.cbt
 import android.app.Application
 import com.threecolumn.cbt.data.AppDatabase
 import com.threecolumn.cbt.data.JournalEntryRepository
+import com.threecolumn.cbt.data.JournalTitleStore
 import com.threecolumn.cbt.data.ThoughtRecordRepository
 
 class CbtApplication : Application() {
@@ -12,4 +13,5 @@ class CbtApplication : Application() {
     val journalEntryRepository: JournalEntryRepository by lazy {
         JournalEntryRepository(AppDatabase.getInstance(this).journalEntryDao())
     }
+    val journalTitleStore: JournalTitleStore by lazy { JournalTitleStore(this) }
 }

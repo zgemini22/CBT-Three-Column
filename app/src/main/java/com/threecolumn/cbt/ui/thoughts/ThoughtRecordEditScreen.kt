@@ -10,10 +10,12 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
@@ -31,6 +33,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -50,11 +53,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.CognitiveDistortion
 import com.threecolumn.cbt.data.ThoughtRecord
+import com.threecolumn.cbt.ui.components.OutlinedTextFieldTextSide
+import com.threecolumn.cbt.ui.components.OutlinedTextFieldTextTop
 import com.threecolumn.cbt.ui.components.PageTabRow
+import com.threecolumn.cbt.ui.components.keepCursorInView
 import kotlinx.coroutines.launch
 
 /** Below this width, two side-by-side columns get too narrow to read; use two pages instead. */
@@ -75,23 +82,27 @@ fun ThoughtRecordEditScreen(
     var existing by remember { mutableStateOf<ThoughtRecord?>(null) }
     var loaded by remember { mutableStateOf(recordId == null) }
 
-    var situation by remember { mutableStateOf("") }
-    var automaticThought by remember { mutableStateOf("") }
-    var rationalResponse by remember { mutableStateOf("") }
+    var situation by remember { mutableStateOf(TextFieldValue("")) }
+    var automaticThought by remember { mutableStateOf(TextFieldValue("")) }
+    var rationalResponse by remember { mutableStateOf(TextFieldValue("")) }
     // Belief ratings are optional: null until the user touches a slider.
     var beliefBefore by remember { mutableStateOf<Int?>(null) }
     var beliefAfter by remember { mutableStateOf<Int?>(null) }
     var selectedDistortions by remember { mutableStateOf(setOf<CognitiveDistortion>()) }
     var beliefExpanded by rememberSaveable { mutableStateOf(false) }
+    // Read here rather than inside the top bar: Scaffold composes its top bar separately, during
+    // measure, and that copy could miss the update when an existing record finished loading,
+    // leaving Save disabled on a record that has both fields filled in.
+    val canSave = automaticThought.text.isNotBlank() && rationalResponse.text.isNotBlank()
 
     LaunchedEffect(recordId) {
         if (recordId != null) {
             val record = viewModel.getById(recordId)
             existing = record
             if (record != null) {
-                situation = record.situation
-                automaticThought = record.automaticThought
-                rationalResponse = record.rationalResponse
+                situation = TextFieldValue(record.situation)
+                automaticThought = TextFieldValue(record.automaticThought)
+                rationalResponse = TextFieldValue(record.rationalResponse)
                 beliefBefore = record.beliefBefore.takeIf { it >= 0 }
                 beliefAfter = record.beliefAfter.takeIf { it >= 0 }
                 selectedDistortions = record.distortionKeys
@@ -129,15 +140,15 @@ fun ThoughtRecordEditScreen(
                     }
                     IconButton(
                         onClick = {
-                            if (automaticThought.isNotBlank() && rationalResponse.isNotBlank()) {
+                            if (canSave) {
                                 viewModel.save(
                                     ThoughtRecord(
                                         id = existing?.id ?: 0,
                                         createdAt = existing?.createdAt ?: System.currentTimeMillis(),
-                                        situation = situation.trim(),
-                                        automaticThought = automaticThought.trim(),
+                                        situation = situation.text.trim(),
+                                        automaticThought = automaticThought.text.trim(),
                                         distortionKeys = selectedDistortions.map { it.name },
-                                        rationalResponse = rationalResponse.trim(),
+                                        rationalResponse = rationalResponse.text.trim(),
                                         beliefBefore = beliefBefore ?: ThoughtRecord.BELIEF_UNSET,
                                         beliefAfter = beliefAfter ?: ThoughtRecord.BELIEF_UNSET
                                     )
@@ -145,7 +156,7 @@ fun ThoughtRecordEditScreen(
                                 onDone()
                             }
                         },
-                        enabled = automaticThought.isNotBlank() && rationalResponse.isNotBlank()
+                        enabled = canSave
                     ) {
                         Icon(Icons.Filled.Check, contentDescription = stringResource(R.string.save_desc))
                     }
@@ -164,6 +175,8 @@ fun ThoughtRecordEditScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
+                    .consumeWindowInsets(padding)
+                    .imePadding()
                     .verticalScroll(rememberScrollState())
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
@@ -207,6 +220,8 @@ fun ThoughtRecordEditScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
+                    .consumeWindowInsets(padding)
+                    .imePadding()
             ) {
                 if (beliefExpanded) {
                     BeliefCard(
@@ -262,10 +277,10 @@ fun ThoughtRecordEditScreen(
 /** Page 1: what happened (optional), then the thought it set off. */
 @Composable
 private fun ThoughtColumn(
-    situation: String,
-    onSituationChange: (String) -> Unit,
-    automaticThought: String,
-    onAutomaticThoughtChange: (String) -> Unit,
+    situation: TextFieldValue,
+    onSituationChange: (TextFieldValue) -> Unit,
+    automaticThought: TextFieldValue,
+    onAutomaticThoughtChange: (TextFieldValue) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -282,7 +297,9 @@ private fun ThoughtColumn(
             onValueChange = onAutomaticThoughtChange,
             label = { Text(stringResource(R.string.section_automatic_thought)) },
             minLines = 3,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .keepCursorInView(automaticThought, LocalTextStyle.current, OutlinedTextFieldTextTop, OutlinedTextFieldTextSide)
         )
     }
 }
@@ -326,8 +343,8 @@ private fun DistortionsColumn(
 
 @Composable
 private fun RationalResponseColumn(
-    rationalResponse: String,
-    onRationalResponseChange: (String) -> Unit,
+    rationalResponse: TextFieldValue,
+    onRationalResponseChange: (TextFieldValue) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -336,7 +353,9 @@ private fun RationalResponseColumn(
             onValueChange = onRationalResponseChange,
             label = { Text(stringResource(R.string.section_rational_response)) },
             minLines = 3,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .keepCursorInView(rationalResponse, LocalTextStyle.current, OutlinedTextFieldTextTop, OutlinedTextFieldTextSide)
         )
     }
 }

@@ -9,12 +9,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
@@ -44,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -51,9 +55,14 @@ import androidx.compose.ui.unit.dp
 import com.threecolumn.cbt.R
 import com.threecolumn.cbt.data.CognitiveDistortion
 import com.threecolumn.cbt.data.ThoughtRecord
+import com.threecolumn.cbt.ui.components.DismissKeyboardOnScroll
 import com.threecolumn.cbt.ui.components.SearchField
+import com.threecolumn.cbt.ui.components.SearchResultCount
+import com.threecolumn.cbt.ui.components.highlightMatches
+import com.threecolumn.cbt.ui.components.searchHighlightStyle
 import com.threecolumn.cbt.ui.theme.NotebookColors
 import com.threecolumn.cbt.ui.theme.notebookMargin
+import com.threecolumn.cbt.util.SearchQuery
 import java.util.Calendar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -72,7 +81,10 @@ fun ThoughtRecordListScreen(
 ) {
     val records by viewModel.records.collectAsState()
     val context = LocalContext.current
-    var query by remember { mutableStateOf("") }
+    // Saveable, so opening a result and coming back finds the search still there.
+    var queryText by rememberSaveable { mutableStateOf("") }
+    val query = remember(queryText) { SearchQuery(queryText) }
+    val focusManager = LocalFocusManager.current
     val distortionLabelByEntry = CognitiveDistortion.entries.associateWith { stringResource(it.labelRes) }
     val filteredRecords = remember(records, query, distortionLabelByEntry) {
         filterRecords(records, query, distortionLabelByEntry)
@@ -97,6 +109,12 @@ fun ThoughtRecordListScreen(
         } else {
             selectedRecordIds + id
         }
+    }
+
+    // Declared before the selection handler so that, when both apply, back leaves selection first.
+    BackHandler(enabled = queryText.isNotEmpty()) {
+        queryText = ""
+        focusManager.clearFocus()
     }
 
     BackHandler(enabled = selectionMode) {
@@ -145,12 +163,18 @@ fun ThoughtRecordListScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
+                    .consumeWindowInsets(padding)
+                    .imePadding()
             ) {
-                SearchField(query = query, onQueryChange = { query = it })
+                SearchField(query = queryText, onQueryChange = { queryText = it })
                 if (filteredRecords.isEmpty()) {
                     NoResultsState()
                 } else {
+                    if (!query.isEmpty) SearchResultCount(filteredRecords.size)
+                    val listState = rememberLazyListState()
+                    DismissKeyboardOnScroll(listState)
                     LazyColumn(
+                        state = listState,
                         contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 96.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         modifier = Modifier
@@ -164,6 +188,7 @@ fun ThoughtRecordListScreen(
                             items(recordsInGroup, key = { it.id }) { record ->
                                 ThoughtRecordCard(
                                     record = record,
+                                    query = query,
                                     isSelectionMode = selectionMode,
                                     isSelected = record.id in selectedIds,
                                     onClick = {
@@ -207,20 +232,17 @@ fun ThoughtRecordListScreen(
 
 private fun filterRecords(
     records: List<ThoughtRecord>,
-    query: String,
+    query: SearchQuery,
     distortionLabelByEntry: Map<CognitiveDistortion, String>
 ): List<ThoughtRecord> {
-    val trimmed = query.trim()
-    if (trimmed.isEmpty()) return records
+    if (query.isEmpty) return records
     return records.filter { record ->
-        record.situation.contains(trimmed, ignoreCase = true) ||
-            record.automaticThought.contains(trimmed, ignoreCase = true) ||
-            record.rationalResponse.contains(trimmed, ignoreCase = true) ||
-            record.distortionKeys.any { key ->
-                CognitiveDistortion.fromStorageKey(key)
-                    ?.let { distortionLabelByEntry[it] }
-                    ?.contains(trimmed, ignoreCase = true) == true
-            }
+        val distortionLabels = record.distortionKeys.mapNotNull { key ->
+            CognitiveDistortion.fromStorageKey(key)?.let { distortionLabelByEntry[it] }
+        }
+        query.matches(
+            listOf(record.situation, record.automaticThought, record.rationalResponse) + distortionLabels
+        )
     }
 }
 
@@ -346,6 +368,7 @@ private fun NoResultsState() {
 @Composable
 private fun ThoughtRecordCard(
     record: ThoughtRecord,
+    query: SearchQuery,
     isSelectionMode: Boolean,
     isSelected: Boolean,
     onClick: () -> Unit,
@@ -363,6 +386,9 @@ private fun ThoughtRecordCard(
             }
         )
     ) {
+        // While searching, each field starts shortly before its first match, so a match deep in a
+        // long passage still lands inside the card's few visible lines, and every match is marked.
+        val highlight = searchHighlightStyle()
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -390,7 +416,7 @@ private fun ThoughtRecordCard(
             }
             if (record.situation.isNotBlank()) {
                 Text(
-                    text = record.situation,
+                    text = highlightMatches(query.excerpt(record.situation, contextBefore = 8), query, highlight),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
@@ -399,7 +425,7 @@ private fun ThoughtRecordCard(
                 )
             }
             Text(
-                text = record.automaticThought,
+                text = highlightMatches(query.excerpt(record.automaticThought, contextBefore = 30), query, highlight),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Medium,
@@ -411,7 +437,7 @@ private fun ThoughtRecordCard(
                 .map { stringResource(it.labelRes) }
             if (distortionLabels.isNotEmpty()) {
                 Text(
-                    text = distortionLabels.joinToString(" · "),
+                    text = highlightMatches(distortionLabels.joinToString(" · "), query, highlight),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 4.dp)
@@ -431,7 +457,7 @@ private fun ThoughtRecordCard(
                     )
                     Spacer(Modifier.width(10.dp))
                     Text(
-                        text = record.rationalResponse,
+                        text = highlightMatches(query.excerpt(record.rationalResponse, contextBefore = 30), query, highlight),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                         maxLines = 4,
